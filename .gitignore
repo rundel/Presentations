@@ -1,0 +1,12 @@
+.DS_store
+.Rhistory
+*.tex
+*.aux
+*.log
+*.nav
+*.out
+*.snm
+*.synctex.gz
+*.tex
+*.toc
+*.vrb

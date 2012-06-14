@@ -1,3 +1,5 @@
+library(rgeos)
+
 ###############################################
 #
 # Boolean Operations
