@@ -1,0 +1,95 @@
+\usetheme{Madrid}
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode%
+  \hbox{%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+    \usebeamerfont{author in head/foot}\insertshortauthor%~~\beamer@ifempty{\insertshortinstitute}{}{(\insertshortinstitute)}
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+
+\usecolortheme{seahorse}
+
+\usepackage{geometry}
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{epstopdf}
+\usepackage{amsmath}  	% this permits text in eqnarray among other benefits
+\usepackage{color}          	% gives color options
+\usepackage{url}		% produces hyperlinks
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{colortbl}	% allows for color usage in tables
+\usepackage{multirow}	% allows for rows that span multiple rows in tables
+\usepackage{xcolor}		% this package has a variety of color options
+\usepackage{calc}
+\usepackage{multicol}
+\usepackage{multirow}
+\usepackage{fancybox}
+
+%User defined colors: See colors section
+\xdefinecolor{oiBlue}{rgb}{0.15, 0.35, 0.55}
+\xdefinecolor{gray}{rgb}{0.5, 0.5, 0.5}
+\xdefinecolor{darkGray}{rgb}{0.3, 0.3, 0.3}
+\xdefinecolor{darkerGray}{rgb}{0.2, 0.2, 0.2}
+\xdefinecolor{rubineRed}{rgb}{0.89,0,0.30}
+\xdefinecolor{linkCol}{rgb}{0.11,0.49,0.95}	
+\xdefinecolor{irishGreen}{rgb}{0,0.60,0}	
+\xdefinecolor{darkturquoise}{rgb}{0.44, 0.58, 0.86}
+\definecolor{lightGreen}{rgb}{0.533,0.765,0.42}
+
+
+\setbeamercolor*{palette primary}{fg=white,bg= oiBlue!70}
+\setbeamercolor*{palette secondary}{fg=black,bg= oiBlue!20!white}
+\setbeamercolor*{palette tertiary}{fg=white,bg= oiBlue!80!black!90}
+\setbeamercolor*{palette quaternary}{fg=white,bg= oiBlue}
+
+\setbeamercolor{structure}{fg= oiBlue}
+
+\setbeamercolor{frametitle}{bg= oiBlue!70}
+
+\newcommand{\urlwofont}[1]{\urlstyle{same}\textit{\url{#1}}}
+
+\setbeamertemplate{blocks}[shadow=false]
+
+\newcommand{\removepagenumbers}{% 
+  \setbeamertemplate{footline}{
+    %
+    \begin{beamercolorbox}[colsep=1.5pt]{upper separation line foot}
+    \end{beamercolorbox}
+    \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+      leftskip=.3cm,rightskip=.3cm plus1fil]{author in head/foot}%
+      \leavevmode{\usebeamerfont{author in head/foot}\insertshortauthor}%
+%      \hfill%
+%      {\usebeamerfont{author in head/foot}\usebeamercolor[fg]{institute in head/foot}\insertshortinstitute}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[ht=2.5ex,dp=1.125ex,%
+      leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+      {\usebeamerfont{title in head/foot}\insertshorttitle}%
+      \hfill%
+      {\usebeamerfont{author in head/foot}\usebeamercolor[fg]{institute in head/foot}\insertshortinstitute}%
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[colsep=1.5pt]{lower separation line foot}
+    \end{beamercolorbox}
+    }
+} 
+
+\setbeamercolor{disc body}{bg=oiBlue!20!white!80,fg=oiBlue!80!black!90}
+\setbeamercolor{disc title}{bg=oiBlue!40!white!60,fg=oiBlue!70!black!100}
+
+\setbeamercolor{block body}{bg=oiBlue!20!white!80,fg=oiBlue!80!black!90}
+\setbeamercolor{block title}{bg=oiBlue!40!white!60,fg=oiBlue!70!black!100}
+
+
