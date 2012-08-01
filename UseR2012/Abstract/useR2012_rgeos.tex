@@ -1,0 +1,51 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{amsfonts, amsmath, hanging, hyperref, parskip, times}
+\usepackage[numbers]{natbib}
+\usepackage[pdftex]{graphicx}
+\hypersetup{
+  colorlinks,
+  linkcolor=blue,
+  urlcolor=blue,
+  citecolor=blue
+}
+
+\let\section=\subsubsection
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}} 
+\let\proglang=\textit
+\let\code=\texttt 
+\renewcommand{\title}[1]{\begin{center}{\bf \LARGE #1}\end{center}}
+\newcommand{\affiliations}{\footnotesize\centering}
+\newcommand{\keywords}{\paragraph{Keywords:}}
+
+\setlength{\topmargin}{-15mm}
+\setlength{\oddsidemargin}{-2mm}
+\setlength{\textwidth}{165mm}
+\setlength{\textheight}{250mm}
+
+\begin{document}
+\pagestyle{empty}
+
+\title{\pkg{rgeos}: spatial geometry predicates and topology operations in \proglang{R}}
+
+
+\begin{center}
+  {\bf Colin Rundel$^{1,^\star}$, Roger Bivand$^{2}$, Edzer Pebesma$^{3}$}
+\end{center}
+
+\begin{affiliations}
+1. Duke University, Department of Statistical Science \\[-2pt]
+2. Norwegian School of Economics, Department of Economics \\[-2pt]
+3. University of M\"unster, Institute for Geoinformatics \\[-2pt]
+$^\star$Contact author: \href{mailto:rundel@gmail.com}{rundel@gmail.com}\\
+\end{affiliations}
+
+\keywords Geospatial, GIS, geometry, sp 
+
+\vskip 0.8cm
+
+\pkg{rgeos} is a package that implements functionality for the manipulation and querying of spatial geometries using the Geometry Engine - Open Source (GEOS) \proglang{C} library. This package expands on existing spatial functionality in \proglang{R} through integration with \pkg{sp} spatial classes and transparently replaces \pkg{gpclib} which is encumbered by a licensing agreement allowing only non-commercial use. Additionally, \pkg{rgeos} includes functionality for spatial predicates and topology operations for non-polygon geometries like points, lines, linear rings, and heterogeneous geometry collections. Previously, these operations were not possible within \proglang{R} and required the use of external GIS tools like GRASS, PostGIS, or ArcGIS which significantly complicate spatial workflows.
+
+This talk will discuss the basic usage of this package with a focus on real world use-cases from the R-sig-Geo mailing list. Additionally, we will cover some of the finer details of the GEOS library which will give insight into the most efficient approaches for employing \pkg{rgeos}. Finally, we will discuss future directions for the package with plans for additional features such as spatial indexes using GEOS' \code{STRtree} functionality and the addition of improvements made in GEOS 3.3.0.
+
+
+\end{document}
