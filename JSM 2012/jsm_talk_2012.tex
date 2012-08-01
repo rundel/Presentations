@@ -9,7 +9,7 @@
 \title[JSM 2012]{Leveraging GPU Libraries for Efficient Computation of Bayesian Spatial Assignment Models in R}
 \author{Colin Rundel}
 \date{August 1, 2012}
-\institute[UCLA]{University of California, Los Angeles}
+\institute[UCLA / Duke]{University of California, Los Angeles / Duke University}
 
 
 \begin{document}
@@ -86,9 +86,9 @@ Likelihood:
 Model fitting and prediction is done via MCMC
 \begin{itemize} \addtolength{\itemsep}{3mm}
 \item Original implementation in pure C++ with minimal dependencies
-\item Rewritten using R / C++ using Rcpp(Armadillo) 
+\item Rewritten using R / C++ via Rcpp(Armadillo) 
 \begin{itemize}
-\item Code closer to matrix notation
+\item Code closer to matrix notation (and R)
 \item Transparent use of high performance LAPACK implementations (ATLAS, OpenBLAS, Intel MKL)
 \end{itemize}
 \item GPU based optimizations were added using CUDA, CUBLAS, and MAGMA libraries
@@ -356,6 +356,7 @@ Relatively small changes in one function resulted in $\sim 5$x improvement
 \begin{tabular}{lll}
 email        & : & rundel@gmail.com \\
 github       & : & {\normalsize \urlwofont{http://github.com/rundel/}} \\
+presentation & : & {\normalsize \urlwofont{http://github.com/rundel/Presentations/}} \\
 \end{tabular}
 }
 \end{center}
