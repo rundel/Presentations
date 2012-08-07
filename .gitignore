@@ -1,6 +1,6 @@
+.gitignore
 .DS_store
 .Rhistory
-*.tex
 *.aux
 *.log
 *.nav
