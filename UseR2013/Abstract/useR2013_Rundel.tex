@@ -1,0 +1,46 @@
+\documentclass[11pt, a4paper]{article}
+\usepackage{amsfonts, amsmath, hanging, hyperref, natbib, parskip, times}
+\usepackage[pdftex]{graphicx}
+\hypersetup{
+  colorlinks,
+  linkcolor=blue,
+  urlcolor=blue
+}
+
+\let\section=\subsubsection
+\newcommand{\pkg}[1]{{\normalfont\fontseries{b}\selectfont #1}} 
+\let\proglang=\textit
+\let\code=\texttt 
+\renewcommand{\title}[1]{\begin{center}{\bf \LARGE #1}\end{center}}
+\newcommand{\affiliations}{\footnotesize}
+\newcommand{\keywords}{\paragraph{Keywords:}}
+
+\setlength{\topmargin}{-15mm}
+\setlength{\oddsidemargin}{-2mm}
+\setlength{\textwidth}{165mm}
+\setlength{\textheight}{250mm}
+
+\begin{document}
+\pagestyle{empty}
+
+\title{Leveraging GPU libraries for efficient computation of Gaussian process models in \proglang{R}}
+
+\begin{center}
+  {\bf Colin Rundel$^{1,^\star}$}
+\end{center}
+
+\begin{affiliations}
+1. Duke University, Department of Statistical Science \\[-2pt]
+$^\star$Contact author: \href{mailto:rundel@gmail.com}{rundel@gmail.com}\\
+\end{affiliations}
+
+\keywords Gaussian processes, Rcpp, GPU, HPC, Armadillo
+
+\vskip 0.8cm
+
+
+
+In this talk we will presents a case study of our recent work on the implementation of a Gaussian process based Bayesian model for spatial assignment. The talk will focus on the low level implementation of this model in \proglang{R} using \pkg{Rcpp}, \pkg{Armadillo}, and GPU linear algebra libraries \pkg{CUBLAS} and \pkg{Magma}. Building our implementation on top of these existing libraries allows us to exploit the computational power of commodity GPU hardware without the need for specific expertise in developing for these processors. We will discuss how through judicious use of these tools we are able to improve the performance of our assignment models by 3-5x over our original \pkg{RcppArmadillo} implementation.  It is our hope that our case study will provide insight into the identification of common computational bottle necks which can be improved through the use of existing GPU libraries and implementations.
+
+
+\end{document}
