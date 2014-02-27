@@ -1,0 +1,1100 @@
+\documentclass[t]{beamer}\usepackage[]{graphicx}\usepackage[]{color}
+%% maxwidth is the original width if it is less than linewidth
+%% otherwise use linewidth (to make sure the graphics do not exceed the margin)
+\makeatletter
+\def\maxwidth{ %
+  \ifdim\Gin@nat@width>\linewidth
+    \linewidth
+  \else
+    \Gin@nat@width
+  \fi
+}
+\makeatother
+
+\definecolor{fgcolor}{rgb}{0.345, 0.345, 0.345}
+\newcommand{\hlnum}[1]{\textcolor[rgb]{0.686,0.059,0.569}{#1}}%
+\newcommand{\hlstr}[1]{\textcolor[rgb]{0.192,0.494,0.8}{#1}}%
+\newcommand{\hlcom}[1]{\textcolor[rgb]{0.678,0.584,0.686}{\textit{#1}}}%
+\newcommand{\hlopt}[1]{\textcolor[rgb]{0,0,0}{#1}}%
+\newcommand{\hlstd}[1]{\textcolor[rgb]{0.345,0.345,0.345}{#1}}%
+\newcommand{\hlkwa}[1]{\textcolor[rgb]{0.161,0.373,0.58}{\textbf{#1}}}%
+\newcommand{\hlkwb}[1]{\textcolor[rgb]{0.69,0.353,0.396}{#1}}%
+\newcommand{\hlkwc}[1]{\textcolor[rgb]{0.333,0.667,0.333}{#1}}%
+\newcommand{\hlkwd}[1]{\textcolor[rgb]{0.737,0.353,0.396}{\textbf{#1}}}%
+
+\usepackage{framed}
+\makeatletter
+\newenvironment{kframe}{%
+ \def\at@end@of@kframe{}%
+ \ifinner\ifhmode%
+  \def\at@end@of@kframe{\end{minipage}}%
+  \begin{minipage}{\columnwidth}%
+ \fi\fi%
+ \def\FrameCommand##1{\hskip\@totalleftmargin \hskip-\fboxsep
+ \colorbox{shadecolor}{##1}\hskip-\fboxsep
+     % There is no \\@totalrightmargin, so:
+     \hskip-\linewidth \hskip-\@totalleftmargin \hskip\columnwidth}%
+ \MakeFramed {\advance\hsize-\width
+   \@totalleftmargin\z@ \linewidth\hsize
+   \@setminipage}}%
+ {\par\unskip\endMakeFramed%
+ \at@end@of@kframe}
+\makeatother
+
+\definecolor{shadecolor}{rgb}{.97, .97, .97}
+\definecolor{messagecolor}{rgb}{0, 0, 0}
+\definecolor{warningcolor}{rgb}{1, 0, 1}
+\definecolor{errorcolor}{rgb}{1, 0, 0}
+\newenvironment{knitrout}{}{} % an empty environment to be redefined in TeX
+
+\usepackage{alltt}
+
+\input{settings.tex}
+
+\usepackage{bm}
+\usepackage{isotope}
+\usepackage{appendixnumberbeamer}
+
+\newcommand{\PM}{$\text{PM}_{2.5}$ }
+
+\title[GPU GPs]{Using GPUs to improve the computational efficiency of Gaussian process models}
+\author{Colin Rundel}
+\date{February 27, 2014}
+\institute[Duke]{Duke University}
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+
+
+\begin{document}
+
+\begin{frame}[plain]
+\titlepage
+\end{frame}
+
+
+
+
+%==================================================================================================
+
+\section{Background}
+\addtocounter{framenumber}{-1} 
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{The problem with GPs ...}
+
+Unless you are lucky (or clever), Gaussian process models are difficult to scale to large problems.
+
+\pause \vspace{7mm}
+
+MVN Density:
+
+\[
+  f(\bm{x}|\bm{\mu},\bm\Sigma) = \frac{1}{\sqrt{(2\pi)^k|\bm{\Sigma}|}}  \exp\left(-\frac{1}{2} (\bm{x}-\bm{\mu})' \bm{\Sigma}^{-1} (\bm{x}-\bm{\mu}) \right)
+\]
+~\\
+
+\begin{itemize}
+\pause \item Drawing a sample? \pause - Choleksy of $\Sigma$ \pause - $\mathcal{O}\left(n^3\right)!$
+\vspace{2mm}
+\pause \item Evaluating the likelihood? \pause - Invert $\Sigma$ \pause - $\mathcal{O}\left(n^3\right)$!
+\vspace{2mm}
+\pause \item Fitting a model? \pause - Update $\Sigma$ \pause - $\mathcal{O}\left(n^2\right)$
+\end{itemize}
+
+\pause \vspace{2mm}
+
+I don't have any clever solutions for these problems, but there are very smart people out there who are working on them.
+
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Tools and Optimization}
+
+\vfill
+
+\begin{center}
+\includegraphics[width=\textwidth]{figs/diagram.pdf}
+\end{center}
+
+\vfill
+
+Regardless of tools or workflow, measuring / profiling performance is critical.
+
+\vfill \pause
+
+\begin{center}
+``\textit{Data or it didn't happen.}''
+\end{center}
+
+
+\end{frame}
+
+%==================================================================================================
+
+\section{Migratory Bird Spatial Assignment Model}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Background}
+
+Using intrinsic markers (genetic and isotopic signals) for the purpose of inferring migratory connectivity.
+
+\vspace{2mm}
+
+\begin{itemize}
+\item Existing methods are too coarse for most applications
+\vspace{2mm}
+\item Large amounts of data are available ( \textgreater{}150,000 feather samples from \textgreater{}500 species)
+\vspace{2mm}
+\item Genetic assignment methods are based on Wasser, et al. (2004)
+\vspace{2mm}
+\item Isotopic assignment methods are based on Wunder, et al. (2005)
+\end{itemize}
+
+\vfill
+
+{\scriptsize
+Rundel, C.W., \textit{et al.} (2013) Novel statistical methods for integrating genetic and stable isotopic data to infer individual-level migratory connectivity. \textit{Molecular Ecology} 22 (16).
+}
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}[t]
+\frametitle{Data - DNA microsatellites and $\delta \isotope[2]{H}$}
+
+\begin{columns}[t]
+\column{0.5\textwidth}
+Hermit Thrush (\textit{Catharus guttatus}) \\
+\vspace{2mm}
+\begin{itemize}
+\item 138 individuals
+\item 14 locations
+\item 6 loci
+\item 9-27 alleles / locus
+\end{itemize}
+\column{0.5\textwidth}
+Wilson's Warbler (\textit{Wilsonia pusilla}) \\
+
+\begin{itemize}
+\item 163 individuals
+\item 8 locations
+\item 9 loci
+\item 15-31 alleles / locus
+\end{itemize}
+
+\end{columns}
+
+~\\
+~\\
+
+\begin{columns}[t]
+\column{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.65\textwidth]{figs/hermit_thrush.jpeg}
+\end{center}
+\column{0.5\textwidth}
+\begin{center}
+\includegraphics[width=0.65\textwidth]{figs/wilsons_warbler.jpeg}
+\end{center}
+\end{columns}
+
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Allele Frequency Model}
+
+For the allele $i$, from locus $l$, at location $k$
+
+\begin{align*}
+\bm{y}_{\cdot l k}|\bm{\Theta} &\sim \text{Mult}\left(\textstyle\sum_i y_{ilk},\: \bm{f}_{\cdot l k}\right) \\
+\\
+f_{ilk} &= \frac{\exp(\Theta_{ilk})}{\sum_i \exp(\Theta_{ilk})} \\
+\\
+\bm{\Theta}_{il}|\bm{\alpha},\bm{\mu} &\sim \mathcal{N}( \bm{\mu}_{il},\, \bm{\Sigma_{}}) \\
+\end{align*}
+
+\[ \left\{\Sigma\right\}_{i,j} = \alpha_0 \, \exp \Big(-(d_{i,j}/\alpha_1)^{\alpha_2} \Big) + \alpha_3 \, I_{d_{i,j}=0} \]
+
+\end{frame}
+
+
+%==================================================================================================
+
+
+\begin{frame}
+\frametitle{Genetic Assignment  Model}
+
+Assignment model:
+
+\begin{align*}
+P(S_G|\bm{f},k) &= \prod_l P(i_l, j_l | \bm{f},k) \\
+\\
+P(i_l, j_l | \bm{f},k) &= 
+\begin{cases}
+\gamma P(i_l|\bm{f},k) + (1-\gamma)P(i_l|\bm{\tilde f},k)^2 & \text{if $i=j$} \vspace{2mm} \\
+(1-\gamma) P(i_l|\bm{f},k) P(j_l|\bm{f},k)      & \text{if $i \ne j$}
+\end{cases} \\
+\\
+P(i_k|\bm{f},k) &= (1-\delta) f_{lik} + \delta / m_l
+\end{align*}
+
+\vfill
+
+\[\delta \;-\; \text{Genotyping error rate} \quad\quad \gamma \;-\; \text{Single amplification rate}\]
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Isotope Model}
+
+\[ S_I | k,\bm{\tilde p}, \omega, \rho, \tau^2 \sim \text{N}(\omega+\rho \, \tilde{p}_k, \tau^2) \]
+ 
+\vfill
+
+\begin{center}
+\includegraphics[width=0.5\textwidth]{figs/isoscape.pdf}
+\end{center}
+
+\vfill
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Combined Model}
+
+\vfill
+
+\begin{center}
+\includegraphics[width=\textwidth]{figs/hermit_maps.pdf}
+\end{center}
+
+\vfill
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Implementation}
+
+Model fitting is done via MCMC (MH within Gibbs) \\
+\begin{itemize} \addtolength{\itemsep}{3mm}
+\item Original implementation in pure C++ with minimal dependencies (Wasser, et al. (2004))
+\item Rewritten using R / C++ via Rcpp(Armadillo) 
+\begin{itemize}
+\item Code closer to matrix notation (and R)
+\item Transparent use of high performance LAPACK implementations
+\item R Package - isoscatR - \url{https://github.com/rundel/isoscatR}
+\end{itemize}
+\item Model fitting performance is quite good
+\begin{itemize}
+  \item 300,000 iterations in $\sim 5.5$ minutes
+\end{itemize}
+\item Bottleneck is sampling posterior predictive
+\begin{itemize}
+  \item1,000 iterations in $\sim 30$ minutes
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Model Assessment}
+
+\vspace{-3mm}
+
+\begin{center}
+\includegraphics[width=\textwidth]{figs/ROCs.pdf}
+\end{center}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Migratory Connectivity}
+
+\vspace{-3mm}
+
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figs/wintering.png}
+\end{center}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Prediction details}
+
+Why is the prediction slow? \pause 
+
+~\\
+
+Predicting allele frequencies for Hermit thrush at 3318 novel locations.\\
+
+~\\
+
+To do so we sample from:
+\[ \bm{\Theta}_p | \bm{\Theta}_m \sim \mathcal{N}(\bm{\mu}_p+\bm\Sigma_{pm}\bm\Sigma_{m}^{-1}(\bm{\Theta}_m-\bm\mu_m),\: \bm\Sigma_{p}-\bm\Sigma_{pm}\bm\Sigma_{m}^{-1}\bm\Sigma_{mp}) \]
+
+\pause
+
+\vspace{-3mm}
+
+\begin{columns}
+\column{0.15\textwidth}
+\column{0.70\textwidth}
+\begin{block}{Algorithm steps}
+\begin{enumerate}
+\item Calculate $\bm\Sigma_{pm}$, $\bm\Sigma_{p}$, and $\bm\Sigma_{p}-\bm\Sigma_{pm}\bm\Sigma_{m}^{-1}\bm\Sigma_{mp}$
+\item Calculate $\text{Chol}(\bm\Sigma_{p}-\bm\Sigma_{pm}\bm\Sigma_{m}^{-1}\bm\Sigma_{mp})$
+\item Sample from MVN
+\item Calculate allele frequencies
+\end{enumerate}
+\end{block}
+\column{0.2\textwidth}
+\end{columns}
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Posterior predictive sampling timings}
+
+% Performance (CPU) :
+% =============================================
+% Step 1: 1.08 (0.0106)
+% Step 2: 0.000174 (5.15e-06)
+% Step 3: 0.467 (0.00171)
+% Step 4: 0.0491 (0.000725)
+% Step 5: 0.129 (0.000273)
+% Step 6: 0.00654 (0.0338)
+
+
+% Performance (CPU+GPU) :
+% =============================================
+% Step 1: 0.0462 (0.000196)
+% Step 2: 3.43e-05 (3.02e-06)
+% Step 3: 0.208 (0.000229)
+% Step 4: 0.0525 (0.000227)
+% Step 5: 0.127 (0.00188)
+% Step 6: 0.032 (0.231)
+
+\vspace{-7mm}
+
+\begin{center}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{rl|c|c|c}
+& Step                                    & CPU (secs)  & CPU+GPU (secs)  & Rel. Performance \\
+\hline
+1. & Covariances                          & 1.080       & 0.046           & 23.0 \\
+2. & Cholesky                             & 0.467       & 0.208           & 2.3 \\
+3. & Samples                              & 0.049       & 0.052           & 0.9 \\
+4. & Allele Freq                          & 0.129       & 0.127           & 1.0 \\
+\hline 
+   & Total                                & 1.732       & 0.465           & 3.7 \\
+\end{tabular}
+
+\end{center}
+
+\vspace{3mm}
+\only<2->{
+\begin{columns}[t]
+
+\column{0.45\textwidth}
+Total run time: \\ \vspace{2mm}
+\begin{itemize}
+\item CPU - 28.9 minutes
+\item CPU+GPU - 7.8 minutes
+\end{itemize}
+
+\column{0.55\textwidth}
+\only<3>{
+~\\ \vspace{3mm}
+$\times \begin{array}{l}
+166 \text{ for Hermit Thrush} \\
+179 \text{ for Wilson's Warbler}
+\end{array}$
+}
+\end{columns}
+}
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Lessons}
+
+\begin{itemize}    
+
+\item Relatively small changes in one function resulted in 3 - 4x improvement
+
+\begin{itemize}
+\vspace{2mm} \item Cross validation results in two days instead of a week
+
+\vspace{2mm} \item 1-2 weeks of implementation, 1 week of tweaking / testing
+
+\vspace{2mm} \item Started with Cholesky, other optimizations followed
+\end{itemize}
+
+\vspace{7mm} \pause
+
+\item Issues
+
+\begin{itemize}
+\vspace{2mm} \item External library dependency makes package development \\ (much) more complicated
+
+\vspace{2mm} \item Additional code verbosity and complexity
+
+\end{itemize}
+\end{itemize}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Improving Covariance Calculations}
+    
+Covariance is assumed to be stationary and isotropic
+\begin{itemize}
+\item Elements of the covariance matrix can be calculated independently
+\item Small scale ``embarrassingly parallel''
+\item Implementation is straight forward \\ (if we don't worry about things like symmetry)
+\end{itemize}
+
+\vfill
+\begin{center}
+\fbox{
+\includegraphics[width=0.95\textwidth]{figs/pow_exp_kernel.png}
+}
+\end{center}
+\vfill
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Improving Cholesky}
+    
+\vspace{-8mm}
+
+\only<1>{
+\begin{center}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\textwidth]{plots/unnamed-chunk-1} 
+
+}
+
+
+
+\end{knitrout}
+
+\end{center}
+}
+
+\only<2>{
+\begin{center}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\textwidth]{plots/unnamed-chunk-2} 
+
+}
+
+
+
+\end{knitrout}
+
+\end{center}
+}
+
+\only<3>{
+\begin{center}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\textwidth]{plots/unnamed-chunk-3} 
+
+}
+
+
+
+\end{knitrout}
+
+\end{center}
+}
+
+\end{frame}
+
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Building core tools}
+
+Common set of (expensive) tasks for GP models
+
+\vspace{1mm}
+
+\begin{itemize}
+\item Covariance calculation
+\item Cholesky of Cov. 
+\item Inverse of Cov. 
+\end{itemize}
+
+\vspace{2mm}
+
+Goal is to make performing these tasks on a GPU as painless as possible and allow interoperability with GPU (magma, CUBLAS) and CPU (Armadillo) libraries.
+
+\begin{itemize}
+\item GPU matrix class
+\item Modern resource management (RAII)
+\item Simple translation to and from
+\end{itemize}
+
+\vfill
+
+R Package - RcppGP - \url{https://github.com/rundel/RcppGP}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}[label=code]
+\frametitle{CPU vs GPU code}
+
+\vfill
+
+\begin{center}
+\fbox{\includegraphics[width=0.9\textwidth]{figs/CPU.png}}
+
+\vspace{10mm}
+
+\fbox{\includegraphics[width=0.9\textwidth]{figs/GPU.png}}
+\end{center}
+
+\vfill
+
+
+\hyperlink{pm_lessons}{\beamerbutton{Back}}
+\end{frame}
+
+
+%==================================================================================================
+
+\section{Speciated PM$_{2.5}$ Modeling}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Background}
+    
+Fine particulate matter (\PM{}) is an EPA regulated air pollutant linked to a variety of adverse health effects
+
+\begin{itemize}
+  \vspace{2mm} \item Classified based on particle size ($<2.5$ $\mu$m diameter)
+  \vspace{2mm} \item Major species: Sulfate, Nitrate, Ammonium, Soil, Carbon.
+  \vspace{2mm} \item Minor species: trace elements (K, Mg, Ca), heavy metals (Cu, Fe), etc.
+  \vspace{2mm} \item Complex spatio-temporal dependence between species
+\end{itemize}
+
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Data}
+
+Speciated \PM Sources
+\begin{itemize}
+  \item Chemical Speciation Network (CSN) - 221 stations
+  \item Interagency Monitoring of Protected Visual Environments (IMPROVE) - 172 stations
+\end{itemize}
+
+\vspace{2mm}
+
+Total \PM Sources
+\begin{itemize}
+  \item Federal Reference Method (FRM) - 949 stations
+\end{itemize}
+
+\vspace{2mm}
+
+Model Output
+\begin{itemize}
+  \item Community Multi-scale Air Quality (CMAQ) - 12 km grid
+\end{itemize}
+
+\vspace{5mm}
+
+Data Issues
+\begin{itemize}
+  \item Monitoring frequency
+  \item Total vs Sum of Species
+\end{itemize}
+
+\end{frame}
+
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Model Details}
+
+For each species and network,
+
+\vspace{-5mm}
+
+\begin{columns}[t]
+\column{0.4\textwidth}
+\begin{align*}
+C_t^i(\bm{s}) &= Z_t^i(\bm{s}) + \epsilon_{C,t}^i(\bm{s}) \\
+I_t^i(\bm{s}) &= Z_t^i(\bm{s}) + \epsilon_{I,t}^i(\bm{s}) \\
+\end{align*}
+
+\column{0.6\textwidth}
+\begin{align*}
+{Z}_t^i(\bm{s}) &= \max{}\left(0,~\widetilde{Z}_t^i(\bm{s})\right) \\
+\widetilde{Z}_t^i(\bm{s}) &= \beta_{0,t}^i +\beta_{0,t}^i(\bm{s}) + \beta_{1,t}^i \: Q_t^i(B_{\bm{s}})  
+\end{align*}
+\end{columns}
+
+\vspace{2mm} \pause
+
+For total PM,
+\begin{columns}[c]
+\column{0.42\textwidth}
+\begin{align*}
+C_t^{tot}(\bm{s}) &= Z_t^{tot}(\bm{s}) + \epsilon_{C,t}^{tot}(\bm{s}) \\
+I_t^{tot}(\bm{s}) &= Z_t^{tot}(\bm{s}) + \epsilon_{I,t}^{tot}(\bm{s}) \\
+F_t^{tot}(\bm{s}) &= Z_t^{tot}(\bm{s}) + \epsilon_{F,t}^{tot}(\bm{s})
+\end{align*}
+
+\column{0.58\textwidth}
+\vspace{6mm}
+\[ Z^{tot}_{t}(\bm{s}) = \sum_{i=1}^{5} Z^i_t(\bm{s}) + Z^{o}_{t}(\bm{s}) \]
+\end{columns}
+
+\vspace{3mm} \pause
+
+\begin{align*}
+{Z}_t^o(s) &= \max{}\left(0,~\widetilde{Z}_t^o(s)\right) \\
+\widetilde{Z}_t^{o}(\bm{s}) &= \beta_{0,t}^o +\beta_{0,t}^o(\bm{s}) + \beta_{1,t}^o \: Q_t^o(B_{\bm{s}})
+\end{align*}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Model Details Cont.}
+
+Spatial dependence enters the model through the $\beta_{0,t}^i(s)$ and $\beta_{0,t}^o(s)$ parameters.
+
+
+\[ \beta_{0,t}^i(\bm{s}) = {\sigma}^i_t~w^i_t(\bm{s}) 
+\hspace{10mm}
+\beta_{0,t}^o(\bm{s}) = {\eta}_t~w^o_t(\bm{s}) \]
+
+\vspace{5mm}
+
+where $w^i_{t}(\bm{s})$ and $w^o_{t}(\bm{s})$ are zero mean, variance $1$, Gaussian processes with exponential correlation given by 
+
+
+\begin{align*}
+\text{corr}(w^i_{t}(\bm{s}),w^i_{t}(\bm{s}')) = \exp(-\phi^i_{t} |\bm{s}-\bm{s}'|) \\
+\\
+\text{corr}(w^o_{t}(\bm{s}),w^o_{t}(\bm{s}')) = \exp(-\xi_{t} |\bm{s}-\bm{s}'|)
+\end{align*}
+
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}[label=pm_results]
+\frametitle{Model results}
+
+\vfill
+\begin{center}
+\only<1>{\includegraphics[width=0.8\textwidth]{figs/pm_maps.pdf}}
+\only<2>{\includegraphics[width=\textwidth]{figs/pm_ts.pdf}}
+\end{center}
+\vfill
+
+%\hyperlink{regions}{\beamerbutton{Regions}}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Model fitting performance}
+
+\begin{center}
+\renewcommand*{\arraystretch}{1.5}
+\begin{tabular}{l|c|c|c}
+Parameter                 & CPU (secs) & CPU+GPU (secs)  & Rel. Performance \\
+\hline           
+$\beta_0, \; \beta_1$     & 0.00029    & 0.00030         & 0.97 \\
+$\beta_0(s) $             & 0.09205    & 0.09132         & 1.00 \\
+$\sigma^2,\eta^2$         & 0.00383    & 0.00385         & 0.99 \\
+$\phi,\; \xi$             & 0.46084    & 0.25174         & 1.83 \\
+$\tau^2_i,\; \tau^2_{tot}$& 0.00003    & 0.00003         & 1.00 \\
+\hline
+Total                     & 0.55708    & 0.34729         & 1.60
+\end{tabular}
+\end{center}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Run times}
+
+Total run time for model fitting (50,000 iterations): \\ \vspace{2mm}
+
+\begin{columns}[c]
+\column{0.5\textwidth}
+\begin{itemize}
+\item CPU - 7.7 hours
+\item CPU+GPU - 4.8 hours
+\end{itemize}
+\column{0.5\textwidth}
+$\times$ 52 weeks
+\end{columns}
+
+
+\vspace{7mm} \pause
+
+
+Total run time for model prediction at 5950 locations (1,000 iterations): \\ \vspace{2mm}
+
+\begin{columns}[c]
+\column{0.5\textwidth}
+\begin{itemize}
+\item CPU - 7.2 hours
+\item CPU+GPU - 4.3 hours
+\end{itemize}
+\column{0.5\textwidth}
+$\times$ 52 weeks
+\end{columns}
+
+\vspace{7mm} \pause
+
+One run takes about 775 hours total on CPU alone, 473 on CPU and GPU.
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}[label=pm_lessons]
+\frametitle{Lessons}
+
+
+\begin{itemize}
+\item Infrastructure makes a huge difference in development time
+\begin{itemize}
+  \vspace{2mm} \item 1 hour to go from CPU implementation to CPU+GPU implementation 
+  \vspace{2mm} \item Code shown previously is 2/3 of the changes necessary \hyperlink{code}{\beamerbutton{Code}}
+\end{itemize}
+
+\vspace{2mm}
+\item In practice, easier to run CPU only code across more servers (configuration time / effort)
+
+\begin{itemize}
+\vspace{2mm} \item Not possible (or at least easy) for models variants that are not independent in time.
+\end{itemize}
+
+\item Rcpp Attributes offer huge advantages in development and deployment
+\begin{itemize}
+  \item Simplifies external dependencies (locally)
+\end{itemize}
+
+\end{itemize}
+
+\end{frame}
+
+%==================================================================================================
+
+\section{Related and Future Work}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{GPUs and reduced rank GPs}
+    
+For example the Gaussian Process,
+
+\[ Y(\bm{s}) = x'(\bm{s}) \, \bm{\beta} + w(\bm{s}) + \epsilon(\bm{s}), \quad \epsilon(\bm{s}) \sim N(0,~\tau^2I_n) \]
+%
+\[ w(\bm{s}) \sim N(0,~\bm{C}(\bm{s})), \quad \bm{C}(\bm{s},\bm{s}')=\sigma^2\,\rho(\bm{s},\bm{s}'|\theta) \]
+
+~\\
+
+can be approximated using a Gaussian predictive process with knots at locations $\bm{s}^*$ where
+
+\[ Y(\bm{s}) = x'(\bm{s}) \, \bm{\beta} + \widetilde{w}(\bm{s}) + \epsilon(\bm{s}) \]
+%
+\[ \widetilde{w}(\bm{s}) = \bm{C}(\bm{s},\bm{s}^*) \, \bm{C}(\bm{s}^*)^{-1} \, w(\bm{s}^*). \]
+%
+\[ w(\bm{s}^*) \sim N(0,~\bm{C}(\bm{s}^*)) \]
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Another Approach}
+  
+bigGP is an R package written by Chris Paciorek, et al.
+
+\begin{itemize}
+\item Specialized implementation of LA operation for GPs
+\item Designed to run on large super computer clusters
+\item Uses both shared and distributed memory
+\item Able to fit models on the order of $n = 65$k (32 GB Cov. matrix)
+\end{itemize}
+
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{figs/Paciorek.pdf}
+\end{center}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Future Directions}
+    
+\begin{itemize}
+
+\item Refinement of RcppGP
+
+\vspace{1mm}
+\begin{itemize}
+  \item Full Rcpp Attribute support
+  \item Transparent GPU to CPU failover
+\end{itemize}
+\vspace{1mm}
+
+\item Single vs. Multi-GPU algorithms
+
+\vspace{2mm}
+
+\item Mixed precision methods
+
+\vspace{2mm}
+
+\item NVBLAS
+
+\vspace{2mm}
+
+\item Unified memory
+
+\end{itemize}
+
+
+\end{frame}
+
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Acknowledgments}
+
+\vfill
+
+\begin{columns}[t]
+\column{0.5\textwidth}
+\textbf{Migratory Connectivity}
+\vspace{5mm}
+\begin{itemize}
+  \item John Novembre - UChicago
+  \vspace{3mm} \item Thomas Smith - UCLA
+  \vspace{3mm} \item Kristen Ruegg - UCLA, UCSC
+  \vspace{3mm} \item Center for Tropical Research, UCLA IoES
+\end{itemize}
+
+\column{0.5\textwidth}
+\textbf{Speciated \PM}
+\vspace{2.5mm}
+\begin{itemize}
+  \item Alan Gelfand - Duke
+  \vspace{3mm} \item Dave Holland - EPA
+  \vspace{3mm} \item Erin Schliep - Duke
+\end{itemize}
+\end{columns}
+
+\vfill
+
+\end{frame}
+
+%==================================================================================================
+
+\appendix
+
+%==================================================================================================
+
+\begin{frame}
+    
+
+
+\end{frame}
+
+%==================================================================================================
+
+
+\begin{frame}
+\frametitle{Performance}
+
+\vfill
+
+\begin{columns}[t]
+\column{0.6\textwidth}
+System Specs:
+\vspace{2.5mm}
+\begin{itemize}
+\item 4 core Intel i5-2500K @ 3.30 GHz
+\vspace{2mm} \item 16 GB DDR3 @ 1333 MHz
+\vspace{2mm} \item GeForce GTX 460
+\end{itemize}
+
+\column{0.4\textwidth}
+Software Specs:
+\vspace{0.5mm}
+\begin{itemize}
+\item Ubuntu 13.10
+\vspace{2mm} \item OpenBlas 0.2.8
+\vspace{2mm} \item CUDA 6.0RC
+\vspace{2mm} \item Magma 1.4.1
+\end{itemize}
+\end{columns}
+
+\vfill
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Double vs single float performance}
+    
+\vspace{-8mm}
+
+\only<1>{
+\begin{center}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\textwidth]{plots/unnamed-chunk-4} 
+
+}
+
+
+
+\end{knitrout}
+
+\end{center}
+}
+
+\only<2>{
+\begin{center}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\textwidth]{plots/unnamed-chunk-5} 
+
+}
+
+
+
+\end{knitrout}
+
+\end{center}
+}
+
+\end{frame}
+
+%==================================================================================================
+
+\begin{frame}
+\frametitle{Amazon EC2 Instances}
+    
+\vspace{-8mm}
+
+\only<1>{
+\begin{center}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\textwidth]{plots/unnamed-chunk-6} 
+
+}
+
+
+
+\end{knitrout}
+
+\end{center}
+}
+
+\only<2>{
+\begin{center}
+\begin{knitrout}\footnotesize
+\definecolor{shadecolor}{rgb}{0.969, 0.969, 0.969}\color{fgcolor}
+
+{\centering \includegraphics[width=\textwidth]{plots/unnamed-chunk-7} 
+
+}
+
+
+
+\end{knitrout}
+
+\end{center}
+}
+
+\end{frame}
+
+
+%==================================================================================================
+
+
+\begin{frame}[label=regions]
+\frametitle{Regions}
+
+\vfill
+\begin{center}
+\includegraphics[width=0.9\textwidth]{figs/pm_regions.pdf}
+\end{center}
+\vfill
+
+\hyperlink{pm_results}{\beamerbutton{Back}}
+
+\end{frame}
+
+\end{document}
