@@ -1,0 +1,7 @@
+Title: 
+
+Geospatial data and the R ecosystem
+
+Abstract: 
+
+R is a programming language designed for statistical computing and graphics with a rich ecosystem of user-created packages to extend its functionality. For this talk we will focus on the packages that enable R to read/write, manipulate, visualize, and analyze geospatial data. We will discuss the basic structure and taxonomy of geospatial data and address the unique challenges that this type of data can present for analysis. We will then focus on the core R packages (sp, rgdal, rgeos) that enable GIS functionality and why R offers advantages over traditional GIS tools.

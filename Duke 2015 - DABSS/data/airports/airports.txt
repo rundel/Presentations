@@ -1,0 +1,599 @@
+Metadata:
+  Identification_Information:
+    Citation:
+      Citation_Information:
+        Originator: National Atlas of the United States
+        Publication_Date: 201207
+        Title: Airports of the United States
+        Publication_Information:
+          Publication_Place: Rolla, MO
+          Publisher: National Atlas of the United States
+        Online_Linkage: <http://nationalatlas.gov/atlasftp-1m.html>
+    Description:
+      Abstract:
+        This map layer includes airports in the United States, Puerto Rico and the U.S. Virgin Islands.  The data 
+        were derived from an extract of the Public-Use Airports database of the National Transportation Atlas 
+        Databases-2010 (NTAD-2010), published by the Bureau of Transportation Statistics, Department of 
+        Transportation.
+      Purpose:
+        These data are intended for geographic display and analysis at the national level, and for large regional 
+        areas.  The data should be displayed and analyzed at scales appropriate for 1:1,000,000-scale data.  No 
+        responsibility is assumed by the National Atlas of the United States in the use of these data.
+      Supplemental_Information:
+        Information about National Atlas Web services can be found on the Web Map and Web Feature Services page;  
+        see <http://nationalatlas.gov/infodocs/webservices.html>.
+
+    Time_Period_of_Content:
+      Time_Period_Information:
+        Single_Date/Time:
+          Calendar_Date: 201207
+      Currentness_Reference: Publication date
+    Status:
+      Progress: Complete
+      Maintenance_and_Update_Frequency: Irregular
+    Spatial_Domain:
+      Bounding_Coordinates:
+        West_Bounding_Coordinate: -177
+        East_Bounding_Coordinate: -64
+        North_Bounding_Coordinate: 72
+        South_Bounding_Coordinate: 17
+    Keywords:
+      Theme:
+        Theme_Keyword_Thesaurus: ISO 19115 Topic Category
+        Theme_Keyword: Transportation
+      Theme:
+        Theme_Keyword_Thesaurus: None
+        Theme_Keyword: Airports
+      Place:
+        Place_Keyword_Thesaurus:
+          U.S. Department of Commerce; 1995; Countries, Dependencies, Areas of Special Sovereignty, and Their 
+          Principal Administrative Divisions; Federal Information Processing Standard (FIPS) 10-4; Washington, DC;
+          National Institute of Standards and Technology.
+        Place_Keyword: United States
+      Place: 
+        Place_Keyword_Thesaurus: None
+        Place_Keyword: US
+        Place_Keyword: USA
+      Place:
+        Place_Keyword_Thesaurus:
+          U.S. Department of Commerce; 1987; Codes for the Identification of the States, the District of Columbia 
+          and the Outlying Areas of The United States, and Associated Areas; FIPS 5-2; Washington, DC; National 
+          Institute of Standards and Technology.
+        Place_Keyword: Alabama
+        Place_Keyword: Alaska
+        Place_Keyword: Arizona
+        Place_Keyword: Arkansas
+        Place_Keyword: California
+        Place_Keyword: Colorado
+        Place_Keyword: Connecticut
+        Place_Keyword: Delaware
+        Place_Keyword: District of Columbia
+        Place_Keyword: Florida
+        Place_Keyword: Georgia
+        Place_Keyword: Hawaii
+        Place_Keyword: Idaho
+        Place_Keyword: Illinois
+        Place_Keyword: Indiana
+        Place_Keyword: Iowa
+        Place_Keyword: Kansas
+        Place_Keyword: Kentucky
+        Place_Keyword: Louisiana
+        Place_Keyword: Maine
+        Place_Keyword: Maryland
+        Place_Keyword: Massachusetts
+        Place_Keyword: Michigan
+        Place_Keyword: Minnesota
+        Place_Keyword: Mississippi
+        Place_Keyword: Missouri
+        Place_Keyword: Montana
+        Place_Keyword: Nebraska
+        Place_Keyword: Nevada
+        Place_Keyword: New Hampshire
+        Place_Keyword: New Jersey
+        Place_Keyword: New Mexico
+        Place_Keyword: New York
+        Place_Keyword: North Carolina
+        Place_Keyword: North Dakota
+        Place_Keyword: Ohio
+        Place_Keyword: Oklahoma
+        Place_Keyword: Oregon
+        Place_Keyword: Pennsylvania
+        Place_Keyword: Rhode Island
+        Place_Keyword: South Carolina
+        Place_Keyword: South Dakota
+        Place_Keyword: Tennessee
+        Place_Keyword: Texas
+        Place_Keyword: Utah
+        Place_Keyword: Vermont
+        Place_Keyword: Virginia
+        Place_Keyword: Washington
+        Place_Keyword: West Virginia
+        Place_Keyword: Wisconsin
+        Place_Keyword: Wyoming
+        Place_Keyword: Puerto Rico
+        Place_Keyword: U.S. Virgin Islands
+    Access_Constraints: None
+    Use_Constraints:
+      None.  Acknowledgment of The National Atlas of the United States of America would be appreciated in products 
+      derived from these data.
+    Point_of_Contact: 
+      Contact_Information: 
+        Contact_Organization_Primary: 
+          Contact_Organization: National Atlas of the United States 
+        Contact_Address: 
+          Address_Type: Mailing and physical address 
+          Address: U.S. Geological Survey
+          Address: 511 National Center 
+          Address: 12201 Sunrise Valley Drive 
+          City: Reston 
+          State_or_Province: VA 
+          Postal_Code: 20192 
+        Contact_Voice_Telephone: 1-888-ASK-USGS (1-888-275-8747)
+        Contact_Electronic_Mail_Address: atlasmail@usgs.gov
+        Contact_Instructions:
+          For questions about this map layer or metadata, please contact the National Atlas using the information 
+          above, or through the U.S. Geological Survey contact page at <http://www.usgs.gov/ask/>.  For 
+          distribution questions, please see the Distribution Information elsewhere in this metadata. 
+  Data_Quality_Information:
+    Logical_Consistency_Report 
+      The map layer was checked for topological consistency using ArcGIS.  No other checks for logical consistency 
+      were performed on this map layer.
+    Completeness_Report:
+      This map layer includes airports in the 50 United States, Puerto Rico, and the U.S. Virgin Islands, with 
+      enplanements of 25 passengers or more per year.
+    Lineage:
+      Source_Information:
+        Source_Citation:
+          Citation_Information:
+            Originator: 
+              Research and Innovative Technology Administration, Bureau of Transportation Statistics (RITA/BTS)
+            Publication_Date: 2010
+            Title: Public-Use Airports - National Transportation Atlas Database (NTAD) 2010
+            Publication_Information:
+              Publication_Place: Washington, DC
+              Publisher: 
+                Research and Innovative Technology Administration, Bureau of Transportation Statistics (RITA/BTS)
+            Online_Linkage: <http://go.usa.gov/gSTH>
+        Type_of_Source_Media: Online
+        Source_Time_Period_of_Content:
+          Time_Period_Information:
+            Single_Date/Time:
+              Calendar_Date: 2010
+          Source_Currentness_Reference: Publication date
+        Source_Citation_Abbreviation: AIRPRT
+        Source_Contribution: Spatial and attribute information
+
+      Source_Information:
+        Source_Citation:
+          Citation_Information:
+            Originator: U.S. Geological Survey
+            Publication_Date: 2010
+            Title: Geographic Names Information System (GNIS)
+            Publication_Information:
+              Publication_Place: Reston, VA
+              Publisher: U.S. Geological Survey
+            Online_Linkage: <http://geonames.usgs.gov/>
+        Type_of_Source_Media: Online
+        Source_Time_Period_of_Content:
+          Time_Period_Information:
+            Single_Date/Time:
+              Calendar_Date: 2010
+          Source_Currentness_Reference: Date of data access
+        Source_Citation_Abbreviation: GNIS
+        Source_Contribution: Attribute information
+
+      Source_Information:
+        Source_Citation:
+          Citation_Information:
+            Originator: Federal Aviation Administration (FAA)
+            Publication_Date: 2011
+            Title: Passenger Boarding (Enplanement) and All-Cargo Data for U.S. Airports
+            Publication_Information:
+              Publication_Place: Washington, DC
+              Publisher: Bureau of Transportation Statistics, BTS
+            Online_Linkage: <http://www.faa.gov/airports/planning_capacity/passenger_allcargo_stats/passenger/>
+        Type_of_Source_Media: Online
+        Source_Time_Period_of_Content:
+          Time_Period_Information:
+            Single_Date/Time:
+              Calendar_Date: 2010
+          Source_Currentness_Reference: Ground condition
+        Source_Citation_Abbreviation: FAA
+        Source_Contribution: Attribute information
+
+      Source_Information:
+        Source_Citation:
+          Citation_Information:
+            Originator: International Civil Aviation Organization (ICAO)
+            Publication_Date: 2010
+            Title: Location Indicators by State
+            Publication_Information:
+              Publication_Place: Montreal, Canada
+              Publisher: International Civil Aviation Organization
+            Online_Linkage:
+              <http://www.icao.int/safety/ism/Accident%20Incident%20Reporting%20Guidance/LocationIndicatorsByState.pdf>
+        Type_of_Source_Media: Online
+        Source_Time_Period_of_Content:
+          Time_Period_Information:
+            Single_Date/Time:
+              Calendar_Date: 2010
+          Source_Currentness_Reference: Publication date
+        Source_Citation_Abbreviation: ICAO
+        Source_Contribution: Attribute information
+
+      Source_Information:
+        Source_Citation:
+          Citation_Information:
+            Originator: Wikipedia
+            Publication_Date: Unknown
+            Title: List of Airports by ICAO Code: P
+        Type_of_Source_Media: Online
+        Source_Time_Period_of_Content: 
+          Time_Period_Information:
+            Single_Date/Time:
+              Calendar_Date: 2010
+          Source_Currentness_Reference: Date of data access
+        Source_Citation_Abbreviation: Wiki
+        Source_Contribution: Attribute information
+
+      Source_Information:
+        Source_Citation:
+          Citation_Information:
+            Originator: National Atlas of the United States
+            Publication_Date: Unknown
+            Title: 1:1,000,000-Scale National Atlas map layers and other quality control files
+            Other_Citation_Details:
+              Numerous sources were used to perform quality-control and vertical integration, including all 
+              the 1:1,000,000-scale National Atlas map layers, a variety of online sources, and online USGS 
+              topographic maps.  More information is available from the National Atlas contacts listed elsewhere in 
+              this metadata.
+        Type_of_Source_Media: Variable
+        Source_Time_Period_of_Content: 
+          Time_Period_Information:
+            Single_Date/Time:
+              Calendar_Date: Unknown
+          Source_Currentness_Reference: Variable
+        Source_Citation_Abbreviation: QC
+        Source_Contribution: Spatial information
+
+      Process_Step:
+        Process_Description:
+          Airports with passenger enplanement of 25 passengers or more per year were selected from AIRPRT to create 
+          a point coverage.  Balloonports, gliderports, heliports, seaplane bases, and ultralight facilities were 
+          not included.  Attributes for the airport location identifier, total enplanements, city, latitude, 
+          longitude, elevation, activation date, and control-tower presence were retained.
+
+          The data set was enhanced with information from GNIS, including airport names, State, State FIPS, FIPS, 
+          and county.  Air Force Bases that are in GNIS were included; enplanement data for these facilities may 
+          not be available.
+
+          The ICAO field was populated using the Location Indicators by State, and ICAO errors were corrected using 
+          Wikipedia.
+        Source_Used_Citation_Abbreviation: AIRPRT
+        Source_Used_Citation_Abbreviation: GNIS
+        Source_Used_Citation_Abbreviation: FAA
+        Source_Used_Citation_Abbreviation: ICAO
+        Source_Used_Citation_Abbreviation: Wiki
+        Process_Date: 2010
+
+      Process_Step:
+        Process_Description:
+          Additional information on total enplanements was extracted from the FAA passenger enplanement data.  
+          Attribute names were adjusted as necessary, and the data were converted to shapefile format.
+
+          The attribute values were reviewed for consistency and completeness and corrected as necessary.
+        Source_Used_Citation_Abbreviation: FAA
+        Process_Date: 2012
+
+      Process_Step:
+        Process_Description:
+          All the 1:1,000,000-scale map layers were checked for vertical integration.  Airport locations were 
+          checked and adjusted to make sure the features did not fall within waterbodies and to make sure that they 
+          were within 500 meters of their true location.
+        Source_Used_Citation_Abbreviation: QC
+        Process_Date: 2012
+
+      Process_Step:
+        Process_Description:
+          The map layer was saved in shapefile and in file geodatabase formats.
+        Process_Date: 2013
+
+  Spatial_Data_Organization_Information:
+    Indirect_Spatial_Reference:
+      U.S. Department of Commerce; 1987; Codes for the Identification of the States, the District of Columbia and 
+      the Outlying Areas of the United States, and Associated Areas; FIPS 5-2; Washington, DC; National Institute 
+      of Standards and Technology.
+
+      U.S. Department of Commerce; 1990; Counties and Equivalent Entities of the United States, Its Possessions, 
+      and Associated Areas; FIPS 6-4; Washington, DC; National Institute of Standards and Technology.
+
+    Direct_Spatial_Reference_Method: Vector
+    Point_and_Vector_Object_Information:
+      SDTS_Terms_Description:
+        SDTS_Point_and_Vector_Object_Type: Entity point
+        Point_and_Vector_Object_Count: 940
+
+  Spatial_Reference_Information:
+    Horizontal_Coordinate_System_Definition:
+      Geographic:
+        Latitude_Resolution: 0.000278
+        Longitude_Resolution: 0.000278
+        Geographic_Coordinate_Units: Decimal degrees
+      Geodetic_Model:
+        Horizontal_Datum_Name: North American Datum of 1983
+        Ellipsoid_Name: GRS1980
+        Semi-major_Axis: 6378137
+        Denominator_of_Flattening_Ratio: 298.257222
+
+  Entity_and_Attribute_Information:
+    Detailed_Description:
+      Entity_Type:
+        Entity_Type_Label: Airport
+        Entity_Type_Definition: 
+          An area where aircraft can take off and land, usually equipped with associated buildings and facilities, 
+          and used primarily by conventional, fixed-wing aircraft.
+        Entity_Type_Definition_Source: National Atlas of the United States 
+      Attribute:
+        Attribute_Label: Shape
+        Attribute_Definition: The representation of the entity in the data.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: Point
+            Enumerated_Domain_Value_Definition: 0-dimensional element
+            Enumerated_Domain_Value_Definition_Source: ESRI GIS software
+      Attribute:
+        Attribute_Label: Airprtx010
+        Attribute_Definition: Internal feature number.
+        Attribute_Definition_Source: National Atlas of the United States 
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: 0 
+            Range_Domain_Maximum: 2060
+      Attribute:
+        Attribute_Label: Feature
+        Attribute_Definition: The type of landing facility.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: AIRPORT
+            Enumerated_Domain_Value_Definition: An area where aircraft can take off and land.
+            Enumerated_Domain_Value_Definition_Source: National Atlas of the United States
+      Attribute:
+        Attribute_Label: Icao
+        Attribute_Definition: 
+          The 4-digit International Civil Aviation Organization (ICAO) airport location indicator. 
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Codeset_Domain:
+            Codeset_Name: Air Carrier Activity Information System (ACAIS)
+            Codeset_Source: U.S. Department of Transportation, Federal Aviation Administration
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: NONE
+            Enumerated_Domain_Value_Definition: There is no ICAO location identifier for the airport.
+            Enumerated_Domain_Value_Definition_Source: National Atlas of the United States
+      Attribute:
+        Attribute_Label: Iata
+        Attribute_Definition: 
+          The 3- or 4-digit International Air Transport Association (IATA) airport location code.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Codeset_Domain:
+            Codeset_Name: United Nations Economic Commission for Europe (UNECE)
+            Codeset_Source: UN/LOCODE Code List 2011-1
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: NONE
+            Enumerated_Domain_Value_Definition: There is no IATA location code for the airport.
+            Enumerated_Domain_Value_Definition_Source: National Atlas of the United States
+      Attribute:
+        Attribute_Label: Airpt_name
+        Attribute_Definition: The name or identification of the airport.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Codeset_Domain:
+            Codeset_Name: Geographic Names Information System
+            Codeset_Source: U.S. Board on Geographic Names
+      Attribute:
+        Attribute_Label: City
+        Attribute_Definition: The name of the city where the airport is located.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Unrepresentable_Domain: There is no predefined set of valid city names.
+      Attribute:
+        Attribute_Label: State
+        Attribute_Definition: The 2-character abbreviation for the State in which the airport is located.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Codeset_Domain:
+            Codeset_Name:
+              Codes for the Identification of the States, the District of Columbia and the Outlying Areas of the 
+              United States, and Associated Areas; FIPS 5-2.
+            Codeset_Source: 
+              U.S. Department of Commerce; Washington, DC; National Institute of Standards and Technology
+      Attribute:
+        Attribute_Label: State_fips
+        Attribute_Definition: The 2-digit FIPS code for the State in which the airport is located.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Codeset_Domain:
+            Codeset_Name:
+              Codes for the Identification of the States, the District of Columbia and the Outlying Areas of the 
+              United States, and Associated Areas; FIPS 5-2.
+            Codeset_Source: 
+              U.S. Department of Commerce; Washington, DC; National Institute of Standards and Technology
+      Attribute:
+        Attribute_Label: County
+        Attribute_Definition: The name of the county or county equivalent in which the airport is located.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Codeset_Domain:
+            Codeset_Name:
+              Counties and Equivalent Entities of the United States, Its Possessions, and Associated Areas; 
+              FIPS 6-4 
+            Codeset_Source: 
+              U.S. Department of Commerce; Washington, DC; National Institute of Standards and Technology
+      Attribute:
+        Attribute_Label: Fips
+        Attribute_Definition: 
+          The 5-digit FIPS code of the county or county equivalent in which the airport is located.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Codeset_Domain:
+            Codeset_Name:
+              Counties and Equivalent Entities of the United States, Its Possessions, and Associated Areas; 
+              FIPS 6-4 
+            Codeset_Source: 
+              U.S. Department of Commerce; Washington, DC; National Institute of Standards and Technology
+      Attribute:
+        Attribute_Label: Tot_enp
+        Attribute_Definition: 
+          The total enplanements during calendar year 2008.  Total enplanements are the sum of large certified, 
+          commuter, air taxi, foreign, and in-transit enplanements.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: 0
+            Enumerated_Domain_Value_Definition: 
+              The number of total enplanements is unknown.  This value applies to Air Force bases only.
+            Enumerated_Domain_Value_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: 25
+            Range_Domain_Maximum: 43130585
+      Attribute:
+        Attribute_Label: Latitude
+        Attribute_Definition: The latitude of the airport.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: 17.701556
+            Range_Domain_Maximum: 71.285448
+      Attribute:
+        Attribute_Label: Longitude
+        Attribute_Definition: The longitude of the airport.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -176.646031
+            Range_Domain_Maximum: -64.801722
+      Attribute:
+        Attribute_Label: Elev
+        Attribute_Definition: 
+          The elevation, in feet, at the highest point on the centerline of the usable landing surface.  The value 
+          is measured to the nearest foot with respect to mean sea level.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: -115
+            Range_Domain_Maximum: 9070
+      Attribute:
+        Attribute_Label: Act_date
+        Attribute_Definition: 
+          The month and year that the facility was added to the NFDC airport database, in the format MM/YYYY.  This 
+          information is only available for facilities opened since 1938.
+        Attribute_Definition_Source: FAA
+        Attribute_Domain_Values:
+          Range_Domain:
+            Range_Domain_Minimum: 01/1938
+            Range_Domain_Maximum: 12/1993
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: <blank>
+            Enumerated_Domain_Value_Definition: The month and year are unknown. 
+            Enumerated_Domain_Value_Definition_Source: 
+              National Atlas of the United States
+      Attribute:
+        Attribute_Label: Cntl_twr
+        Attribute_Definition: An indication of whether the airport includes a control tower.
+        Attribute_Definition_Source: National Atlas of the United States
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: Y
+            Enumerated_Domain_Value_Definition: A control tower is present.
+            Enumerated_Domain_Value_Definition_Source: 
+              National Atlas of the United States
+        Attribute_Domain_Values:
+          Enumerated_Domain:
+            Enumerated_Domain_Value: N
+            Enumerated_Domain_Value_Definition: No control tower is present.
+            Enumerated_Domain_Value_Definition_Source: 
+              National Atlas of the United States
+
+  Distribution_Information:
+    Distributor:
+      Contact_Information:
+        Contact_Organization_Primary:
+          Contact_Organization: Earth Explorer, U.S. Geological Survey
+        Contact_Address:
+          Address_Type: Mailing address
+          Address: U.S. Geological Survey
+          Address: 47914 252nd Street
+          City: Sioux Falls
+          State_or_Province: SD
+          Postal_Code: 57198-0001
+        Contact_Voice_Telephone: 605-594-6116
+        Contact_Voice_Telephone: 866-573-3222
+        Contact_Electronic_Mail_Address: custserv@usgs.gov
+
+    Distribution_Liability:
+      Although these data have been processed successfully on a computer system at the U.S. Geological Survey, no 
+      warranty expressed or implied is made by the U.S. Geological Survey regarding the utility of the data on any 
+      other system, nor shall the act of distribution constitute any such warranty.  No responsibility is assumed 
+      by the U.S. Geological Survey in the use of these data.
+    Standard_Order_Process:
+      Digital_Form:
+        Digital_Transfer_Information:
+          Format_Name: ESRI Shapefile
+        Digital_Transfer_Option:
+          Online_Option:
+            Computer_Contact_Information:
+              Network_Address:
+                Network_Resource_Name: <http://nationalatlas.gov/atlasftp-1m.html>
+      Digital_Form:
+        Digital_Transfer_Information:
+          Format_Name: ESRI File Geodatabase
+        Digital_Transfer_Option:
+          Online_Option:
+            Computer_Contact_Information:
+              Network_Address:
+                Network_Resource_Name: <http://nationalatlas.gov/atlasftp-1m.html>
+      Digital_Form:
+        Digital_Transfer_Information:
+          Format_Name: Web Map Service (WMS)
+        Digital_Transfer_Option:
+          Online_Option:
+            Computer_Contact_Information:
+              Network_Address:
+                Network_Resource_Name: 
+                  <http://nationalatlas.gov/wms/1million?SERVICE=WMS&REQUEST=GetCapabilities>
+                Network_Resource_Name: 
+                  <http://webservices.nationalatlas.gov/wms/transportation?SERVICE=WMS&REQUEST=GetCapabilities>
+                Network_Resource_Name: 
+                  <http://webservices.nationalatlas.gov/wms?SERVICE=WMS&REQUEST=GetCapabilities>
+
+      Fees: None
+
+  Metadata_Reference_Information:
+    Metadata_Date: 20130311
+    Metadata_Contact:
+      Contact_Information:
+        Contact_Organization_Primary:
+          Contact_Organization: National Atlas of the United States
+        Contact_Address:
+          Address_Type: Mailing address
+          Address: U.S. Geological Survey
+          Address: 511 National Center
+          Address: 12201 Sunrise Valley Drive 
+          City: Reston
+          State_or_Province: VA
+          Postal_Code: 20192
+        Contact_Voice_Telephone: 1-888-ASK-USGS (1-888-275-8747)
+        Contact_Electronic_Mail_Address: atlasmail@usgs.gov
+    Metadata_Standard_Name: FGDC Content Standards for Digital Geospatial Metadata
+    Metadata_Standard_Version: FGDC-STD-001-1998
+    Metadata_Security_Information:
+      Metadata_Security_Classification_System: None
+      Metadata_Security_Classification: Unclassified
+      Metadata_Security_Handling_Description: None 
