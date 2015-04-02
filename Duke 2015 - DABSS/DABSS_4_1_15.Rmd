@@ -177,6 +177,7 @@ NAm_google = spTransform(NAm, CRS("+init=epsg:3857"))
 - `rgeos`:
     * `readWKT` / `writeWKT` - Well Known Text
 
+<!--
 ## Geospatial object details {.smaller}
 
 <div class="columns-2">
@@ -188,6 +189,7 @@ ogrInfo("data/us_interstates/","us_interstates")
 ```
 <br/><br/><br/><br/>
 </div>
+-->
 
 # Geospatial stuff is hard
 
@@ -206,14 +208,10 @@ box()
 
 ## Dateline
 
-Lets say we want to fly from the Western most point in the US to the Eastern most point.
+Want to fly from the Western most point in the US to the Eastern most point?
 
 
-It turns out this depends on our definition of east and west - if we use latitude and longitude
-then:
-
-
-```{r echo=FALSE, fig.align="center", fig.height=3, fig.width=7}
+```{r echo=FALSE, fig.align="center", fig.height=4, fig.width=10}
 par(mar=c(3,3,1,1))
 ak = readOGR("data/ak/states.shp","states",FALSE)
 
@@ -294,7 +292,7 @@ par(mar=c(0,0,0,0))
 
 ```{r fig.align="center"}
 nc = spTransform(nc, CRS(proj4string(hwy)))
-row.names(nc) = as.character(nc$COUNTY)
+row.names(nc) = sub(" County","", as.character(nc$COUNTY))
 air = spTransform(air, CRS(proj4string(hwy)))
 
 plot(nc)
@@ -306,12 +304,35 @@ plot(hwy, add=TRUE, col="red")
 
 ```{r}
 d = gDistance(nc,air,byid=c(TRUE,FALSE)) 
-str(d) 
-d[,"Durham County"]
-d[,"Wake County"]
-d[,"Orange County"]
+str(d)
+```
+<div class="columns-2">
+```{r}
+d[,"Durham"]
+d[,"Wake"]
+d[,"Orange"]
 ```
 
+<br/><br/><br/>
+</div>
+
+## Distance to County centroid? {.smaller}
+
+```{r}
+ncc = gCentroid(nc,byid=TRUE)
+class(ncc)
+d = gDistance(ncc,air,byid=c(TRUE,FALSE)) 
+```
+
+<div class="columns-2">
+```{r}
+d[,"Durham"]
+d[,"Wake"]
+d[,"Orange"]
+```
+
+<br/><br/><br/>
+</div>
 
 ## Spatial predicates in `rgeos` {.smaller}
 
@@ -323,10 +344,11 @@ d[,"Orange County"]
 For more detail see the DE-9IM specification
 </div>
 
-## Which counties have airports?
+## Which counties have airports? {.smaller}
 
 ```{r}
 nc_air = gIntersects(nc,air,byid=c(TRUE)) 
+str(nc_air)
 nc$COUNTY[apply(nc_air,2,any)]
 ```
 
@@ -338,26 +360,28 @@ plot(nc[apply(nc_air,2,any),], add=TRUE, col="lightblue")
 plot(air[apply(nc_air,1,any),], add=TRUE, pch=1, col="blue")
 ```
 
+<!--
 ## Which interstates cross NC?
 
 ```{r}
 nc_hwy = gIntersects(nc,hwy,byid=c(FALSE,TRUE)) 
 hwy$ROUTE_NUM[nc_hwy]
 ```
+-->
 
 ## Adjacency matrix of counties {.smaller}
 
 ```{r}
 adj = gTouches(nc,byid=TRUE)
 str(adj)
-nc$COUNTY[adj["Durham County",]]
+nc$COUNTY[adj["Durham",]]
 ```
 
-##
+## {.smaller}
 
 ```{r fig.align="center"}
-image(adj,col=grey(c(1,0)),axes=FALSE)
-box()
+library(corrplot)
+corrplot(adj[1:20,1:20],method="color",type="lower",tl.col="black",cl.pos = "n")
 ```
 
 ## Which counties have the most neighbors?
@@ -380,11 +404,11 @@ plot(nc[rowSums(adj)==min(rowSums(adj)),],add=TRUE,col="lightblue")
 
 ## Summary
 
-- Geospatial stuff can be hard, but it doesn't have to be
+- Geospatial stuff can be hard ... but it doesn't have to be
     * Don't reinvent the wheel
     * Open standards are your friend
 
-- 
+<br/>
 
 - Keep calm, use R
 
@@ -393,4 +417,19 @@ plot(nc[rowSums(adj)==min(rowSums(adj)),],add=TRUE,col="lightblue")
     * Reproducibility via scriptability
     * Unification of workflow
 
-## Questions & Comments
+## 
+
+<br/><br/>
+
+<div class="centered">
+<div style="font-size:300%;">
+Questions & Comments?
+</div>
+</div>
+
+<br/><br/><br/>
+
+|--------------|:-:|-------------------------|
+| email        |   | rundel@gmail.com        |
+| github       |   | http://github.com/rundel|
+| presentation |   | http://bit.ly/1MCKNzK   |
