@@ -248,7 +248,7 @@ lines(inter,col='red',lwd=2,lty=3)
 ## Distance
 
 ```{r echo=FALSE, fig.align="center"}
-pt = readWKT("POINT (45 43)")
+pt = readWKT("MULTIPOINT ((45 43), (15 70))")
 ls = readWKT("LINESTRING (10 10, 10 90)")
 po = readWKT("POLYGON ((30 50, 50 80, 70 50, 50 20, 30 50), (40 40, 60 40, 60 60, 40 60, 40 40))")
 
@@ -258,6 +258,7 @@ plot(0,0, type='n', axes=FALSE, xlab="", ylab="", xlim=c(0,90),ylim=c(0,90))
 
 plot(pt, add=TRUE, pch=16, col=cols[1], cex=1.5)
 text(48,50,"C",cex=3,col=cols[1])
+text(18,77,"C",cex=3,col=cols[1])
 
 plot(ls, add=TRUE, col=cols[3], lwd=2)
 r=rapply(coordinates(ls), points, pch=16, col=cols[3], cex=1.5)
@@ -268,7 +269,7 @@ points(poly_coords(po), pch=16, col=paste0(cols[4],"CC"),cex=1.5)
 text(35,70,"A",cex=3,col=paste0(cols[4],"CC"))
 ```
 
-How do we define the distance between A and B or A and C?
+How do we define the distance between A and B, A and C, or B and C?
 
 
 # GIS Functionality
@@ -407,6 +408,7 @@ plot(nc[rowSums(adj)==min(rowSums(adj)),],add=TRUE,col="lightblue")
 - Geospatial stuff can be hard ... but it doesn't have to be
     * Don't reinvent the wheel
     * Open standards are your friend
+    * High quality open source libraries 
 
 <br/>
 
