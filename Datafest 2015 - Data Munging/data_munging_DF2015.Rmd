@@ -1,0 +1,559 @@
+---
+title: "dataFest 2015 <br/> Data Munging with R and dplyr"
+author: "Colin Rundel"
+date: "March 18, 2015"
+output:
+    ioslides_presentation:
+        widescreen: true
+        smaller: false
+---
+
+```{r, echo=FALSE, results='hide'}
+options(width = 90)
+
+suppressMessages(library(readr))
+suppressMessages(library(dplyr))
+suppressMessages(library(tidyr))
+```
+
+
+# Set up
+
+## Welcome to the Hadleyverse
+
+For today's session we will be using a number of R packages that have been developed by Hadley Wickham.
+
+Most of these packages are on CRAN but we'll make sure we're using the most current available versions by grabbing them from github instead.
+
+To do this we need to install Hadley's devtools package from CRAN so that we can easily grab the others from github.
+
+```{r, eval=FALSE}
+install.packages("devtools")
+library(devtools)
+```
+
+## Installing from Github
+
+The three packages we will be talking about today are:
+
+* `readr`
+* `tidyr`
+* `dplyr`
+
+which we can install as follows
+
+```{r, eval=FALSE}
+install_github("hadley/readr")
+install_github("hadley/tidyr")
+install_github("hadley/dplyr")
+install_github("hadley/lubridate")
+```
+
+## Datasets, presentation, source code
+
+- Please download the following datasets that will be used in this presentation:
+    - `billboard.csv`: http://tinyurl.com/df15-billboard
+    - `nyparking.csv`: http://tinyurl.com/df15-nyparking
+    - `weather.csv`: http://tinyurl.com/df15-weather
+
+<br/>
+
+- The slides for this presentation can be found at
+
+    - http://tinyurl.com/df15-dataMunging-slides
+
+- Slides and all source files can be found at
+
+    - http://tinyurl.com/df15-dataMunging-source
+
+# readr
+
+## readr
+
+This is a new package that is designed to be a fast and friendly way of reading tabular data into R.
+
+Core features:
+
+* Faster than base R
+* No characters as factors
+* No column name mangling
+* Consistent argument/fucntion naming scheme
+* Plays nice with dplyr (`tbl_df`)
+* Progress bars
+
+## Example (csv) {.smaller}
+
+
+```{r, eval=FALSE}
+library(readr)
+library(dplyr)
+```
+
+```{r}
+weather = read_csv("weather.csv")
+weather
+```
+
+## {.smaller}
+```{r}
+str(weather)
+```
+
+
+
+# dplyr
+
+## A Grammar of Data Manipulation {.smaller}
+
+dplyr is based on the concepts of functions as verbs that manipulate data frames.
+
+Single table functions / verbs:
+
+* `filter()`: pick rows matching criteria
+* `slice()`: pick rows using index(es)
+* `select()`: pick columns by name
+* `rename()`: rename specific columns
+* `arrange()`: reorder rows
+* `mutate()`: add new variables
+* `transmute()`: create new data frame with variables
+* `sample_n()` / `sample_frac()`: randomly sample rows
+* `summarise()`: reduce variables to values
+
+
+## dplyr function rules
+
+* First argument is a data frame
+
+* Subsequent arguments say what to do with data frame
+
+* Always return a data frame
+
+* Don't modify in place
+
+
+## Pipes {.smaller}
+
+![magrittr](imgs/magrittr.jpeg) ![magritte](imgs/magritte.jpg)
+
+Nested:
+
+```{r, eval=FALSE}
+f( g( h(x), z=1), y=1 )
+```
+
+<br/>
+
+Piped:
+
+```{r, eval=FALSE}
+h(x) %>% g(z=1) %>% f(y=1)
+```
+
+## Pipes
+
+For the less mathematically inclined you can think about the following sequence of actions - find key, unlock car, start car, drive to school, park.
+
+Expressed as a set of nested fucntions in R pseudocode this would look like:
+
+```{r eval=FALSE}
+park(drive(start_car(find("keys")), to="campus"))
+```
+
+Writing it out using pipes give it a more natural (and easier to read) structure:
+
+```{r eval=FALSE}
+find("keys") %>%
+    start_car() %>%
+    drive(to="campus") %>%
+    park()
+```
+
+## Example Data
+
+We will demonstrate dplyr's functionality using data on parking violations from New York city. This is a small sample of a much larger data set available from NYC Open Data.
+
+```{r}
+library(dplyr)
+library(readr)
+
+park = read_csv("nyparking.csv")
+park
+```
+
+## Fixing Dates {.smaller}
+
+```{r}
+library(lubridate)
+park$`Issue Date` = mdy(park$`Issue Date`)
+park
+```
+
+
+## filter() {.smaller}
+
+```{r}
+park %>% filter(`Issue Date` > "2013/09/01", `Issue Date` < "2014/6/30")
+```
+
+## {.smaller}
+
+```{r}
+park %>% filter(`Registration State` == "CA" | `Registration State` == "AZ")
+```
+
+## slice() {.smaller}
+
+```{r}
+park %>% slice(3:8)
+```
+
+## {.smaller}
+
+```{r}
+park %>% slice((n()-5):n())
+```
+
+## select() {.smaller}
+
+```{r}
+park %>% select(contains("street"))
+```
+
+## {.smaller}
+
+```{r}
+park %>% select(`Plate ID`:`Plate Type`)
+```
+
+## {.smaller}
+
+```{r}
+park %>% select(-(`Plate ID`:`Plate Type`))
+```
+
+## rename() {.smaller}
+
+```{r}
+park %>% rename(`Days Parking In Effect` = `Days Parking In Effect    `)
+```
+
+## arrange() {.smaller}
+
+```{r}
+park %>% select(1:6) %>% arrange(`Registration State`, `Issue Date`)
+```
+
+## arrange() & desc() {.smaller}
+
+```{r}
+park %>% select(1:6) %>% arrange(`Registration State`,  desc(`Issue Date`))
+```
+
+## mutate() {.smaller}
+
+```{r}
+park %>% select(2:5) %>%
+mutate(month = month(`Issue Date`),
+       day = day(`Issue Date`),
+       year = year(`Issue Date`),
+       wday = wday(`Issue Date`, label=TRUE))
+```
+
+## transmute() {.smaller}
+
+```{r}
+park %>%
+transmute(month = month(`Issue Date`),
+          day = day(`Issue Date`),
+          year = year(`Issue Date`),
+          wday = wday(`Issue Date`, label=TRUE))
+```
+
+## distinct() {.smaller}
+
+```{r}
+park %>% distinct()
+```
+
+## sample_n() {.smaller}
+
+```{r}
+park %>% select(1:6) %>% sample_n(10)
+```
+
+## sample_frac() {.smaller}
+
+```{r}
+park %>% select(1:6) %>% sample_frac(0.0001)
+```
+
+## summarise() {.smaller}
+
+```{r}
+park %>% summarize(n(), min(`Issue Date`), max(`Issue Date`))
+```
+
+## group_by() {.smaller}
+
+```{r}
+park %>% select(1:6) %>% group_by(`Registration State`)
+```
+
+## summarise() & group_by() {.smaller}
+
+```{r}
+park %>% select(1:6) %>%
+group_by(`Registration State`) %>%
+summarize(n(), min(`Issue Date`), max(`Issue Date`))
+```
+
+## {.smaller}
+
+```{r}
+park %>% select(1:6) %>%
+filter(`Plate Type` != 999) %>%
+group_by(`Plate Type`, `Violation Code`) %>%
+summarize(n = n(), n_states = n_distinct(`Registration State`))
+```
+
+## Putting it all together
+
+Lets see if we can find out something about the distribution tickets through time.
+
+```{r}
+days = park %>% select(`Issue Date`) %>% group_by(`Issue Date`) %>% summarize(n = n())
+days
+```
+
+##
+
+```{r}
+plot(days,type='l')
+```
+
+##
+
+```{r}
+days = days %>% filter(`Issue Date` > "2013/09/01", `Issue Date` < "2014/6/30")
+plot(days,type='l')
+```
+
+##
+
+```{r}
+plot(days %>% filter(`Issue Date` > "2013/12/22", `Issue Date` < "2014/1/5"),type='l')
+```
+
+
+## Exercise {.smaller}
+
+Using the Parking Violation dataset,
+
+* Construct a data frame containing Registration State and a issue date and time combined into a single DateTime column (try `paste` and `ymd_hm` from lubridate).
+* Subset these data to include only datetimes between 09/01/2013 and 6/30/2014.
+* Use these data to answer the following questions for both instate (NY registered cars) and out of state (non-NY registered cars):
+    * What day of the week are you most likely to get a ticket?
+    * What hour of the day are you most likely to get a ticket?
+    * What hour and day of the week are you most likely to get a ticket?
+
+
+## A Grammar of Data Manipulation (cont.)
+
+Two table functions / verbs:
+
+* `left_join` - Join matching rows from `b` to `a`.
+* `right_join` - Join matching rows from `a` to `b`.
+* `inner_join` - Join data. Retain only rows in both sets.
+* `full_join` - Join data. Retain all values, all rows.
+* `semi_join` - All rows in `a` that have a match in `b`.
+* `anti_join` - All rows in `a` that do not have a match in `b`.
+
+## Joining Data {.smaller}
+
+<div class="columns-2">
+```{r}
+addr = data.frame(name = c("Alice","Bob",
+                           "Carol","dave",
+                           "Eve"),
+                  email= c("alice@company.com",
+                           "bob@company.com",
+                           "carol@company.com",
+                           "dave@company.com",
+                           "eve@company.com"),
+                  stringsAsFactors = FALSE)
+```
+
+```{r}
+phone = data.frame(name = c("Bob","Carol",
+                            "Eve","Eve",
+                            "Frank"),
+                   phone= c("919 555-1111",
+                            "919 555-2222",
+                            "919 555-3333",
+                            "310 555-3333",
+                            "919 555-4444"),
+                   stringsAsFactors = FALSE)
+```
+</div>
+
+<div class="columns-2">
+```{r}
+addr
+```
+
+```{r}
+phone
+```
+</div>
+
+## Outer Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+full_join(addr, phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all=TRUE)
+```
+<br/>
+</div>
+
+## Inner Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+inner_join(addr,phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all=FALSE)
+```
+<br/>
+</div>
+
+## Left Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+left_join(addr,phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all.x=TRUE)
+```
+<br/>
+</div>
+
+## Right Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+right_join(addr, phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all.y=TRUE)
+```
+<br/>
+</div>
+
+## Semi and Anti Joins {.smaller}
+
+<div class="columns-2">
+```{r}
+semi_join(addr, phone)
+anti_join(addr, phone)
+```
+</div>
+
+
+
+
+
+# tidyr
+
+## Tidy Data
+
+
+Hadley's Definition:
+
+A dataset is messy or tidy depending on how rows, columns and tables are matched up with observations, variables and types.
+
+In tidy data:
+
+* Each variable forms a column.
+* Each observation forms a row.
+* Each type of observational unit forms a table.
+
+Messy data is any other other arrangement of the data.
+
+## Weather Data {.smaller}
+
+```{r}
+w = read_csv("weather.csv")
+w
+```
+
+## From Wide to Long
+
+```{r}
+w %>% gather(day, value, `d 1`:`d 31`, na.rm = TRUE)
+```
+
+##
+
+```{r}
+w %>% gather(day, value, -(id:element), na.rm = TRUE)
+```
+
+## Data cleaning {.smaller}
+
+```{r}
+w %>%
+gather(day, value, -(id:element), na.rm = TRUE) %>%
+mutate(date = as.Date(paste(year, month, extract_numeric(day), sep="-"))) %>%
+select(id, date, element, value) %>%
+arrange(id, date, desc(element))
+```
+
+## Finishing up {.smaller}
+
+```{r}
+w %>%
+gather(day, value, -(id:element), na.rm = TRUE) %>%
+mutate(date = as.Date(paste(year, month, extract_numeric(day), sep="-"))) %>%
+select(id, date, element, value) %>%
+arrange(id, date, desc(element)) %>%
+spread(element, value)
+```
+
+## Exercise
+
+We've also provided a data set from the billboard music charts (`billboard.csv`), using what we've covered so far try to tidy this data into a more useful and usable structure.
+
+```{r}
+bb = read_csv("billboard.csv")
+```
+
+
+
+# Acknowledgments
+
+## Acknowledgments
+
+Above materials are derived in part from the following sources:
+
+* [RStudio Data Wrangling Cheat Sheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+* Package Vigenettes - [dplyr](http://cran.r-project.org/web/packages/dplyr/vignettes/introduction.html), [tidyr](http://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
+
+* [UseR 2014 - dplyr Tutorial](https://www.dropbox.com/sh/i8qnluwmuieicxc/AAAgt9tIKoIm7WZKIyK25lh6a)
