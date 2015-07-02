@@ -1,0 +1,118 @@
+%%
+%% This is file `beamerthemem.sty',
+%% generated with the docstrip utility.
+%%
+%% The original source files were:
+%%
+%% beamerthemem.dtx  (with options: `package')
+%% ---------------------------------------------------------------------------
+%% Copyright 2015 Matthias Vogelgesang and the LaTeX community. A full list of
+%% contributors can be found at
+%% 
+%%     https://github.com/matze/mtheme/graphs/contributors
+%% 
+%% and the original template was based on the HSRM theme by Benjamin Weiss.
+%% 
+%% This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
+%% International License (https://creativecommons.org/licenses/by-sa/4.0/).
+%% ---------------------------------------------------------------------------
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamerthemem}
+    [2015/06/12 A Modern Beamer Theme]
+\newif\if@useTitleProgressBar
+\@useTitleProgressBarfalse
+\DeclareOptionBeamer{usetitleprogressbar}{
+  \@useTitleProgressBartrue
+}
+\newif\if@useTotalSlideIndicator
+\@useTotalSlideIndicatorfalse
+\DeclareOptionBeamer{usetotalslideindicator}{
+  \@useTotalSlideIndicatortrue
+}
+\newif\if@noSlideNumbers
+\@noSlideNumbersfalse
+\DeclareOptionBeamer{noslidenumbers}{
+  \@noSlideNumberstrue
+}
+\newif\if@noSectionSlide
+\@noSectionSlidefalse
+\DeclareOptionBeamer{nosectionslide}{
+  \@noSectionSlidetrue
+}
+\newlength{\@mtheme@voffset}
+\setlength{\@mtheme@voffset}{2em}
+\DeclareOptionBeamer{nooffset}{
+  \setlength{\@mtheme@voffset}{0em}
+}
+\newif\if@beamer@metropolis@blockbg
+\@beamer@metropolis@blockbgfalse
+\DeclareOptionBeamer{blockbg}{
+    \@beamer@metropolis@blockbgtrue
+}
+\DeclareOptionBeamer{darkcolors}{
+  \PassOptionsToPackage{darkcolors}{beamercolorthememetropolis}%
+}
+\DeclareOptionBeamer*{
+  \PackageWarning{beamerthemem}{Unknown option `\CurrentOption'}%
+}
+\ProcessOptionsBeamer
+\useinnertheme{metropolis}
+\useoutertheme{metropolis}
+\usecolortheme{metropolis}
+\RequirePackage{etoolbox}
+\RequirePackage{ifxetex,ifluatex}
+\ifboolexpr{bool {xetex} or bool {luatex}}{
+  \usefonttheme{metropolis}
+}{
+  \PackageWarning{beamerthemem}{%
+    You need to compile with XeLaTeX or LuaLaTeX to use the Fira fonts.
+  }
+}
+\AtEndPreamble{%
+  \@ifpackageloaded{pgfplots}{%
+    \RequirePackage{pgfplotsthemetol}
+  }{}
+}
+\def\mthemetitleformat#1{\MakeLowercase{#1}}
+\def\mthemesectiontitleformat#1{\mthemetitleformat{#1}}
+\def\mthemeframetitleformat#1{\mthemetitleformat{#1}}
+\def\mthemeplaintitleformat#1{\mthemetitleformat{#1}}
+\patchcmd{\sectionentry}
+  {\def\insertsectionhead{#2}}
+  {\def\insertsectionhead{\mthemesectiontitleformat{#2}}}
+  {}{}
+\patchcmd{\beamer@section}
+  {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{#1}}}
+  {\def\insertsectionhead{\hyperlink{Navigation\the\c@page}{\mthemesectiontitleformat{#1}}}}
+  {}{}
+
+\patchcmd{\beamer@@frametitle}
+  {\beamer@ifempty{#2}{}{%
+      \gdef\insertframetitle{{#2\ifnum\beamer@autobreakcount>0\relax{}\space\usebeamertemplate*{frametitle continuation}\fi}}%
+    \gdef\beamer@frametitle{#2}%
+    \gdef\beamer@shortframetitle{#1}%
+    }}
+  {\beamer@ifempty{#2}{}{%
+      \gdef\insertframetitle{{\mthemeframetitleformat{#2}\ifnum\beamer@autobreakcount>0\relax{}\space\usebeamertemplate*{frametitle continuation}\fi}}%
+    \gdef\beamer@frametitle{#2}%
+    \gdef\beamer@shortframetitle{#1}%
+    }}
+  {}{}
+\newcommand{\plain}[2][]{%
+  \begingroup
+    \setbeamercolor{background canvas}{use=palette primary,parent=palette primary}
+    \begin{frame}{#1}
+      \centering
+      \vfill
+      \vspace{1em}
+      \usebeamercolor[fg]{palette primary}
+      \usebeamerfont{section title}
+      \mthemeplaintitleformat{#2}
+      \vfill
+    \end{frame}
+  \endgroup
+}
+\newcommand{\mreducelistspacing}{\vspace{-\topsep}}
+\endinput
+%%
+%% End of file `beamerthemem.sty'.

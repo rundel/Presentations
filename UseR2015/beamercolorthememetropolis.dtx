@@ -1,0 +1,201 @@
+% \iffalse meta-comment -------------------------------------------------------
+% Copyright 2015 Matthias Vogelgesang and the LaTeX community. A full list of
+% contributors can be found at
+%
+%     https://github.com/matze/mtheme/graphs/contributors
+%
+% and the original template was based on the HSRM theme by Benjamin Weiss.
+%
+% This work is licensed under a Creative Commons Attribution-ShareAlike 4.0
+% International License (https://creativecommons.org/licenses/by-sa/4.0/).
+% ------------------------------------------------------------------------- \fi
+% \iffalse
+%<driver> \ProvidesFile{beamercolorthememetropolis.dtx}
+%<*package>
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{beamercolorthememetropolis}
+    [2015/06/12 A Modern Beamer Color Theme]
+%</package>
+%<driver> \documentclass{ltxdoc}
+%<driver> \usepackage{beamercolorthememetropolis}
+%<driver> \begin{document}
+%<driver> \DocInput{beamercolorthememetropolis.dtx}
+%<driver> \end{document}
+% \fi
+% \CheckSum{0}
+% \StopEventually{}
+% \iffalse
+%<*package>
+% ------------------------------------------------------------------------- \fi
+% \section{Implementation: \textsc{metropolis} color theme}
+% Options
+%
+%
+% darkcolors
+%
+%    \begin{macrocode}
+\newif\if@beamer@metropolis@darkcolors
+\@beamer@metropolis@darkcolorsfalse
+\DeclareOptionBeamer{darkcolors}{
+    \@beamer@metropolis@darkcolorstrue
+}
+%    \end{macrocode}
+%
+% Unknown option error handling
+%
+%    \begin{macrocode}
+\DeclareOptionBeamer*{%
+  \PackageWarning{beamercolorthememetropolis}{Unknown option `\CurrentOption'}%
+}
+\ProcessOptionsBeamer
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Base colors}
+%
+%    \begin{macrocode}
+\definecolor{mDarkBrown}{HTML}{604c38}
+\definecolor{mDarkTeal}{HTML}{23373b}
+\definecolor{mLightBrown}{HTML}{EB811B}
+\definecolor{mLightGreen}{HTML}{14B03D}
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Base styles}
+%
+% All colors in the \textsc{metropolis} theme are derived from the definitions
+% of |normal text|, |alerted text|, and |example text|.
+%
+%    \begin{macrocode}
+\if@beamer@metropolis@darkcolors
+  \setbeamercolor{normal text}{%
+    fg=black!2,
+    bg=mDarkTeal
+  }
+\else
+  \setbeamercolor{normal text}{%
+    fg=mDarkTeal,
+    bg=black!2
+  }
+\fi
+\setbeamercolor{alerted text}{%
+  fg=mLightBrown
+}
+\setbeamercolor{example text}{%
+  fg=mLightGreen
+}
+%    \end{macrocode}
+%
+%
+%    \begin{macrocode}
+%    \end{macrocode}
+%
+%
+%
+% \subsection{Derived colors}
+%
+% The titles and structural elements (e.g. |itemize| bullets) are set in the
+% same color as |normal text|. This would ideally done by setting |normal text|
+% as a parent style, which we do to set |titlelike|, but this doesn't work for
+% |structure| as its foreground is set explicitly in
+% |beamercolorthemedefault.sty|.
+%
+%    \begin{macrocode}
+\setbeamercolor{titlelike}{%
+  use=normal text,
+  parent=normal text
+}
+\setbeamercolor{structure}{%
+  fg=normal text.fg
+}
+%    \end{macrocode}
+%
+% The “primary” palette should be used for the most important navigational
+% elements, and possibly of other elements. The \textsc{metropolis} theme uses
+% it for frame titles and slides.
+%
+%    \begin{macrocode}
+\setbeamercolor{palette primary}{%
+  use=normal text,
+  fg=normal text.bg,
+  bg=normal text.fg
+}
+\setbeamercolor{frametitle}{%
+  use=palette primary,
+  parent=palette primary
+}
+%    \end{macrocode}
+%
+% The \textsc{metropolis} inner or outer themes optionally display progress
+% bars in various locations. Their color is set by |progress bar| but the two
+% different kinds can be customized separately. The horizontal rule on the title
+% page is also set based on the progress bar color and can be customized with
+% |title separator|.
+%
+%    \begin{macrocode}
+\setbeamercolor{progress bar}{%
+  use=alerted text,
+  fg=alerted text.fg,
+  bg=normal text.bg!50!normal text.fg
+}
+\setbeamercolor{title separator}{
+  use=progress bar,
+  parent=progress bar
+}
+\setbeamercolor{progress bar in head/foot}{%
+  use=progress bar,
+  parent=progress bar
+}
+\setbeamercolor{progress bar in section page}{
+  use=progress bar,
+  parent=progress bar
+}
+%    \end{macrocode}
+%
+% Blocks
+%
+%    \begin{macrocode}
+\if@beamer@metropolis@blockbg
+  \setbeamercolor{block title}{%
+    use=normal text,
+    fg=normal text.fg,
+    bg=normal text.bg!80!fg
+  }
+\else
+  \setbeamercolor{block title}{use=normal text, parent=normal text}
+\fi
+\setbeamercolor{block title alerted}{%
+    use={block title, alerted text},
+    bg=block title.bg,
+    fg=alerted text.fg
+}
+\setbeamercolor{block title example}{%
+    use={block title, example text},
+    bg=block title.bg,
+    fg=example text.fg
+}
+\setbeamercolor{block body alerted}{use=block body, parent=block body}
+\setbeamercolor{block body example}{use=block body, parent=block body}
+\setbeamercolor{block body}{
+  use={block title, normal text},
+  bg=block title.bg!50!normal text.bg
+}
+%    \end{macrocode}
+%
+% Footnotes
+%
+%    \begin{macrocode}
+\setbeamercolor{footnote}{fg=normal text.fg!90}
+\setbeamercolor{footnote mark}{fg=.}
+\mode<all>
+%    \end{macrocode}
+%
+%
+%
+% \iffalse
+%</package>
+% \fi
+% \Finale
+\endinput
