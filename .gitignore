@@ -11,4 +11,7 @@
 *.vrb
 *.fdb_latexmk
 *.fls
-/JSM 2013/Talk/Data/
+*.bbl
+*.blg
+JSM 2013/Talk/Data/
+UseR2015/_minted-user2015/
