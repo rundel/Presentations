@@ -1,0 +1,1207 @@
+% -*- program:xelatex -*-
+
+\documentclass[12pt]{beamer}
+
+\usetheme{m}
+
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{multicol}
+\usepackage{minted}
+\usepackage{hyperref}
+\usepackage{animate}
+\usepackage{bm}
+
+\newcommand{\PM}{$\text{PM}_{2.5}$ }
+
+\title{An Brief Introduction to Gaussian Processes}
+\subtitle{}
+\date{Duke - ``What if?'' Focus Cluster - 2015}
+\author{Colin Rundel}
+\institute{Duke University\\Department of Statistical Science}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo/logo}}
+
+\begin{document}
+
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<echo=FALSE, include=FALSE>>=
+suppressMessages(library(fields))
+if(!file.exists("data.Rdata"))
+    source("setup.R")
+
+load("data.Rdata")
+@
+
+
+<<echo=FALSE>>=
+default_plot_hook = knit_hooks$get('plot')
+
+seq_plot_hook = function(x, options) 
+{
+  txt = default_plot_hook(x, options)
+  if (options$fig.cur <= 0)
+    return(txt)
+  
+  gsub('(\\\\includegraphics[^}]+})', sprintf('\\\\only<%d>{\\1}', options$fig.cur), txt)
+}
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Approaches to Regression}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Example Data}
+
+\vspace{4mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5>>=
+par(mar=c(4,4,0.1,0.1))
+
+plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Simple Linear Regression}
+\vspace{-7mm}
+{\footnotesize
+\hspace{-6mm} Model: \hfill $y = \beta_0 + \beta_1\,x$ \hfill ~ \\
+\hspace{-6mm} R: \hfill \mintinline{R}{l = lm(y~x)} \hfill ~
+}
+\vspace{3mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5>>=
+par(mar=c(4,4,0.1,0.1))
+
+plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+abline(lm(y~x),col=adjustcolor("blue",0.5),lwd=4)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{frame}
+% \frametitle{Simple Linear Regression - Prediction}
+% \vspace{-7mm}
+% {\footnotesize
+% \hspace{-6mm} Model: \hfill $y = \beta_0 + \beta_1\,x$ \hfill ~ \\
+% \hspace{-6mm} R: \hfill \mintinline{R}{l = lm(y~x)} \hfill ~
+% }
+% \vspace{3mm}
+
+% <<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5>>=
+% par(mar=c(4,4,0.1,0.1))
+
+% plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+% l = lm(y~x)
+% abline(l,col=adjustcolor("blue",0.5),lwd=4)
+
+% x_pred = seq(-4,4,len=1000)
+% y_pred = predict(l,newdata=data.frame(x=x_pred), interval="prediction")
+
+% lines(x_pred,y_pred[,"fit"],col=adjustcolor("blue",0.5),lwd=4)
+
+% lines(x_pred,y_pred[,"lwr"],col=adjustcolor("blue",0.5),lwd=1,lty=2)
+% lines(x_pred,y_pred[,"upr"],col=adjustcolor("blue",0.5),lwd=1,lty=2)
+
+% polygon(c(x_pred,rev(x_pred)), c(y_pred[,"lwr"], rev(y_pred[,"upr"])), 
+%         col=adjustcolor("blue",0.25),border=NA)
+% @
+
+% \end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<echo=FALSE>>=
+degrees = c(2:4,10,20)
+@
+
+\begin{frame}[fragile]
+\frametitle{Polynomial Regression}
+\vspace{-7mm}
+{\footnotesize
+<<echo=FALSE, results='asis'>>=
+spans = seq(0.75,0.05,by=-0.10)
+
+for(i in seq_along(degrees))
+{
+    cat("\\only<",i,">{\n",sep="")
+
+    cat("\\hspace{-6mm} Model:",
+        "\\hfill $y = \\beta_0 ")
+    if (degrees[i] <= 4)
+    {
+        cat(" + \\beta_1\\,x",sep="")
+        for(j in 2:degrees[i])
+        {
+            cat(" + \\beta_",j,"\\,x^{",j,"}",sep="")
+        }
+    } else { 
+        cat(" + \\beta_{1}\\,x")
+        cat(" + \\beta_{2}\\,x^{2}")
+        cat(" + \\ldots + \\beta_{",degrees[i],"}\\,x^{",degrees[i],"}",sep="")
+    }
+
+    cat("$ \\hfill ~ \\\\\n")
+
+    cat("\\hspace{-6mm} R: \\hfill ",
+        "\\mintinline{R}{l = lm(y~poly(x,",degrees[i],"))} ",
+        "\\hfill ~\n",sep="")
+    
+    cat("}\n",sep="")
+} 
+@
+
+
+}
+\vspace{3mm}
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = seq_plot_hook)
+@
+
+<<echo=FALSE, out.width="0.9\\textwidth", fig.height=4.5, fig.show='hold', fig.keep='all'>>=
+par(mar=c(4,4,0.1,0.1))
+
+for(degree in degrees)
+{
+    plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+    l = lm(y~poly(x,degree))
+    x_pred = seq(-3.5,3.5,len=1000)
+    y_pred = predict(l,newdata=data.frame(x=x_pred))
+    lines(x_pred,y_pred,col=adjustcolor("blue",0.5),lwd=4)
+}
+@
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = default_plot_hook)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% <<echo=FALSE>>=
+% degrees = c(2:4,10,20)
+% @
+
+% \begin{frame}[fragile]
+% \frametitle{Polynomial Regression - Prediction}
+% \vspace{-7mm}
+% {\footnotesize
+% \hspace{-6mm} Model: \hfill $y = \beta_0  + \beta_{1}\,x + \beta_{2}\,x^{2} + \ldots + \beta_{10}\,x^{10}$ \hfill ~ \\
+% \hspace{-6mm} R: \hfill \mintinline{R}{l = lm(y~poly(x,10))} \hfill ~
+% }
+% \vspace{3mm}
+
+% <<echo=FALSE, out.width="0.9\\textwidth", fig.height=4.5>>=
+% par(mar=c(4,4,0.1,0.1))
+
+% degree = 10
+
+% plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+
+% l = lm(y~poly(x,degree))
+
+% x_pred = seq(-3.5,3.5,len=1000)
+% y_pred = predict(l,newdata=data.frame(x=x_pred), interval="prediction")
+
+% lines(x_pred,y_pred[,"fit"],col=adjustcolor("blue",0.5),lwd=4)
+
+% lines(x_pred,y_pred[,"lwr"],col=adjustcolor("blue",0.5),lwd=1,lty=2)
+% lines(x_pred,y_pred[,"upr"],col=adjustcolor("blue",0.5),lwd=1,lty=2)
+
+% polygon(c(x_pred,rev(x_pred)), c(y_pred[,"lwr"], rev(y_pred[,"upr"])), 
+%         col=adjustcolor("blue",0.25),border=NA)
+% @
+
+% \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Local Regression (LOESS / LOWESS)}
+\vspace{-7mm}
+{\footnotesize
+\hspace{-6mm} Model: \hfill (non-parametric) \hfill ~ \\
+\hspace{-6mm} R: \hfill \mintinline{R}{l = loess(y~x, degree=1)} \hfill ~
+}
+\vspace{3mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5>>=
+par(mar=c(4,4,0.1,0.1))
+
+plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+l = loess(y~x, degree=1, span=0.5)
+x_pred = seq(-3.5,3.5,len=1000)
+y_pred = predict(l,newdata=data.frame(x=x_pred))
+lines(x_pred,y_pred,col=adjustcolor("blue",0.5),lwd=4)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[fragile]
+\frametitle{Local Regression - How does it work?}
+\vspace{-7mm}
+{\footnotesize
+\hspace{-6mm} Model: \hfill (non-parametric) \hfill ~ \\
+\hspace{-6mm} R: \hfill \mintinline{R}{l = loess(y~x, span=0.5, degree=1)} \hfill ~
+}
+\vspace{3mm}
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = seq_plot_hook)
+@
+
+<<echo=FALSE,out.width='0.9\\textwidth', fig.height=4.5, fig.show='hold', fig.keep='all'>>=
+
+par(mar=c(4,4,0.1,0.1))
+
+plot_base = function() {
+    plot(0,0,xlab="x",ylab="y",type="n",
+         ylim=c(-4,1.5),xlim=c(-3.5,3.5))    
+}
+tricubic = function(dist) {
+    (1 - (dist/max(dist))^3)^3
+}
+
+n_knots = 25
+knot_indexes = seq(1,length(x),by = floor(length(x)/50))
+
+span = 0.5
+l = loess(y~x, span=span, degree=1)
+x_pred = seq(-3.5,3.5,len=1000)
+y_pred = predict(l,newdata=data.frame(x=x_pred))
+
+
+
+for(i in knot_indexes)
+{
+
+    knot = x[i]
+    dist = c(rdist(knot, x))
+    cutoff = quantile(dist,probs=span)
+
+    sub = dist <= cutoff
+
+    local_x = x[sub]
+    local_y = y[sub]
+    weights = tricubic(dist[sub])
+
+    local_l = lm(local_y~local_x,weights=weights)
+
+    plot_base()
+    points(x[!sub],y[!sub],pch=16,cex=0.75,col=adjustcolor("black",alpha=0.05/1.05))
+
+    cols = sapply( weights/max(weights), function(x) adjustcolor("black",(x+0.05)/1.05))
+    points(x[sub],y[sub],pch=16,cex=0.75,col=cols)
+
+    abline(local_l, col=adjustcolor("red",0.5),lty=2,lwd=2)
+
+    lines(x_pred[x_pred <= knot],y_pred[x_pred <= knot],col=adjustcolor("blue",0.5),lwd=4)    
+}
+@
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = default_plot_hook)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = seq_plot_hook)
+@
+
+
+\begin{frame}
+\frametitle{Local Regression (LOESS) - Adjusting Span}
+\vspace{-7mm}
+{\footnotesize
+\hspace{-6mm} Model: \hfill (non-parametric) \hfill ~ \\
+<<echo=FALSE, results='asis'>>=
+spans = c(0.75,0.50,0.25,0.05)
+
+for(i in seq_along(spans))
+{
+    cat("\\only<",i,">{",
+        "\\hspace{-6mm} R: \\hfill ",
+        "\\mintinline{R}{l = loess(y~x, span=",spans[i],")} ",
+        "\\hfill ~",
+        "}\n",sep="")
+} 
+@
+}
+\vspace{3mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.show='hold', fig.keep='all'>>=
+par(mar=c(4,4,0.1,0.1))
+
+for(span in spans)
+{
+    plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+    l = loess(y~x,span=span)
+    x_pred = seq(-3.5,3.5,len=1000)
+    y_pred = predict(l,newdata=data.frame(x=x_pred))
+    lines(x_pred,y_pred,col=adjustcolor("blue",0.5),lwd=4)
+}
+@
+
+\end{frame}
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = default_plot_hook)
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% \begin{frame}[fragile]
+% \frametitle{Local Regression - Prediction}
+% \vspace{-7mm}
+% {\footnotesize
+% \hspace{-6mm} R: \hfill \mintinline{R}{l = loess(y~x, span=0.25, degree=2)} \hfill ~
+% }
+% \vspace{3mm}
+
+% <<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5>>=
+% suppressMessages(library(msir))
+% par(mar=c(4,4,0.1,0.1))
+
+% plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+
+% l = loess.sd(x, y, nsigma = 1.96, span=0.25)
+
+% lines(l$x, l$y,     col=adjustcolor("blue",0.5),lwd=4)
+% lines(l$x, l$upper, col=adjustcolor("blue",0.5),lwd=1,lty=2)
+% lines(l$x, l$lower, col=adjustcolor("blue",0.5),lwd=1,lty=2)
+
+% polygon(c(l$x,rev(l$x)), c(l$lower, rev(l$upper)), 
+%         col=adjustcolor("blue",0.25),border=NA)
+% @
+
+% \end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Regression Trees}
+\vspace{-7mm}
+{\footnotesize
+%\hspace{-6mm} Model: \hfill (non-parametric) \hfill ~ \\
+\hspace{-6mm} R: \hfill \mintinline{R}{l = rpart(y~x)} \hfill ~
+}
+\vspace{3mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5>>=
+library(rpart)
+
+par(mar=c(4,4,0.1,0.1))
+
+plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+l = rpart(y~x)
+x_pred = seq(-3.5,3.5,len=1000)
+y_pred = predict(l,newdata=data.frame(x=x_pred))
+y_pred[which(!(duplicated(y_pred)))] = NA # cheating, but good enough
+lines(x_pred,y_pred,col=adjustcolor("blue",0.5),lwd=4)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Regression Trees - Model}
+\vspace{-7mm}
+{\footnotesize
+\hspace{-6mm} Model:
+}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7>>=
+library(rpart.plot)
+
+par(mar=c(0.1,0.1,0.1,0.1))
+
+prp(l, digits=3)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = seq_plot_hook)
+@
+
+
+\begin{frame}
+\frametitle{Regression Trees - How does it work?}
+
+<<echo=FALSE, out.width="0.9\\textwidth", fig.height=4.5, fig.show='hold', fig.keep='all'>>=
+library(stringr)
+par(mar=c(4,4,0.1,0.1))
+
+cuts = data.frame(rules = labels(l), yval=l$frame$yval, 
+                  nodes = as.integer(row.names(l$frame)),
+                  stringsAsFactors = FALSE)[-1,]
+
+for(i in 1:(nrow(cuts)/2 + 1))
+{
+    plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+
+    if (i == 1)
+    {
+        lines(c(-3.5,3.5), rep(mean(y),2), col=adjustcolor("blue",0.5), lwd=4)
+    } else {
+
+        cur_cuts = cuts[cuts$nodes <= sort(cuts$nodes)[2*(i-1)],]
+
+        plot_branch = function(node, s = rep(TRUE,length(x)))
+        {
+            s = s & eval(parse(text=cur_cuts$rules[cur_cuts$nodes==node]))
+
+            if ((2*node) %in% cur_cuts$nodes)
+            {
+                plot_branch(2*node,   s)
+                plot_branch(2*node+1, s)
+            } else {
+                yval = cur_cuts$yval[cur_cuts$nodes==node]
+                lines(range(x[s]), rep(yval,2), lwd=4, col=adjustcolor("blue",0.5))
+            }
+        }
+
+        plot_branch(2)
+        plot_branch(3)
+
+        cut_vals = as.numeric(str_replace(cur_cuts$rules,"x>=|x< ",""))
+        
+        cur_cut = cut_vals[which.max(cur_cuts$nodes)]
+        abline(v=cur_cut, col=adjustcolor("red",0.5), lty=2, lwd=2)
+
+        abline(v=unique(cut_vals[cut_vals != cur_cut]), 
+               col=adjustcolor("black",0.33), lty=2, lwd=2)
+    }
+}
+@
+
+\end{frame}
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = default_plot_hook)
+@
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Natural Spline Regression}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm} Model: 
+    \hfill {\scriptsize
+        $y = \begin{cases}    
+                \beta_{0,1} + \beta_{1,1} \, x + \beta_{2,1} \, x^2 + \beta_{3,1} \, x^3 & \text{ if $k_1 < x \leq k_2$} \\
+                \beta_{0,2} + \beta_{1,2} \, x + \beta_{2,2} \, x^2 + \beta_{3,2} \, x^3 & \text{ if $k_2 < x \leq k_3$}
+            \end{cases}$
+    } \hfill ~ \vspace{0.5mm} \\
+\hspace{-6mm} R: \hfill \mintinline{R}{l = lm(y~ns(x,df=4))} \hfill ~
+}
+\vspace{2mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7>>=
+library(splines)
+
+par(mar=c(4,4,0.1,0.1))
+
+plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+
+df=4
+b = bs(x,df=df)
+l = lm(y~ns(x,df=df))
+
+x_pred = seq(-3.5,3.5,len=1000)
+y_pred = predict(l,newdata=data.frame(x=x_pred))
+
+lines(x_pred,y_pred,col=adjustcolor("blue",0.5),lwd=4)
+
+x_knots = c(attr(b,"knots"), attr(b,"Boundary.knots"))
+y_knots = predict(l,newdata=data.frame(x=x_knots))
+
+points(x_knots,y_knots,col=adjustcolor("red",0.5),lwd=4,pch=16,cex=1.5)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%<<echo=FALSE>>=
+%knit_hooks$set(plot = seq_plot_hook)
+%@
+%
+%\begin{frame}
+%\frametitle{Natural Splines - How does it work}
+%\vspace{-8.5mm}
+%{\footnotesize
+%\hspace{-6mm} Model: 
+%    \hfill {\scriptsize
+%        $y = \begin{cases}    
+%                \beta_{0,1} + \beta_{1,1} \, x + \beta_{2,1} \, x^2 + \beta_{3,1} \, x^3 & \text{ if $k_1 < x \leq k_2$} \\
+%                \beta_{0,2} + \beta_{1,2} \, x + \beta_{2,2} \, x^2 + \beta_{3,2} \, x^3 & \text{ if $k_2 < x \leq k_3$}
+%            \end{cases}$
+%    } \hfill ~ \vspace{0.5mm} \\
+%\hspace{-6mm} R: \hfill \mintinline{R}{l = lm(y~ns(x,df=4))} \hfill ~
+%}
+%\vspace{2mm}
+%
+%<<echo=FALSE, out.width="0.9\\textwidth", fig.height=4.5, fig.show='hold', fig.keep='all'>>=
+%par(mar=c(4,4,0.1,0.1))
+%
+%df = 4
+%
+%n = ns(x,df=df)
+%l = lm(y~ns(x,df=df))
+%d = 3
+%
+%knots = sort(c(attr(n, "Boundary.knots"), attr(n, "knots")))
+%
+%f = sapply(2:length(knots), 
+%           function(i) 
+%           {
+%                x_sub = seq(knots[i-1], knots[i], length.out=d+1)
+%                y_sub = predict(n, x_sub)
+%                apply(y_sub, 2, 
+%                      function(z) 
+%                      {
+%                            s.f = paste("z ~ x_sub+", paste("I(x_sub", 2:d, sep="^", collapse=")+"), ")", sep="")
+%                            f = as.formula(s.f)
+%                            b.hat = coef(lm(f))
+%                            s = paste(c(b.hat[1], 
+%                                  sapply(1:d, function(j) paste(b.hat[j+1], "*", ref, "^", j, sep=""))), 
+%                                  collapse=" + ")
+%                            paste(s.pre, s, ", 0)", sep="")
+%                      }
+%                )
+%            }
+%)
+%apply(f, 1, function(s) paste(s, collapse=" + "))
+%
+%
+%
+%
+%for(df in dfs)
+%{
+%    plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+%
+%
+%    x_pred = seq(-3.5,3.5,len=1000)
+%    y_pred = predict(l,newdata=data.frame(x=x_pred))
+%
+%    lines(x_pred,y_pred,col=adjustcolor("blue",0.5),lwd=4)
+%
+%    x_knots = c(attr(b,"knots"), attr(b,"Boundary.knots"))
+%    y_knots = predict(l,newdata=data.frame(x=x_knots))
+%
+%    points(x_knots,y_knots,col=adjustcolor("red",0.5),lwd=4,pch=16,cex=1.5)
+%}
+%@
+%
+%\end{frame}
+%
+%<<echo=FALSE>>=
+%knit_hooks$set(plot = default_plot_hook)
+%@
+%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = seq_plot_hook)
+@
+
+\begin{frame}
+\frametitle{Natural Spline Regression - Adding knots}
+\vspace{-7mm}
+{\footnotesize
+<<echo=FALSE, results='asis'>>=
+dfs = c(3:10,15)
+
+for(i in seq_along(dfs))
+{
+    cat("\\only<",i,">{",
+        "\\hspace{-6mm} R: \\hfill ",
+        "\\mintinline{R}{l = lm(y~ns(x,df=",dfs[i],"))} ",
+        "\\hfill ~",
+        "}\n",sep="")
+} 
+@
+}
+\vspace{3mm}
+
+<<echo=FALSE, out.width="0.9\\textwidth", fig.height=4.5, fig.show='hold', fig.keep='all'>>=
+par(mar=c(4,4,0.1,0.1))
+
+for(df in dfs)
+{
+    plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+
+    b = ns(x,df=df)
+    l = lm(y~ns(x,df=df))
+
+    x_pred = seq(-3.5,3.5,len=1000)
+    y_pred = predict(l,newdata=data.frame(x=x_pred))
+
+    lines(x_pred,y_pred,col=adjustcolor("blue",0.5),lwd=4)
+
+    x_knots = c(attr(b,"knots"), attr(b,"Boundary.knots"))
+    y_knots = predict(l,newdata=data.frame(x=x_knots))
+
+    points(x_knots,y_knots,col=adjustcolor("red",0.5),lwd=4,pch=16,cex=1.5)
+}
+@
+
+\end{frame}
+
+<<echo=FALSE>>=
+knit_hooks$set(plot = default_plot_hook)
+@
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{frame}
+%\frametitle{Natural Spline Regression - Prediction}
+%\vspace{-8.5mm}
+%{\footnotesize
+%\hspace{-6mm} R: \hfill \mintinline{R}{l = lm(y~ns(x,df=4))} \hfill ~
+%}
+%\vspace{2mm}
+%
+%<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7>>=
+%library(splines)
+%
+%par(mar=c(4,4,0.1,0.1))
+%
+%plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+%
+%df=10
+%b = bs(x,df=df)
+%l = lm(y~ns(x,df=df))
+%
+%x_pred = seq(-3.5,3.5,len=1000)
+%y_pred = predict(l,newdata=data.frame(x=x_pred), interval="prediction")
+%
+%lines(x_pred,y_pred[,"fit"],col=adjustcolor("blue",0.5),lwd=4)
+%
+%lines(x_pred,y_pred[,"lwr"],col=adjustcolor("blue",0.5),lwd=1,lty=2)
+%lines(x_pred,y_pred[,"upr"],col=adjustcolor("blue",0.5),lwd=1,lty=2)
+%
+%polygon(c(x_pred,rev(x_pred)), c(y_pred[,"lwr"], rev(y_pred[,"upr"])), 
+%        col=adjustcolor("blue",0.25),border=NA)
+%
+%
+%x_knots = c(attr(b,"knots"), attr(b,"Boundary.knots"))
+%y_knots = predict(l,newdata=data.frame(x=x_knots))
+%
+%points(x_knots,y_knots,col=adjustcolor("red",0.5),lwd=4,pch=16,cex=1.5)
+%@
+%
+%\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Gaussian Process Regression}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm} Model: \hfill $\bm{y} \sim \mathcal{N}\big(\bm{\beta_0}, \bm{\Sigma}\big)$ \hfill ~ \vspace{0.5mm} \\
+\hspace{-6mm}     R: \hfill \mintinline{R}{l = bgp(x, y, corr="exp")} \hfill ~
+}
+\vspace{2mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7>>=
+library(splines)
+
+par(mar=c(4,4,0.1,0.1))
+
+plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+
+lines(gp$XX[[1]], gp$ZZ.mean, col=adjustcolor("blue",0.5), lwd=4)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Gaussian Process Regression - Details}
+
+\vspace{-5mm}
+{\small
+We model the outcome $\bm{y}$ as arising from a multivariate normal distribution given by
+%
+\[
+  f(\bm{x}|\bm{\beta_0},\bm{\Sigma}) = \frac{1}{\sqrt{(2\pi)^d|\bm{\Sigma}|}}  \exp\left(-\frac{1}{2} (\bm{x}-\bm{\beta_0})' \bm{\Sigma}^{-1} (\bm{x}-\bm{\beta_0}) \right).
+\]
+
+The magic here comes from defining the covariance terms (off-diagonal elements) of $\bm\Sigma$ in a way such that close observations, in $x$, are more correlated.
+%
+\vspace{2mm}
+%
+\begin{align*}
+    \Sigma_{\{i,j\}} = \text{cov}(x_i,\, x_j) &= \sigma^2 \, e^{-|x_i-x_j|\,\phi}
+                       \text{cov}(x_i,\, x_j) &= e^{-|x_i-x_j|\,\phi}
+\end{align*}
+}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Exponential Correlation Function}
+
+\vspace{-7mm}
+
+<<echo=FALSE, fig.width="0.9\\textwidth", fig.height=5, fig.align="center">>=
+par(mar=c(4,4,0.1,0.1))
+
+plot(0,0,type='n',xlab="Distance",ylab="Correlation",ylim=c(0,1),xlim=c(0,6))
+
+phi = seq(0.1, 2, len=10)
+d = seq(0,6,len=500)
+for(i in 1:length(phi)) 
+{
+    y = exp(-phi[i]*d)
+    lines(d,y)
+}
+
+@
+
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{frame}
+%\frametitle{Gaussian Process Regression - Prediction}
+%\vspace{-8.5mm}
+%{\footnotesize
+%\hspace{-6mm} Model: \hfill $\bm{y} \sim \mathcal{N}\big(\beta_0, \bm{\Sigma}\big)$ \hfill ~ \vspace{0.5mm} \\
+%\hspace{-6mm}     R: \hfill \mintinline{R}{l = bgp(x, y, corr="exp")} \hfill ~
+%}
+%\vspace{2mm}
+%
+%<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7>>=
+%library(splines)
+%
+%par(mar=c(4,4,0.1,0.1))
+%
+%plot(x,y,pch=16,cex=0.75,ylim=c(-4,1.5),xlim=c(-3.5,3.5))
+%
+%lines(gp$XX[[1]], gp$ZZ.mean, col=adjustcolor("blue",0.5), lwd=4)
+%
+%lines(gp$XX[[1]], gp$ZZ.q1, col=adjustcolor("blue",0.5), lwd=1,lty=2)
+%lines(gp$XX[[1]], gp$ZZ.q2, col=adjustcolor("blue",0.5), lwd=1,lty=2)
+%
+%polygon(c(gp$XX[[1]],rev(gp$XX[[1]])), c(gp$ZZ.q1, rev(gp$ZZ.q2)), col=adjustcolor("blue",0.25),border=NA)
+%@
+%
+%\end{frame}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Moving into Space}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{\PM{} Background}
+\vspace{-5mm}
+Fine particulate matter (\PM{}) is an EPA regulated air pollutant linked to a variety of adverse health effects
+
+\begin{itemize}
+  \vspace{2mm} \item Classified based on particle size ($<2.5$ $\mu$m diameter)
+  \vspace{2mm} \item Major species: Sulfate, Nitrate, Ammonium, Soil, Carbon.
+  \vspace{2mm} \item Minor species: trace elements (K, Mg, Ca), heavy metals (Cu, Fe), etc.
+  \vspace{2mm} \item Complex spatio-temporal dependence between species
+\end{itemize}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Spatial Data - Total \PM{}}
+
+\vspace{-9mm}
+
+<<echo=FALSE>>=
+suppressMessages(library(maptools))
+suppressMessages(library(raster))
+data(wrld_simpl)
+@
+
+
+<<echo=FALSE, out.width="0.9\\textwidth", fig.height=7, fig.width=8>>=
+par(mar=c(0.25,4,0.1,0.25), mfrow=c(2,1),oma=c(4,0.1,0.1,0.1))
+
+load("data.Rdata")
+
+plot(res[,1:2],pch=16, cex=0.75,axes=FALSE,ylab="")
+box()
+axis(2)
+plot(wrld_simpl[209,],add=TRUE,border=adjustcolor("black",0.25))
+
+r_data = r
+plot(res[,1:2],type='n',ylab="")
+plot(r_data,add=TRUE,legend=TRUE)
+plot(wrld_simpl[209,],add=TRUE,border=adjustcolor("black",0.25))
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Spatial Data - Multiple Regression}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm}     R: \hfill \mintinline{R}{l = lm(pm25~long+lat, data=d)} \hfill ~
+}
+\vspace{2mm}
+
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7, fig.align="center">>=
+l = lm(pm25~longitude+latitude,data=res)
+
+r[] = NA
+r[sub] = predict(l,newdata=locs)
+plot(r)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Spatial Data - Polynomial Regression}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm}     R: \hfill \mintinline{R}{l = lm(pm25~poly(long,5)+poly(lat,5), data=d)} \hfill ~
+}
+\vspace{2mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7, fig.align="center">>=
+l = lm(pm25~poly(longitude,5)+poly(latitude,5),data=res)
+
+r[] = NA
+r[sub] = predict(l,newdata=locs)
+plot(r)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Spatial Data - Loess}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm}     R: \hfill \mintinline{R}{l = loess(pm25~long+lat, data=d, span=0.25)} \hfill ~
+}
+\vspace{2mm}
+
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7, fig.align="center">>=
+l = loess(pm25~longitude+latitude,data=res,span=0.25)
+
+r[] = NA
+r[sub] = predict(l,newdata=locs)
+plot(r)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Spatial Data - Regression Tree}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm}     R: \hfill \mintinline{R}{l = rpart(pm25~long+lat, data=d)} \hfill ~
+}
+\vspace{2mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7, fig.align="center">>=
+l = rpart(pm25~longitude+latitude,data=res)
+
+r[] = NA
+r[sub] = predict(l,newdata=locs)
+plot(r)
+@
+
+\end{frame}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Spatial Data - Natural Splines}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm}     R: \hfill \mintinline{R}{l = lm(pm25~ns(long,df=5)+ns(lat,df=5),data=d)} \hfill ~
+}
+\vspace{2mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7, fig.align="center">>=
+l = lm(pm25~ns(longitude,df=5)+ns(latitude,df=5),data=res)
+
+r[] = NA
+r[sub] = predict(l,newdata=locs)
+plot(r)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Spatial Data - GP}
+\vspace{-8.5mm}
+{\footnotesize
+\hspace{-6mm}     R: \hfill \mintinline{R}{l = bgp(X=locs, Z=pm25, XX=pred_locs, corr="exp")} \hfill ~
+}
+\vspace{2mm}
+
+<<echo=FALSE,out.width="0.9\\textwidth", fig.height=4.5, fig.width=7, fig.align="center">>=
+r[] = NA
+r[sub] = sp_gp$ZZ.mean
+plot(r)
+@
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Modeling \PM{}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{All the \PM{} data}
+
+\vspace{-5mm}
+
+Speciated \PM Sources
+\begin{itemize}
+  \item Chemical Speciation Network (CSN) - 221 stations
+  \item Interagency Monitoring of Protected Visual Environments (IMPROVE) - 172 stations
+\end{itemize}
+
+\vspace{2mm}
+
+Total \PM Sources
+\begin{itemize}
+  \item Federal Reference Method (FRM) - 949 stations
+\end{itemize}
+
+\vspace{2mm}
+
+Model Output
+\begin{itemize}
+  \item Community Multi-scale Air Quality (CMAQ) - 12 km grid
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Community Multi-scale Air Quality modeling}
+
+\vspace{-9mm}
+
+\begin{center}
+\includegraphics[width=\textwidth]{imgs/cmaq.pdf}
+\end{center}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Data Issues - Monitoring frequency}
+
+\vspace{-9mm}
+
+\vfill
+\begin{center}
+\includegraphics[width=\textwidth]{imgs/freq.pdf}
+\end{center}
+\vfill
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Data Issues - Sum vs Total}
+
+\vspace{-9mm}
+
+\vfill
+\begin{center}
+\includegraphics[width=\textwidth]{imgs/sum.pdf}
+\end{center}
+\vfill
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Modeling - Species}
+    
+\vspace{-5mm}
+
+Our goal was to model all 5 species and total \PM{} at the \emph{same time}.
+
+\vspace{1mm}
+
+For each species level oberservation our model looked something like,
+%
+\begin{align*}
+N_t^i(\bm{s}) &= Z_t^i(\bm{s}) + \epsilon_{N,t}^i(\bm{s}) \\
+\vspace{2mm}
+{Z}_t^i(\bm{s}) &= \max{}\left(0,~\widetilde{Z}_t^i(\bm{s})\right) \\
+\vspace{2mm}
+\widetilde{Z}_t^i(\bm{s}) &= \beta_{0,t}^i +\beta_{0,t}^i(\bm{s}) + \beta_{1,t}^i \: Q_t^i(B_{\bm{s}}) 
+\end{align*}
+
+Here $\beta_{0,t}^i(\bm{s})$ is the Gaussian process that induces spatial dependence.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Modeling - Total}
+    
+\vspace{-5mm}
+
+Everything gets coupled together via the total \PM{}, which we require to be the sum of the individual species.
+
+{\small
+\[N_t^{tot}(\bm{s}) = Z_t^{tot}(\bm{s}) + \epsilon_{F,t}^{tot}(\bm{s})\]
+\[Z^{tot}_{t}(\bm{s}) = Z_t^{Sulf}(\bm{s}) + Z_t^{Nit}(\bm{s}) + Z_t^{Amm}(\bm{s}) + 
+                        Z_t^{Soil}(\bm{s}) + Z_t^{Carb}(\bm{s}) + Z^{Oth}_{t}(\bm{s})\]
+}
+
+The wrinkle here is that we haven't observed all of the species (only the 5 major species) - so we end up having to estimate the ``other'' unobserved species as $Z^{Oth}_{t}(\bm{s})$.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}[t]
+\frametitle{Computation}
+
+\vspace{-5mm}
+
+The model is fit and predictions made using a Bayesian hybrid MCMC based approach - which is very computationally intensive.
+
+\begin{itemize}
+\item Model fitting - $\sim 8$ hours per weekly model
+\item Prediction - $\sim 7$ hours per weekly model
+\item Yearly data - 52 weeks = $\sim 800$ hours
+\item Model variants - 3 variant = $\sim 2,400$ hours
+\item Validation - 10-fold x-validation = $\sim 24,000$ hours
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Results - Maps}
+
+\vspace{-9mm}
+
+\vfill
+\begin{center}
+\includegraphics[width=\textwidth]{imgs/joint_biv.pdf}
+\end{center}
+\vfill
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Results - Time series}
+
+\vspace{-9mm}
+
+\vfill
+\begin{center}
+\includegraphics[width=\textwidth]{imgs/ts.pdf}
+\end{center}
+\vfill
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Validation}
+
+\vspace{-9mm}
+
+\vfill
+\begin{center}
+\includegraphics[width=\textwidth]{imgs/cv.pdf}
+\end{center}
+\vfill
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Acknowledgments}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{frame}
+\frametitle{Acknowledgments}
+
+Paper - ``A data fusion approach for spatial analysis of speciated PM2.5 across time'' - Environmetrics
+
+
+\begin{itemize}
+\item Alan Gelfand - Duke
+\vspace{3mm} \item Dave Holland - EPA
+\vspace{3mm} \item Erin Schliep - Duke
+\end{itemize}
+
+\end{frame}
+
+\end{document}
