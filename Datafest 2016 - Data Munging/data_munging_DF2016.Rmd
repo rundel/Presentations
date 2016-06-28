@@ -1,0 +1,630 @@
+---
+title: "dataFest 2016 <br/> Data Munging with R and dplyr"
+author: "Colin Rundel"
+date: "March 28, 2016"
+output:
+    ioslides_presentation:
+        widescreen: true
+        smaller: false
+---
+
+```{r, echo=FALSE, results='hide'}
+options(width = 90)
+
+suppressMessages(library(readr))
+suppressMessages(library(dplyr))
+suppressMessages(library(nycflights13))
+```
+
+
+# Set up & Configuration
+
+## Datasets, presentation, source code
+
+- That data we will be using today is available via the `nycflights13` package.
+
+    - In R, run 
+
+```{r eval=FALSE}
+install.packages("nycflights13")
+```
+
+<br/>
+
+- The slides and all source files for this presentation can be found at
+
+    - http://bit.ly/df2016-munging
+
+
+## Welcome to the Hadleyverse
+
+For today's session we will be using a number of R packages that have been developed by Hadley Wickham.
+
+All of these packages are available on CRAN, before starting we want to make sure that everyone is using the most current available versions.
+
+```{r, eval=FALSE}
+install.packages(c("dplyr","readr","magrittr"))
+```
+
+<br/>
+
+Also - now is a good time to check that your version of R is up-to-date. If you are not running version 3.2.3 or later it is time to update. After updating R be sure to also update your packages.
+
+
+# readr
+
+## readr
+
+This is a recent package that is designed to be a fast and friendly way of reading tabular data into R.
+
+<br/>
+
+Core features:
+
+* Faster than base R (~4x)
+* No strings as factors
+* No column name mangling
+* Consistent argument/function naming scheme
+* Plays nice with dplyr (`tbl_df`)
+* Progress bars
+
+
+## Example (csv) {.smaller}
+
+
+```{r, eval=FALSE}
+library(readr)
+library(dplyr)
+```
+
+```{r}
+(mtcars = read_csv(system.file("extdata/mtcars.csv", package = "readr")))
+```
+
+## {.smaller}
+
+```{r}
+str(mtcars)
+```
+
+## {.smaller}
+
+```{r}
+(mtcars = read_csv(system.file("extdata/mtcars.csv.zip", package = "readr")))
+```
+
+# Pipes
+
+## magrittr {.smaller}
+
+
+<div class="centered">
+<img src="imgs/magritte.jpg" height="175px" />
+&nbsp;&nbsp;&nbsp;&nbsp;
+<img src="imgs/magrittr.jpeg" height="175px" />
+</div>
+
+This is an idea that has been around for a long time - particularly in the unix ecosystem. 
+
+* Complex tasks can be accomplished by stringing together many simple tools - syntax is important for efficiency / readability
+
+* The idea of pipes is that the result of the previous command is passed to the next command, which allows many tools to be strung together - from left to right.
+
+* In R, Magrittr introduces the `%>%` pipe operator which runs the expression of the left and passes the result as the *first* argument to expression on the right.
+
+ 
+## An example {.smaller}
+
+You can think about the following sequence of actions we want to perform:
+
+* find key
+* start car with keys
+* drive car to campus
+* park car
+
+Expressed as a set of nested functions in R pseudocode this would look like:
+
+```{r eval=FALSE}
+park(drive(start_car(find("keys")), to="campus"))
+```
+
+Writing it out using pipes give it a more natural (and easier to read) structure:
+
+```{r eval=FALSE}
+find("keys") %>%
+    start_car() %>%
+    drive(to="campus") %>%
+    park()
+```
+
+## Approaches {.smaller}
+
+All of the following are fine, it amounts to preference.
+
+<br/>
+
+Nested:
+
+```{r, eval=FALSE}
+h( g( f(x), y=1), z=1 )
+```
+
+Piped:
+
+```{r, eval=FALSE}
+f(x) %>% g(y=1) %>% h(z=1)
+```
+
+Intermediate:
+```{r, eval=FALSE}
+res = f(x)
+res = g(res, y=1)
+res = h(res, z=1)
+```
+
+## What about other arguments? {.smaller}
+
+Sometimes we want to send our results to a function argument *other* than first one or we want to use the previous result for multiple arguments. In these cases we refer to the previous result using `.`.
+
+```{r}
+data.frame(a=1:3,b=3:1) %>% lm(a~b,data=.)
+data.frame(a=1:3,b=3:1) %>% .[[1]]
+data.frame(a=1:3,b=3:1) %>% .[[length(.)]]
+```
+
+# dplyr
+
+## A Grammar of Data Manipulation {.smaller}
+
+dplyr is based on the concepts of functions as verbs that manipulate data frames.
+
+Single data frame functions / verbs:
+
+* `tbl_df()`: add the `tbl_df` class to a data frame
+* `filter()`: pick rows matching given criteria
+* `slice()`: pick rows by index(es)
+* `select()`: pick columns by name
+* `rename()`: rename column(s)
+* `arrange()`: sort / reorder row(s)
+* `mutate()`: add new variables / columns
+* `transmute()`: create new data frame
+* `distinct()`: filter for unique rows
+* `sample_n()` / `sample_frac()`: randomly sample rows
+* `summarise()`: reduce variables to values
+* `group_by()`: indicates values to group by when summarizing
+
+
+## dplyr rules
+
+* First argument is a data frame
+
+* Subsequent arguments say what to do with data frame
+
+* Always return a data frame
+
+* Don't modify in place
+
+
+## Example Data {.smaller}
+
+We will demonstrate dplyr's functionality using the nycflights13 data.
+
+```{r}
+str(flights)
+```
+
+## tbl_df()? {.smaller}
+```{r}
+flights
+```
+
+## filter() - March flights {.smaller}
+
+```{r}
+flights %>% filter(month == 3)
+```
+
+## filter() - Flights in the first 7 days of March {.smaller}
+
+```{r}
+flights %>% filter(month == 3, day <= 7)
+```
+
+## filter() - Flights to LAX or RDU in March {.smaller}
+
+```{r}
+flights %>% filter(dest == "LAX" | dest == "RDU", month==3)
+```
+
+## slice() - First 10 flights {.smaller}
+
+```{r}
+flights %>% slice(1:10)
+```
+
+## slice() - Last 5 flights {.smaller}
+
+```{r}
+flights %>% slice((n()-5):n())
+```
+
+## select() - Individual Columns {.smaller}
+
+```{r}
+flights %>% select(year, month, day)
+```
+
+## select() - Exclude Columns {.smaller}
+
+```{r}
+flights %>% select(-year, -month, -day)
+```
+
+## select() - Ranges {.smaller}
+
+```{r}
+flights %>% select(year:day)
+```
+
+## select() - Exclusion Ranges {.smaller}
+
+```{r}
+flights %>% select(-(year:day))
+```
+
+## select() - Matching {.smaller}
+
+<div class="columns-2">
+```{r}
+flights %>% select(contains("dep"), 
+                   contains("arr"))
+```
+```{r}
+flights %>% select(contains("dep"), 
+                   starts_with("arr"))
+```
+</div>
+
+
+## rename() {.smaller}
+
+```{r}
+flights %>% rename(tail_number = tailnum)
+```
+
+## arrange() {.smaller}
+
+```{r}
+flights %>% filter(month==3,day==2) %>% arrange(origin, dest)
+```
+
+## arrange() & desc() {.smaller}
+
+```{r}
+flights %>% filter(month==3,day==2) %>% arrange(desc(origin), dest)
+```
+
+## mutate() {.smaller}
+
+```{r}
+library(lubridate)
+flights %>% select(1:3) %>% mutate(date = paste(month,day,year,sep="/") %>% mdy())
+```
+
+## transmute() {.smaller}
+
+```{r}
+flights %>% select(1:3) %>% transmute(date = paste(month,day,year,sep="/") %>% mdy())
+```
+
+## distinct() {.smaller}
+
+```{r}
+flights %>% select(origin, dest) %>% distinct() %>% arrange(origin,dest)
+```
+
+## sample_n() {.smaller}
+
+```{r}
+flights %>% sample_n(10)
+```
+
+## sample_frac() {.smaller}
+
+```{r}
+flights %>% sample_frac(0.001)
+```
+
+## summarise() {.smaller}
+
+```{r}
+flights %>% mutate(date = paste(month,day,year,sep="/") %>% mdy()) %>% 
+            summarize(n(), min(date), max(date))
+```
+
+## group_by() {.smaller}
+
+```{r}
+flights %>% group_by(origin)
+```
+
+## summarise() with group_by() {.smaller}
+
+```{r}
+flights %>% group_by(origin) %>%
+            mutate(date = paste(month,day,year,sep="/") %>% mdy()) %>% 
+            summarize(n(), min(date), max(date))
+```
+
+## Examples
+
+1. Which destinations have the highest average delays?
+
+1. Which plane (check the tail number) flew out of each New York airport the most?
+
+
+## Exercises - Part 1
+
+1. What was the shortest flight out of each airport in terms of distance? In terms of duration?
+
+1. Which date should you fly on if you want to have the lowest possible average depature delay? What about arrival delay?
+
+1. How many flights to Los Angeles (LAX) did each of the legacy carriers (AA, UA, DL or US) have in May from JFK, and what was their average duration?
+
+
+# Merging Data
+
+## A Grammar of Data Manipulation (cont.)
+
+Two table functions / verbs, all functions have the form `f(a,b)`:
+
+* `left_join` - Join matching rows from `b` to `a`, preserving all rows of `a`
+* `right_join` - Join matching rows from `a` to `b`, preserving all rows of `b`.
+* `inner_join` - Join data, preserving only rows with keys in both `a` and `b`.
+* `full_join` - Join data, preserving all rows in both `a` and `b`.
+* `semi_join` - Subset rows in `a` that have a match in `b`.
+* `anti_join` - Subset rows in `a` that do not have a match in `b`.
+
+## Joining Data {.smaller}
+
+<div class="columns-2">
+```{r}
+addr = data.frame(name = c("Alice","Bob",
+                           "Carol","dave",
+                           "Eve"),
+                  email= c("alice@company.com",
+                           "bob@company.com",
+                           "carol@company.com",
+                           "dave@company.com",
+                           "eve@company.com"),
+                  stringsAsFactors = FALSE)
+```
+
+```{r}
+phone = data.frame(name = c("Bob","Carol",
+                            "Eve","Eve",
+                            "Frank"),
+                   phone= c("919 555-1111",
+                            "919 555-2222",
+                            "919 555-3333",
+                            "310 555-3333",
+                            "919 555-4444"),
+                   stringsAsFactors = FALSE)
+```
+</div>
+
+<div class="columns-2">
+```{r}
+addr
+```
+
+```{r}
+phone
+```
+</div>
+
+## Outer Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+full_join(addr, phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all=TRUE)
+```
+<br/>
+</div>
+
+## Inner Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+inner_join(addr,phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all=FALSE)
+```
+<br/>
+</div>
+
+## Left Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+left_join(addr,phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all.x=TRUE)
+```
+<br/>
+</div>
+
+## Right Join {.smaller}
+
+<div class="columns-2">
+dplyr:
+```{r}
+right_join(addr, phone)
+```
+
+Base R:
+```{r}
+merge(addr, phone, all.y=TRUE)
+```
+<br/>
+</div>
+
+## Semi and Anti Joins {.smaller}
+
+<div class="columns-2">
+```{r}
+semi_join(addr, phone)
+anti_join(addr, phone)
+```
+</div>
+
+## Special case - many-to-many relationships {.smaller}
+
+```{r}
+addr = data.frame(name = c("Alice","Alice", "Bob","Bob"),
+                  email= c("alice@company.com","alice@gmail.com", "bob@company.com","bob@hotmail.com"),
+                  stringsAsFactors = FALSE)
+```
+
+```{r}
+phone = data.frame(name = c("Alice","Alice", "Bob","Bob"),
+                   phone= c("919 555-1111", "310 555-2222", "919 555-3333", "310 555-3333"),
+                   stringsAsFactors = FALSE)
+```
+
+<div class="columns-2">
+dplyr:
+```{r}
+full_join(addr, phone, by="name")
+```
+
+<br/>
+
+Base R:
+```{r}
+merge(addr, phone)
+```
+<br/>
+</div>
+
+
+## Example - Enhancing NYC Flights
+
+The `nycflights13` package also contains additional information about
+
+* `weather` - hourly meterological data for each airport
+* `planes` - construction information about each plane
+* `airports` - airport names and locations
+* `airlines` - translation between two letter carrier codes and names
+
+## Weather and flight delays {.smaller}
+
+Lets take a quick look at the weather data, with an eye towards examining how it might affect things like flight departure delays,
+
+```{r}
+weather
+```
+
+
+## Join by? {.smaller}
+
+Weather column definitions:
+
+* `origin` - Weather station. Named origin to faciliate merging with flights data
+* `year`, `month`, `day`, `hour` - Time of recording
+* `temp`, `dewp` - Temperature and dewpoint in F
+* `humid` - Relative humidity
+* `wind_dir`, `wind_speed`, `wind_gust` - Wind direction (in degrees), speed and gust speed (in mph)
+* `precip` - Preciptation, in inches
+* `pressure` - Sea level pressure in millibars
+* `visib` - Visibility in miles
+
+
+<!--
+* tailnum - Tail number
+* year - Year manufactured
+* type - Type of plane
+* manufacturer - Manufacturer
+* model - Model
+* engines - Number of engines
+* seats - Number of seats
+* speed - Average cruising speed in mph
+* engine - Type of engine
+-->
+
+```{r}
+intersect(names(weather), names(flights))
+```
+
+## Joining flights and weather {.smaller}
+
+When joining these two data frames I will use an inner join (because I only want the flights that have the weather data, and I only want weather data when there was a flight)
+
+```{r}
+(flightsw = inner_join(flights, weather))
+```
+
+##
+
+```{r}
+plot(flightsw$visib, flightsw$dep_delay)
+```
+
+##
+
+```{r}
+plot(flightsw$visib, flightsw$dep_delay, log="y", 
+     pch=16, cex=0.5, col=adjustcolor("black",0.1))
+```
+
+##
+
+```{r}
+boxplot(dep_delay~visib,data=flightsw)
+```
+
+##
+
+```{r}
+filter(flightsw, dep_delay > 0)  %>% 
+  boxplot(dep_delay~visib,data=.,log="y")
+```
+
+##
+
+```{r}
+table(flightsw$visib)
+```
+
+## Exercises - Part 2
+
+1. Check some of the other weather variables (e.g. `temp`, `wind_speed`, `etc`) and see if you can find any relationship between them and departure delay (`dep_delay`).
+
+2. Merge the `flights` data with the `planes` data set (pay attention to what columns are being used for the join). Are older planes more likely to be delayed? What about planes from Airbus vs Boeing vs Embraer?
+
+
+# Acknowledgments
+
+## Acknowledgments
+
+Above materials are derived in part from the following sources:
+
+* [RStudio Data Wrangling Cheat Sheet](http://www.rstudio.com/wp-content/uploads/2015/02/data-wrangling-cheatsheet.pdf)
+
+* Package Vigenettes - [dplyr](http://cran.r-project.org/web/packages/dplyr/vignettes/introduction.html), [tidyr](http://cran.r-project.org/web/packages/tidyr/vignettes/tidy-data.html)
+
+* [UseR 2014 - dplyr Tutorial](https://www.dropbox.com/sh/i8qnluwmuieicxc/AAAgt9tIKoIm7WZKIyK25lh6a)
