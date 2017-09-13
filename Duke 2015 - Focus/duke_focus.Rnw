@@ -14,7 +14,7 @@
 
 \newcommand{\PM}{$\text{PM}_{2.5}$ }
 
-\title{An Brief Introduction to Gaussian Processes}
+\title{A Brief Introduction to Gaussian Processes}
 \subtitle{}
 \date{Duke - ``What if?'' Focus Cluster - 2015}
 \author{Colin Rundel}
