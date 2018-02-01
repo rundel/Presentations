@@ -5,14 +5,14 @@ Recent talks
 
 * JSM - Moving Away from Ad Hoc Statistical Computing Education \[[slides](https://github.com/rundel/Presentations/blob/master/JSM%202017/jsm_2017.pdf)]
 
-* UseR! - Data Carpentry: Open and Reproducible Research with R \[[site](https://fmichonneau.github.io/2017-useR-tutorial/) | [repo](https://github.com/fmichonneau/2017-useR-reproducibility/) ]
+* UseR! - Data Carpentry: Open and Reproducible Research with R \[[site](https://fmichonneau.github.io/2017-useR-tutorial/)|[repo](https://github.com/fmichonneau/2017-useR-reproducibility/)]
 
 
 ### 2016
 
-* JSM - Statistical Computing as an Introduction to Data Science
+* JSM - Statistical Computing as an Introduction to Data Science \[[slides](https://github.com/rundel/Presentations/blob/master/JSM%202016/JSM2016.pdf)]
 
-* UseR! - Continuous Integration and Teaching Statistical Computing with R
+* UseR! - Continuous Integration and Teaching Statistical Computing with R \[[slides](https://github.com/rundel/Presentations/blob/master/UseR2016/user2016.pdf)]
 
 
 ### 2015
