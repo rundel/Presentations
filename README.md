@@ -5,7 +5,7 @@ Recent talks
 
 * JSM - Moving Away from Ad Hoc Statistical Computing Education \[[slides](https://github.com/rundel/Presentations/blob/master/JSM%202017/jsm_2017.pdf)]
 
-* UseR! - Data Carpentry: Open and Reproducible Research with R [site](https://fmichonneau.github.io/2017-useR-tutorial/) [repo](https://github.com/fmichonneau/2017-useR-reproducibility/)
+* UseR! - Data Carpentry: Open and Reproducible Research with R \[[site](https://fmichonneau.github.io/2017-useR-tutorial/) | [repo](https://github.com/fmichonneau/2017-useR-reproducibility/) ]
 
 
 ### 2016
