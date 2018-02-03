@@ -82,10 +82,11 @@ class: split-half
 # Workflow
 
 .center[
-```{r echo=FALSE,out.width="95%"}
+```{r echo=FALSE,out.width="90%"}
 knitr::include_graphics("figs/workflow.png")
 ```
 ]
+
 ---
 
 # Automatic testing ...
@@ -140,7 +141,7 @@ knitr::include_graphics("figs/wercker_good.png")
 
 ---
 
-# What is Kaggle&trade;?
+# Kaggle&trade;?
 
 ```{r echo=FALSE}
 knitr::include_graphics("figs/kaggle.png")
@@ -327,7 +328,6 @@ count: false
 |Simplicity             | <i class="far fa-meh   fa-2x"></i> | <i class="far fa-smile fa-2x"></i> | <i class="far fa-meh   fa-2x"></i>
 ]
 
-
 ---
 
 # Thank you!
@@ -357,7 +357,7 @@ count: false
 <tr>
   <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-3x"></i> </td>
   <td> 
-    <a href="https://github.com/rundel/presentations">github.com/rundel/presentations</a>
+      <a href="http://bit.ly/rundel_rstudioconf2018">bit.ly/rundel_rstudioconf2018</a>
   </td>
 </tr>
 <tr>
