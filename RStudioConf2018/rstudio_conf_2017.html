@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Kaggle in the Classroom:</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Colin Rundel Duke University" />
+    <link href="libs/font-awesome/css/font-awesome.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Kaggle in the Classroom:
+## Using R and GitHub to run predictive modeling competitions
+### Colin Rundel<br/>Duke University
+### rstudio::conf 2018 - San Diego
+
+---
+
+exclude: true
+
+
+
+---
+class: split-half
+
+# Context
+
+
+.column[ .border[
+#### Statistical Computing (Sta 323)
+&lt;hr/&gt;
+
+* 2nd / 3rd year undergrads
+
+* Elective
+
+* ~40 students
+
+* Offered each Spring
+]]
+
+.column[ .border[
+#### Statistical Programming (Sta 523)
+&lt;hr/&gt;
+
+* 1st year master's
+
+* Required
+
+* ~40 students
+
+* Offered each Fall
+]]
+
+--
+
+
+&lt;div style="clear: both;"&gt;&lt;/div&gt;
+
+&lt;br/&gt;&lt;br/&gt;
+
+.bottom[ .center[ &lt;i&gt;
+*Programming course with statistics*
+
+*vs.*
+
+*Statistics course with programming*
+] ]
+
+
+---
+
+# Workflow
+
+.center[
+&lt;img src="figs/workflow.png" width="95%" /&gt;
+]
+---
+
+# Automatic testing ...
+
+.float-middle-main[ .float-middle[ .big-text[
+
+* for reproducibility
+
+* for file organization
+
+* for style (styler, lintr)
+
+* ...
+
+* for correctness
+
+] ] ]
+
+---
+
+# wercker.yml
+
+```yaml
+*box: rocker/tidyverse
+build:
+  steps:
+    - script:
+*       name: Check for allowed files
+        code: |
+          Rscript -e "source(paste0('https://raw.githubusercontent.com/',
+                                    'Sta323-Sp18/hw1/master/hw1_whitelist.R')"
+    - script:
+*       name: Render R markdown
+        code: |
+          Rscript -e "library(rmarkdown);render('hw1.Rmd')"
+```
+
+---
+class: split-half
+
+.column[
+&lt;img src="figs/wercker_bad.png" width="1883" /&gt;
+]
+
+.column[
+&lt;img src="figs/wercker_good.png" width="1896" /&gt;
+]
+
+---
+
+# What is Kaggle&amp;trade;?
+
+&lt;img src="figs/kaggle.png" width="1940" /&gt;
+
+---
+
+# Features
+
+.float-middle-main[ .float-middle[ .big-text[
+
+* Automatic scoring
+
+* Feedback / diagnostics
+
+* Leaderboard
+
+* History
+
+] ] ]
+
+---
+class: split-thirds
+
+## Tickets, taxes, and precincts ...
+
+.pull-left[
+&lt;img src="figs/nyc_opendata.png" width="50%" /&gt;
+]
+
+&lt;div style="clear: both;"&gt;&lt;/div&gt;
+
+&lt;br/&gt;
+
+.column[ .border[
+#### Parking Violations
+&lt;hr/&gt;
+
+* 9.1M tickets w/ 43 variables
+
+* 1.7G csv
+
+* *Human generated*
+
+.center[
+[source](https://data.cityofnewyork.us/City-Government/Parking-Violations-Issued-Fiscal-Year-2014-August-/jt7v-77mi)
+]
+
+] ]
+
+.column[ .border[
+#### Property Taxes
+&lt;hr/&gt;
+
+* MapPLUTO
+
+* Shapefiles of property boundaries
+
+* Includes addresses
+
+.center[
+[source](https://www1.nyc.gov/site/planning/data-maps/open-data/dwn-pluto-mappluto.page)
+]
+
+] ]
+
+.column[ .border[
+#### Police Precincts
+&lt;hr/&gt;
+
+* Shapefiles of boundaries
+
+* 74 precincts
+
+* 24 in Manhattan
+
+.center[
+[source](https://www1.nyc.gov/site/planning/data-maps/open-data/districts-download-metadata.page)
+]
+
+] ]
+
+
+---
+
+# Scoring
+
+&lt;img src="figs/prediction.png" width="1600" /&gt;
+
+---
+
+# Approach #1 - Wercker
+
+.center[
+&lt;img src="figs/wercker_score.gif" width="80%" /&gt;
+]
+
+---
+
+# wercker.yml
+
+```yaml
+box: rocker/tidyverse
+build:
+  steps:
+    - script:
+*     name: Update scores
+      code: |
+        Rscript -e "httr::stop_for_status(httr::POST('http://saxon.stat.duke.edu:7887/prediction', encode = 'json', body=list(team='$team', key='$key', file=base64enc::base64encode('precincts.geojson'))))"
+    - script:
+*     name: Show score
+      code: |
+        wget --quiet -O - http://saxon.stat.duke.edu:7887/score?t=$team
+    - script:
+*     name: Show leaderboard
+      code: |
+        wget --quiet -O - http://saxon.stat.duke.edu:7887/scoreboard
+    - script:
+*     name: Show history
+      code: |
+        wget --quiet -O - http://saxon.stat.duke.edu:7887/history?t=$team
+    - script:
+*     name: Check for allowed files
+      code: |
+        Rscript -e "source('https://raw.githubusercontent.com/Sta523-Fa17/hw6/master/hw6_whitelist.R')"
+```
+
+---
+
+# Details
+
+.center[
+&lt;img src="figs/api.png" width="100%" /&gt;
+]
+
+---
+
+# Approach #2 - Shiny
+
+.center[
+&lt;img src="figs/shiny_demo.gif" width="70%" /&gt;
+]
+
+---
+
+# Overall
+
+&lt;br/&gt;
+
+.middle[
+|                       | Wercker                            | Shiny                              |
+|-----------------------|:----------------------------------:|:----------------------------------:|
+|Automatic scoring      | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; |
+|Feedback / Diagnostics | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; |
+|Leaderboard            | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; |    
+|History                | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; |
+|Simplicity             | &lt;i class="far fa-meh   fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; |
+]
+
+---
+count: false
+
+# Overall
+
+&lt;br/&gt;
+
+.middle[
+|                       | Wercker                            | Shiny                              | Shiny + DB      |
+|-----------------------|:----------------------------------:|:----------------------------------:|:---------------:|
+|Automatic scoring      | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt;
+|Feedback / Diagnostics | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt;
+|Leaderboard            | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt;
+|History                | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-frown fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt;
+|Simplicity             | &lt;i class="far fa-meh   fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-smile fa-2x"&gt;&lt;/i&gt; | &lt;i class="far fa-meh   fa-2x"&gt;&lt;/i&gt;
+]
+
+
+---
+
+# Thank you!
+
+.middle[ .center[
+
+&lt;table class="contact" style="width: 50%; text-align: left; font-size: 120%;"&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fas fa-envelope fa-fw fa-3x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="mailto:rundel@gmail.com"&gt;rundel@gmail.com&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fab fa-github-square fa-fw fa-3x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://github.com/rundel"&gt;github.com/rundel&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fab fa-twitter-square fa-fw fa-3x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://twitter.com/rundel"&gt;@rundel&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="far fa-file-powerpoint fa-fw fa-3x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://github.com/rundel/presentations"&gt;github.com/rundel/presentations&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fas fa-home fa-fw fa-3x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href='http://stat.duke.edu/~cr173'&gt;stat.duke.edu/~cr173&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+
+] ]
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
