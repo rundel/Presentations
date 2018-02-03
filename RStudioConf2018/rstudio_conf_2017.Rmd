@@ -148,10 +148,32 @@ knitr::include_graphics("figs/kaggle.png")
 ```
 
 ---
+class: split-half
 
-# Features
+# Goals
 
-.float-middle-main[ .float-middle[ .big-text[
+<br/>
+
+.column[ .border[
+
+#### Pedagogical
+<hr/>
+
+* Cleaning iteration
+
+* Modeling iteration
+
+* Diagnostics
+
+* Effort cost-benefit
+
+] ] 
+
+
+.column[ .border[
+
+#### Technical
+<hr/>
 
 * Automatic scoring
 
@@ -161,12 +183,14 @@ knitr::include_graphics("figs/kaggle.png")
 
 * History
 
-] ] ]
+] ]
 
 ---
 class: split-thirds
 
-## Tickets, taxes, and precincts ...
+## Task: tickets, taxes, and precincts
+
+<br/>
 
 .pull-left[
 ```{r echo=FALSE, out.width="50%"}
@@ -175,8 +199,6 @@ knitr::include_graphics("figs/nyc_opendata.png")
 ]
 
 <div style="clear: both;"></div>
-
-<br/>
 
 .column[ .border[
 #### Parking Violations
