@@ -1,0 +1,23 @@
+box: rocker/tidyverse
+build:
+  steps:
+    - script:
+      name: Update scores
+      code: |
+        Rscript -e "httr::stop_for_status(httr::POST('http://saxon.stat.duke.edu:7887/prediction', encode = 'json', body=list(team='$team', key='$key', file=base64enc::base64encode('precincts.geojson'))))"
+    - script:
+      name: Show score
+      code: |
+        wget --quiet -O - http://saxon.stat.duke.edu:7887/score?t=$team
+    - script:
+      name: Show leaderboard
+      code: |
+        wget --quiet -O - http://saxon.stat.duke.edu:7887/scoreboard
+    - script:
+      name: Show history
+      code: |
+        wget --quiet -O - http://saxon.stat.duke.edu:7887/history?t=$team
+    - script:
+      name: Check for allowed files
+      code: |
+        Rscript -e "source('https://raw.githubusercontent.com/Sta523-Fa17/hw6/master/hw6_whitelist.R')"
