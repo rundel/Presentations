@@ -4,15 +4,30 @@
 @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 @import url(https://fonts.googleapis.com/css?family=Lato);
 
+.title-slide {
+  background-image: url(figs/track_alpha.png);
+  background-size: cover;
+}
+
+.inverse {
+  background-color: #6CA0DC;
+  color: #ffffff;
+  /* text-shadow: 0 0 20px #333; */
+}
+.inverse h1, .inverse h2, .inverse h3 {
+  color: #444;
+}
+
 body { 
   font-family: 'Lato', sans-serif;
 }
 h1, h2, h3, h4 {
   font-family: 'Lato';
   font-weight: bold;
-  color: #6CA0DC;
+  color: #6CBAEA;
   -webkit-margin-before: 0em;
 }
+
 
 h4 {
   margin-bottom: 0.5em;
@@ -65,14 +80,7 @@ a, a > code {
   background-color: #ffff88; 
 }
 
-.inverse {
-  background-color: #6CA0DC;
-  color: #ffffff;
-  /* text-shadow: 0 0 20px #333; */
-}
-.inverse h1, .inverse h2, .inverse h3 {
-  color: #f3f3f3;
-}
+
 
 .pull-left {
   float: left;
