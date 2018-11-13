@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Teaching Talk</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Colin Rundel Duke University" />
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# Teaching Talk
+### Colin Rundel<br/>Duke University
+### University of Edinburgh - 2018
+
+---
+
+exclude: true
+
+
+
+
+---
+
+## Melanism in Peppered Moths
+
+.pull-left[
+&lt;img src="imgs/typica.jpg" width="693" /&gt;&lt;img src="imgs/carbonaria.jpg" width="693" /&gt;
+]
+
+.pull-right[
+* *Biston betularia* is a common and widely spread (Asia, Europe, &amp; N. America) species of moth
+
+* The species exhibits several different naturally occurring (and genetically determined) colorations
+
+    - The lightly colored (above) is referred to as *typica*
+    
+    - The darkly colored (below) is referred to as *carbonaria*
+    
+* Put forward as an example of evolution by natural selection (different predation rates)
+]
+
+.footnote[
+Photos by [Olaf Leillinger](https://de.wikipedia.org/wiki/User:olei) via [Wikipedia](https://en.wikipedia.org/wiki/Peppered_moth_evolution).
+]
+
+---
+
+![](imgs/tree.jpg)
+
+.footnote[
+Photo by [Martinowksy](https://nl.wikipedia.org/wiki/User:Martinowksy) via [Wikipedia](https://en.wikipedia.org/wiki/Peppered_moth_evolution).
+]
+
+---
+
+## Example
+
+Assume that a researcher is interested in understanding the different rates of predation under differing environmental conditions. As a pilot study, they contaminate a small aviary with soot by burning coal and then releasing a large but equal number of *typica* and *carbonaria* peppered moths into the enclosure. 
+
+After several days, the researcher then introduces a small number of insectivorous birds (known to eat the moths) into the aviary.
+
+Finally, after two days of exposure to the predators the research returns to the aviary and collects a sample of the remaining moths. Within their sample they find:
+
+.center[
+| Form         | Count |
+|:-------------|-------|
+| *typica*     |  12   |
+| *carbonaria* |  31   |
+]
+
+---
+
+## A data model
+
+Is there a simple probabilistic model that we can use to represent the generative process for these data?
+
+&lt;br/&gt;
+
+--
+
+What if instead of moths in an aviary we instead thought of marbles in an urn?
+
+&lt;br/&gt;
+
+--
+
+
+Based on our model choice, what is the parameter of interest? What does its value tell us in the context of the experiment?
+
+&lt;br/&gt;
+
+--
+
+Are there any assumptions that we are making when we choose this model?
+
+---
+
+## Likelihood, Prior, ...
+
+We have chosen a binomial distribution as our *likelihood* model for our data,
+$$ Y \sim Binom(n=43, p) $$
+where `\(Y\)` is the number of carbonaria moths sampled.
+
+--
+
+&lt;br/&gt;
+For this example, we will choose to represent our *prior* beliefs about the parameter `\(p\)`, the proportion of surviving carbonaria moths, using a beta distribution with shape parameters `\(a\)` and `\(b\)`.
+$$ p \sim Beta(a,b) $$
+
+--
+
+&lt;br/&gt;
+Our ultimate goal is inference, we would like to use our *likelihood* and the *prior* to be able to say something useful about the distribution of `\(p\)` given our observed data,
+$$ p | Y = 31 \sim ~?. $$
+This is the *posterior* distribution for our parameter of interest which we can construct using Bayes' theorem.
+
+---
+
+## Bayes Theorem
+
+Likelihood:
+`\begin{align}
+Y&amp; \sim Binom(n=43, p) \\
+P(Y&amp;=y|p,n) = \frac{n!}{y!(n-y)!}p^y(1-p)^{n-y}
+\end{align}`
+
+
+Prior:
+`\begin{align}
+p&amp; \sim Beta(a,b) \\
+f(p&amp;|a,b) = \frac{\Gamma(a) \, \Gamma(B)}{\Gamma(a+b)} p^{a-1}\,(1-p)^{b-1}
+\end{align}`
+
+--
+
+Bayes' theorem:
+`\begin{align}
+f(p|Y=y) 
+  &amp;= \frac{P(Y=y|p)}{P(Y=y)}f(p) \\
+  &amp;= \frac{P(Y=y|p)}{\int_0^1 P(Y=y|p)\,f(p)\,dp}f(p)
+\end{align}`
+
+
+---
+
+## Derivation
+
+--
+
+`\begin{align}
+f(p|Y=y) 
+  &amp;\propto P(Y=y|p)\,f(p) \\~\\
+  &amp;\propto \left( \frac{n!}{y!(n-y)!}p^y(1-p)^{n-y} \right)
+           \left( \frac{\Gamma(a) \, \Gamma(B)}{\Gamma(a+b)} p^{a-1}\,(1-p)^{b-1} \right) \\~\\
+  &amp;\propto \left( p^y \, (1-p)^{n-y} \right)
+           \left( p^{a-1} \, (1-p)^{b-1} \right) \\~\\
+  &amp;\propto p^{a+y-1} \, (1-p)^{b+n-y-1}
+\end{align}`
+
+&lt;br/&gt;
+
+$$ p|Y=y \sim Beta(a+y, b+n-y) $$
+
+---
+
+## Lets explore
+
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+&lt;br/&gt;
+
+.medium[.center[
+
+[http://bit.ly/ed2018_betabinom](http://bit.ly/ed2018_betabinom)
+
+]]
+
+---
+
+## Credible intervals
+
+The intervals we found for `\(p\)` are called credible intervals, like confidence intervals they allow us to conduct inference on our parameter of interest.
+
+
+Some important characteristics of credible intervals,
+
+* depend on *both* the data and the prior
+
+* allow for direct probabilistic statements about the parameter
+
+* do not depend on large sample theory or any kind of normal approximation.
+
+* are not unique for a given posterior distribution
+  - in the shiny app they are determined by requiring that the probability mass in the upper and lower tails be equal.
+
+---
+count: false
+
+
+---
+count: false
+
+## Review - Beta distribution
+
+Let `\(X\)` be a random variable with a `\(beta(a,b)\)` distribution with shape parameters `\(a\)` and `\(b\)` then,
+
+&lt;img src="edinburgh_teaching_2018_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+
+.pull-left[
+
+$$ f(x | a, b) = \frac{\Gamma(a) \, \Gamma(B)}{\Gamma(a+b)} x^{a-1}\,(1-x)^{b-1} $$
+
+for `\(x \in [0,1]\)`, `\(a&gt;0\)`, and `\(b&gt;0\)`.
+
+]
+
+.pull-right[
+$$ E(X) = \frac{a}{a+b} $$
+
+$$ Var(X) = \frac{ab}{(a+b)^2(a+b+1)} $$
+]
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+  tex2jax: {
+    skipTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+  }
+});
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://cdn.bootcss.com/mathjax/2.7.1/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

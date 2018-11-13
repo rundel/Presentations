@@ -1,0 +1,12 @@
+* Define interactive jobs at the beginning
+
+
+* Size your computing to a reasonble multiple of your interactive jobs
+
+* Scalability for research
+
+* Financial resource conflict between 
+
+* Distinguish between interactive and longer jobs
+
+* Mention advanced computing
