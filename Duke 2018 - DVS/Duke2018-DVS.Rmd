@@ -35,6 +35,11 @@ class: center, middle, inverse, title-slide
 
 ### Colin Rundel <br/> 2018-11-13
 
+.lower-left-corner[ .small[ 
+[http://bit.ly/Rundel-DVS](http://bit.ly/Rundel-DVS)
+] ]
+
+
 ---
 class: middle
 count: false

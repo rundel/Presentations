@@ -93,6 +93,11 @@ a, a > code {
   clear: both;
 }
 
+.lower-left-corner {
+  position: fixed;
+  bottom: 5px;
+  left: 10px;
+}
 
 
 .col1 {
