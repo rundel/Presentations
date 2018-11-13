@@ -209,6 +209,10 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
   background-position: bottom 10px right 10px; 
 }
 
+.title-slide a {
+  color: #ffffff;
+}
+
 .element .style {
     position: absolute;
     left: 0;
