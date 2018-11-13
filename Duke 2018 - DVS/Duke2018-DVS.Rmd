@@ -12,6 +12,7 @@ output:
       highlightStyle: github
       highlightLines: true
       countIncrementalSlides: false
+      beforeInit: ["https://use.fontawesome.com/releases/v5.5.0/js/all.js"]
 ---
 exclude: true
 
@@ -64,7 +65,7 @@ It will likely be most useful for you to follow along by taking this code as it 
 
 ## Packages
 
-Everythign we are going to use today is either part of or a dependency of the `tidyverse` metapackage. If you don't have that installed, now would be good to do so. (It is better to do it now since installation can take awhile)
+Everythign we are going to use today is either part of or a dependency of the `tidyverse` metapackage. If you don't have that installed, now is a good time to install it. (It is better to do it now since installation can take awhile)
 
 ```{r eval = FALSE}
 install.packages("tidyverse")
@@ -160,7 +161,8 @@ count: false
   </book>
   <book>
     <title>Edgar Gets Ready for Bed</title>
-    <author>Jennifer Adams and Ron Stucki</author>
+    <author>Jennifer Adams</author>
+    <author>Ron Stucki</author>
     <price>9.99</price>
   </book>
   <book>
@@ -179,8 +181,21 @@ count: false
 knitr::include_graphics('imgs/tidy.png')
 ```
 
+--
+
+```{r echo=FALSE}
+tibble::tribble(
+  ~title, ~author, ~price,
+  "The Cat in the Hat", "Dr. Seuss", 6.99,
+  "Edgar Gets Ready for Bed", "Jennifer Adams", 9.99,
+  "Edgar Gets Ready for Bed", "Ron Stucki", 9.99,
+  '"More More More," Said the Baby', "Vera B Williams", 7.19
+)
+```
+
+
 .footnote[ 
-From R4DS - [tidy data chapter](r4ds.had.co.nz/tidy-data.html), [J. Stat Soft Paper (2014)](http://www.jstatsoft.org/v59/i10/)
+From R4DS - [tidy data chapter](r4ds.had.co.nz/tidy-data.html), 
 ]
 
 ---
@@ -736,3 +751,19 @@ class: middle
 #### [http://bit.ly/Rundel-DVS_darksky](http://bit.ly/Rundel-DVS_darksky)
 ]
 
+---
+
+## Further Reading
+
+* Tidy Data
+  - R for Data Science [tidy data chapter](https://r4ds.had.co.nz/tidy-data.html)
+  - Hadley's [J. Stat Soft Paper (2014)](http://www.jstatsoft.org/v59/i10/)
+
+* Rvest 
+  - [Selector Gadget Vignette](https://cran.r-project.org/web/packages/rvest/vignettes/selectorgadget.html)
+
+* purrr
+  - RStudio's [purrr cheatsheet](https://github.com/rstudio/cheatsheets/raw/master/purrr.pdf)
+  - Jenny Bryan's [purrr tutorial](https://jennybc.github.io/purrr-tutorial/)
+  - Advanced R - Functional Programming Chapters: [Functional Programming](http://adv-r.had.co.nz/Functional-programming.html), [Functionals](http://adv-r.had.co.nz/Functionals.html), [Function Operators](Function operators)
+  
