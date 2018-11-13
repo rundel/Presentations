@@ -1,0 +1,2633 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Tidying Hierarchical Data from the Web</title>
+    <meta charset="utf-8">
+    <meta name="author" content="Colin Rundel" />
+    <meta name="date" content="2018-11-13" />
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+exclude: true
+
+
+
+---
+class: center, middle, inverse, title-slide
+
+# Tidying Hierarchical Data from the Web
+
+### Colin Rundel &lt;br/&gt; 2018-11-13
+
+---
+class: middle
+count: false
+
+# Getting Started
+
+---
+
+## R environments
+
+We will be going through several live demos today and I will be making my code available as we go via a Dropbox link. 
+
+It will likely be most useful for you to follow along by taking this code as it is produced and copying and pasting it to your own R session.
+
+* For this to work well please make sure that you are running a reasonable current version of R (3.5.1 is the latest). 
+
+* If you can't or don't want to update your local install, I highly recommend: 
+
+    * [https://vm-manage.oit.duke.edu/containers](https://vm-manage.oit.duke.edu/containers)
+
+---
+
+## Packages
+
+Everythign we are going to use today is either part of or a dependency of the `tidyverse` metapackage. If you don't have that installed, now would be good to do so. (It is better to do it now since installation can take awhile)
+
+
+```r
+install.packages("tidyverse")
+```
+
+Additionally, even if you do have it installed now is also a good time to check that all of your packages are up-to-date.
+
+
+```r
+update.packages()
+```
+
+---
+
+## My sessionInfo
+
+
+```r
+sessioninfo::package_info() %&gt;% .[.$attached,]
+```
+
+```
+##  package  * version date       lib source        
+##  dplyr    * 0.7.8   2018-11-10 [1] CRAN (R 3.5.1)
+##  jsonlite * 1.5     2017-06-01 [1] CRAN (R 3.5.0)
+##  purrr    * 0.2.5   2018-05-29 [1] CRAN (R 3.5.0)
+##  rvest    * 0.3.2   2016-06-17 [1] CRAN (R 3.5.0)
+##  xml2     * 1.2.0   2018-01-24 [1] CRAN (R 3.5.0)
+## 
+## [1] /usr/local/lib/R/3.5/site-library
+## [2] /usr/local/Cellar/r/3.5.1/lib/R/library
+```
+
+---
+class: middle
+count: false
+
+# Hierarchical Data?
+
+---
+
+## Web data - html
+
+```html
+&lt;html&gt;
+  &lt;body&gt;
+  
+    &lt;div&gt;
+      &lt;span class="title"&gt;The Cat in the Hat&lt;/span&gt;
+      by &lt;span class="author"&gt;Dr. Seuss&lt;/span&gt;
+      -  &lt;span class="price"&gt;$6.99&lt;/span&gt;
+    &lt;/div&gt;
+    
+    &lt;div&gt;
+      &lt;span class="title"&gt;Edgar Gets Ready for Bed&lt;/span&gt;
+      by &lt;span class="author"&gt;Jennifer Adams&lt;/span&gt;, 
+         &lt;span class="author"&gt;Ron Stucki&lt;/span&gt;
+      -  &lt;span class="price"&gt;$9.99&lt;/span&gt;
+    &lt;/div&gt;
+    
+    &lt;div&gt;
+      &lt;span class="title"&gt;"More More More", Said the Baby&lt;/span&gt;
+      by &lt;span class="author"&gt;Vera B Williams&lt;/span&gt;
+      -  &lt;span class="price"&gt;$7.19&lt;/span&gt;
+    &lt;/div&gt;
+
+  &lt;/body&gt;
+&lt;/html&gt;
+```
+
+---
+
+## Web data - JSON
+
+```json
+{
+  "bookList": [
+    {
+      "title": "The Cat in the Hat",
+      "author": "Dr. Seuss",
+      "price": 6.99
+    },
+    {
+      "title": "Edgar Gets Ready for Bed",
+      "author": ["Jennifer Adams", "Ron Stucki"],
+      "price": 9.99
+    },
+    {
+      "title": "\"More More More\", Said the Baby",
+      "author": "Vera B Williams",
+      "price": 7.19
+    }
+  ]
+}
+```
+
+---
+
+## Web data - XML
+
+```xml
+&lt;bookList&gt;
+  &lt;book&gt;
+    &lt;title&gt;The Cat in the Hat&lt;/title&gt;
+    &lt;author&gt;Dr. Seuss&lt;/author&gt;
+    &lt;price&gt;6.99&lt;/price&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;title&gt;Edgar Gets Ready for Bed&lt;/title&gt;
+    &lt;author&gt;Jennifer Adams and Ron Stucki&lt;/author&gt;
+    &lt;price&gt;9.99&lt;/price&gt;
+  &lt;/book&gt;
+  &lt;book&gt;
+    &lt;title&gt;"More More More," Said the Baby&lt;/title&gt;
+    &lt;author&gt;Vera B Williams&lt;/author&gt;
+    &lt;price&gt;7.19&lt;/price&gt;
+  &lt;/book&gt;
+&lt;/bookList&gt;
+```
+
+---
+
+## Tidy data
+
+&lt;img src="imgs/tidy.png" width="100%" /&gt;
+
+.footnote[ 
+From R4DS - [tidy data chapter](r4ds.had.co.nz/tidy-data.html), [J. Stat Soft Paper (2014)](http://www.jstatsoft.org/v59/i10/)
+]
+
+---
+class: middle
+count: false
+
+# Motivating Examples
+
+---
+
+background-image: url(imgs/dennys_lq.jpeg)
+background-position: center
+background-color: #000000
+
+---
+
+background-image: url(imgs/dark_sky_api.png)
+background-color: #30334A
+background-position: top
+
+---
+class: middle
+count: false
+
+# Web Scraping
+
+---
+
+## rvest
+
+.pull-left13[
+&lt;img src="imgs/rvest.png" width="2941" /&gt;
+]
+
+.pull-right23[
+`rvest` is a tidyverse package that makes basic processing and manipulation of HTML data straight forward. It wraps core functionality from the `xml2` package with a more user friendly interface, as such it can also be used for processing XML data.
+]
+
+&lt;br/&gt;
+
+Core functions:
+
+&lt;div&gt;
+.pull-left[
+* `read_html`
+* `html_nodes`
+* `html_table`
+* `html_text`
+]
+
+.pull-right[
+* `html_name`
+* `html_attrs`
+* `html_attr`
+]
+
+---
+
+## html + rvest
+
+```html
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;This is a title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p align="center"&gt;Hello world!&lt;/p&gt;
+    &lt;br/&gt;
+    &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+    &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+    &lt;div class="contact"&gt;
+      &lt;div class="home"&gt;555-555-1234&lt;/div&gt;
+      &lt;div class="home"&gt;555-555-2345&lt;/div&gt;
+      &lt;div class="work"&gt;555-555-9999&lt;/div&gt;
+      &lt;div class="fax"&gt;555-555-8888&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+```
+
+
+
+
+```r
+read_html(html)
+```
+
+```
+## {xml_document}
+## &lt;html&gt;
+## [1] &lt;head&gt;\n&lt;meta http-equiv="Content-Type" content="text/html; charset=UTF-8"&gt;\n&lt;title&gt;This is a ...
+## [2] &lt;body&gt;\n    &lt;p align="center"&gt;Hello world!&lt;/p&gt;\n    &lt;br&gt;&lt;div class="name" id="first"&gt;John&lt;/di ...
+```
+
+---
+
+## css selectors
+
+We will be using a tool called **Selector Gadget** to help identify and extract the html elements / attributes of interest - it does this by interactively constructing a css selector using an example html document.
+
+&lt;br/&gt;
+
+.small[
+
+Selector          |  Example         | Description
+:-----------------|:-----------------|:--------------------------------------------------
+element           |  `p`             | Select all &amp;lt;p&amp;gt; elements
+element element   |  `div p`         | Select all &amp;lt;p&amp;gt; elements inside a &amp;lt;div&amp;gt; element
+element&gt;element   |  `div &gt; p`       | Select all &amp;lt;p&amp;gt; elements with &amp;lt;div&amp;gt; as a parent
+.class            |  `.title`        | Select all elements with class="title" attribute
+#id               |  `#name`         | Select all elements with id="name" attribute
+[attribute]       |  `[class]`       | Select all elements with a class attribute
+[attribute=value] |  `[class=title]` | Select all elements with class="title"
+
+]
+
+---
+
+## Selecting and Extracting
+
+.small[
+```html
+...
+&lt;p align="center"&gt;Hello world!&lt;/p&gt;
+...
+```
+]
+
+
+
+```r
+read_html(html) %&gt;% html_nodes("p")
+```
+
+```
+## {xml_nodeset (1)}
+## [1] &lt;p align="center"&gt;Hello world!&lt;/p&gt;
+```
+
+--
+
+
+```r
+read_html(html) %&gt;% html_nodes("p") %&gt;% html_text()
+```
+
+```
+## [1] "Hello world!"
+```
+
+--
+
+
+```r
+read_html(html) %&gt;% html_nodes("p") %&gt;% html_attrs()
+```
+
+```
+## [[1]]
+##    align 
+## "center"
+```
+
+--
+
+
+```r
+read_html(html) %&gt;% html_nodes("p") %&gt;% html_attr("align")
+```
+
+```
+## [1] "center"
+```
+
+---
+
+## Nesting
+
+.small[
+```html
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;This is a title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p align="center"&gt;Hello world!&lt;/p&gt;
+    &lt;br/&gt;
+    &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+    &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+    &lt;div class="contact"&gt;
+      &lt;div class="home"&gt;555-555-1234&lt;/div&gt;
+      &lt;div class="home"&gt;555-555-2345&lt;/div&gt;
+      &lt;div class="work"&gt;555-555-9999&lt;/div&gt;
+      &lt;div class="fax"&gt;555-555-8888&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+```
+]
+
+
+
+```r
+read_html(html) %&gt;% html_nodes("body div")
+```
+
+```
+## {xml_nodeset (7)}
+## [1] &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+## [2] &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+## [3] &lt;div class="contact"&gt;\n      &lt;div class="home"&gt;555-555-1234&lt;/div&gt;\n      &lt;div class="home"&gt;55 ...
+## [4] &lt;div class="home"&gt;555-555-1234&lt;/div&gt;
+## [5] &lt;div class="home"&gt;555-555-2345&lt;/div&gt;
+## [6] &lt;div class="work"&gt;555-555-9999&lt;/div&gt;
+## [7] &lt;div class="fax"&gt;555-555-8888&lt;/div&gt;
+```
+
+---
+
+## Nesting
+
+.small[
+```html
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;This is a title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p align="center"&gt;Hello world!&lt;/p&gt;
+    &lt;br/&gt;
+    &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+    &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+    &lt;div class="contact"&gt;
+      &lt;div class="home"&gt;555-555-1234&lt;/div&gt;
+      &lt;div class="home"&gt;555-555-2345&lt;/div&gt;
+      &lt;div class="work"&gt;555-555-9999&lt;/div&gt;
+      &lt;div class="fax"&gt;555-555-8888&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+```
+]
+
+
+```r
+read_html(html) %&gt;% html_nodes("body&gt;div")
+```
+
+```
+## {xml_nodeset (3)}
+## [1] &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+## [2] &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+## [3] &lt;div class="contact"&gt;\n      &lt;div class="home"&gt;555-555-1234&lt;/div&gt;\n      &lt;div class="home"&gt;55 ...
+```
+
+---
+
+## Nesting
+
+.small[
+```html
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;This is a title&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;p align="center"&gt;Hello world!&lt;/p&gt;
+    &lt;br/&gt;
+    &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+    &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+    &lt;div class="contact"&gt;
+      &lt;div class="home"&gt;555-555-1234&lt;/div&gt;
+      &lt;div class="home"&gt;555-555-2345&lt;/div&gt;
+      &lt;div class="work"&gt;555-555-9999&lt;/div&gt;
+      &lt;div class="fax"&gt;555-555-8888&lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+```
+]
+
+
+```r
+read_html(html) %&gt;% html_nodes("body div div")
+```
+
+```
+## {xml_nodeset (4)}
+## [1] &lt;div class="home"&gt;555-555-1234&lt;/div&gt;
+## [2] &lt;div class="home"&gt;555-555-2345&lt;/div&gt;
+## [3] &lt;div class="work"&gt;555-555-9999&lt;/div&gt;
+## [4] &lt;div class="fax"&gt;555-555-8888&lt;/div&gt;
+```
+
+---
+
+## classes and ids
+
+
+```r
+read_html(html) %&gt;% html_nodes(".name")
+```
+
+```
+## {xml_nodeset (2)}
+## [1] &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+## [2] &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+```
+
+--
+
+
+
+```r
+read_html(html) %&gt;% html_nodes("div.name")
+```
+
+```
+## {xml_nodeset (2)}
+## [1] &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+## [2] &lt;div class="name" id="last"&gt;Doe&lt;/div&gt;
+```
+
+--
+
+
+```r
+read_html(html) %&gt;% html_nodes("#first")
+```
+
+```
+## {xml_nodeset (1)}
+## [1] &lt;div class="name" id="first"&gt;John&lt;/div&gt;
+```
+
+---
+
+## SelectorGadget
+
+Is a javascript scriptlet / Chrome extension that helps you interactively build a CSS selector for the content you are interested in.
+
+&lt;center&gt;
+&lt;img src='imgs/selectorgadget.png' width=500&gt; &lt;br/&gt;
+&lt;a href='http://selectorgadget.com/'&gt;http://selectorgadget.com/&lt;/a&gt;
+&lt;/center&gt;
+
+---
+class: middle
+
+.center[
+# Live Demo
+
+## Putting `rvest` and `Selector Gadget` to work
+
+#### [http://bit.ly/Rundel-DVS_dennys](http://bit.ly/Rundel-DVS_dennys)
+]
+
+---
+
+class: middle
+count: false
+
+# Dark Sky API
+
+---
+
+## Dark Sky API Details
+
+Go to https://darksky.net/dev and sign up for an account.
+
+Every account gets up to 1000 free API calls / day which should be more than enough for our purposed today.
+
+--
+
+This API uses a **Re**presentational **S**tate **T**ransfer (REST) design, we can make two kinds of requests with this API.
+
+
+* Forecast Request:
+```url
+https://api.darksky.net/forecast/{key}/{latitude},{longitude}
+```
+
+* Time Machine Request:
+```url
+https://api.darksky.net/forecast/{key}/{latitude},{longitude},{time}
+```
+
+---
+
+## Durham Forecast results
+
+The latitude and longitude of Durham, NC are 35.9940° N, 78.8986° W which means we need to request 
+.small[https://api.darksky.net/forecast/24e13b35a014e3ca53a36a217243f61d/35.9940,-78.8986] &lt;br/&gt;
+from the API.
+
+--
+
+The results look something like the following, where each `⊕` represents hidden nested values.
+.small[
+```json
+{  
+  "latitude":35.994,
+  "longitude":-78.8986,
+  "timezone":"America/New_York",
+  "currently":{ ⊕ },
+  "minutely":{ ⊕ },
+  "hourly":{ ⊕  },
+  "daily":{ ⊕ },
+  "flags":{ ⊕ },
+  "offset":-5
+}
+```
+]
+
+.footnote[Note - We can check our coordinates using google maps: https://www.google.com/maps?q=35.9940,-78.8986]
+
+---
+
+## jsonlite
+
+To get things into R we can use the `jsonlite` package to directly read the url.
+
+
+```r
+durham = jsonlite::fromJSON(
+  "https://api.darksky.net/forecast/24e13b35a014e3ca53a36a217243f61d/35.9940,-78.8986",
+  simplifyDataFrame = FALSE
+)
+```
+
+
+```r
+str(durham)
+```
+
+```
+## List of 10
+##  $ latitude : num 36
+##  $ longitude: num -78.9
+##  $ timezone : chr "America/New_York"
+##  $ currently:List of 20
+##   ..$ time                : int 1542084522
+##   ..$ summary             : chr "Heavy Rain"
+##   ..$ icon                : chr "rain"
+##   ..$ nearestStormDistance: int 0
+##   ..$ precipIntensity     : num 0.229
+##   ..$ precipIntensityError: num 0.018
+##   ..$ precipProbability   : int 1
+##   ..$ precipType          : chr "rain"
+##   ..$ temperature         : num 45.5
+##   ..$ apparentTemperature : num 44.1
+##   ..$ dewPoint            : num 45.5
+##   ..$ humidity            : int 1
+##   ..$ pressure            : num 1017
+##   ..$ windSpeed           : num 3.45
+##   ..$ windGust            : num 5.18
+##   ..$ windBearing         : int 345
+##   ..$ cloudCover          : int 1
+##   ..$ uvIndex             : int 0
+##   ..$ visibility          : num 2.92
+##   ..$ ozone               : num 230
+##  $ minutely :List of 3
+##   ..$ summary: chr "Heavy rain for the hour."
+##   ..$ icon   : chr "rain"
+##   ..$ data   :List of 61
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084480
+##   .. .. ..$ precipIntensity     : num 0.222
+##   .. .. ..$ precipIntensityError: num 0.018
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084540
+##   .. .. ..$ precipIntensity     : num 0.232
+##   .. .. ..$ precipIntensityError: num 0.018
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084600
+##   .. .. ..$ precipIntensity     : num 0.234
+##   .. .. ..$ precipIntensityError: num 0.018
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084660
+##   .. .. ..$ precipIntensity     : num 0.231
+##   .. .. ..$ precipIntensityError: num 0.021
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084720
+##   .. .. ..$ precipIntensity     : num 0.22
+##   .. .. ..$ precipIntensityError: num 0.03
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084780
+##   .. .. ..$ precipIntensity     : num 0.209
+##   .. .. ..$ precipIntensityError: num 0.038
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084840
+##   .. .. ..$ precipIntensity     : num 0.222
+##   .. .. ..$ precipIntensityError: num 0.061
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084900
+##   .. .. ..$ precipIntensity     : num 0.254
+##   .. .. ..$ precipIntensityError: num 0.082
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542084960
+##   .. .. ..$ precipIntensity     : num 0.282
+##   .. .. ..$ precipIntensityError: num 0.089
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085020
+##   .. .. ..$ precipIntensity     : num 0.301
+##   .. .. ..$ precipIntensityError: num 0.093
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085080
+##   .. .. ..$ precipIntensity     : num 0.295
+##   .. .. ..$ precipIntensityError: num 0.097
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085140
+##   .. .. ..$ precipIntensity     : num 0.279
+##   .. .. ..$ precipIntensityError: num 0.101
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085200
+##   .. .. ..$ precipIntensity     : num 0.261
+##   .. .. ..$ precipIntensityError: num 0.103
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085260
+##   .. .. ..$ precipIntensity     : num 0.238
+##   .. .. ..$ precipIntensityError: num 0.105
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085320
+##   .. .. ..$ precipIntensity     : num 0.218
+##   .. .. ..$ precipIntensityError: num 0.103
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085380
+##   .. .. ..$ precipIntensity     : num 0.198
+##   .. .. ..$ precipIntensityError: num 0.098
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085440
+##   .. .. ..$ precipIntensity     : num 0.176
+##   .. .. ..$ precipIntensityError: num 0.09
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085500
+##   .. .. ..$ precipIntensity     : num 0.157
+##   .. .. ..$ precipIntensityError: num 0.082
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085560
+##   .. .. ..$ precipIntensity     : num 0.136
+##   .. .. ..$ precipIntensityError: num 0.074
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085620
+##   .. .. ..$ precipIntensity     : num 0.119
+##   .. .. ..$ precipIntensityError: num 0.068
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085680
+##   .. .. ..$ precipIntensity     : num 0.104
+##   .. .. ..$ precipIntensityError: num 0.06
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085740
+##   .. .. ..$ precipIntensity     : num 0.091
+##   .. .. ..$ precipIntensityError: num 0.052
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085800
+##   .. .. ..$ precipIntensity     : num 0.082
+##   .. .. ..$ precipIntensityError: num 0.045
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085860
+##   .. .. ..$ precipIntensity     : num 0.078
+##   .. .. ..$ precipIntensityError: num 0.038
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085920
+##   .. .. ..$ precipIntensity     : num 0.076
+##   .. .. ..$ precipIntensityError: num 0.036
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542085980
+##   .. .. ..$ precipIntensity     : num 0.079
+##   .. .. ..$ precipIntensityError: num 0.037
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086040
+##   .. .. ..$ precipIntensity     : num 0.083
+##   .. .. ..$ precipIntensityError: num 0.042
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086100
+##   .. .. ..$ precipIntensity     : num 0.089
+##   .. .. ..$ precipIntensityError: num 0.045
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086160
+##   .. .. ..$ precipIntensity     : num 0.096
+##   .. .. ..$ precipIntensityError: num 0.051
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086220
+##   .. .. ..$ precipIntensity     : num 0.103
+##   .. .. ..$ precipIntensityError: num 0.055
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086280
+##   .. .. ..$ precipIntensity     : num 0.111
+##   .. .. ..$ precipIntensityError: num 0.059
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086340
+##   .. .. ..$ precipIntensity     : num 0.118
+##   .. .. ..$ precipIntensityError: num 0.063
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086400
+##   .. .. ..$ precipIntensity     : num 0.124
+##   .. .. ..$ precipIntensityError: num 0.068
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086460
+##   .. .. ..$ precipIntensity     : num 0.132
+##   .. .. ..$ precipIntensityError: num 0.07
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086520
+##   .. .. ..$ precipIntensity     : num 0.138
+##   .. .. ..$ precipIntensityError: num 0.071
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086580
+##   .. .. ..$ precipIntensity     : num 0.143
+##   .. .. ..$ precipIntensityError: num 0.074
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086640
+##   .. .. ..$ precipIntensity     : num 0.147
+##   .. .. ..$ precipIntensityError: num 0.073
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086700
+##   .. .. ..$ precipIntensity     : num 0.152
+##   .. .. ..$ precipIntensityError: num 0.072
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086760
+##   .. .. ..$ precipIntensity     : num 0.155
+##   .. .. ..$ precipIntensityError: num 0.072
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086820
+##   .. .. ..$ precipIntensity     : num 0.156
+##   .. .. ..$ precipIntensityError: num 0.07
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086880
+##   .. .. ..$ precipIntensity     : num 0.157
+##   .. .. ..$ precipIntensityError: num 0.068
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542086940
+##   .. .. ..$ precipIntensity     : num 0.157
+##   .. .. ..$ precipIntensityError: num 0.066
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087000
+##   .. .. ..$ precipIntensity     : num 0.158
+##   .. .. ..$ precipIntensityError: num 0.064
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087060
+##   .. .. ..$ precipIntensity     : num 0.156
+##   .. .. ..$ precipIntensityError: num 0.062
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087120
+##   .. .. ..$ precipIntensity     : num 0.154
+##   .. .. ..$ precipIntensityError: num 0.06
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087180
+##   .. .. ..$ precipIntensity     : num 0.155
+##   .. .. ..$ precipIntensityError: num 0.059
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087240
+##   .. .. ..$ precipIntensity     : num 0.153
+##   .. .. ..$ precipIntensityError: num 0.06
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087300
+##   .. .. ..$ precipIntensity     : num 0.153
+##   .. .. ..$ precipIntensityError: num 0.06
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087360
+##   .. .. ..$ precipIntensity     : num 0.154
+##   .. .. ..$ precipIntensityError: num 0.062
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087420
+##   .. .. ..$ precipIntensity     : num 0.157
+##   .. .. ..$ precipIntensityError: num 0.064
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087480
+##   .. .. ..$ precipIntensity     : num 0.158
+##   .. .. ..$ precipIntensityError: num 0.069
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087540
+##   .. .. ..$ precipIntensity     : num 0.159
+##   .. .. ..$ precipIntensityError: num 0.069
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087600
+##   .. .. ..$ precipIntensity     : num 0.162
+##   .. .. ..$ precipIntensityError: num 0.075
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087660
+##   .. .. ..$ precipIntensity     : num 0.166
+##   .. .. ..$ precipIntensityError: num 0.079
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087720
+##   .. .. ..$ precipIntensity     : num 0.171
+##   .. .. ..$ precipIntensityError: num 0.085
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087780
+##   .. .. ..$ precipIntensity     : num 0.173
+##   .. .. ..$ precipIntensityError: num 0.086
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087840
+##   .. .. ..$ precipIntensity     : num 0.174
+##   .. .. ..$ precipIntensityError: num 0.089
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087900
+##   .. .. ..$ precipIntensity     : num 0.177
+##   .. .. ..$ precipIntensityError: num 0.091
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542087960
+##   .. .. ..$ precipIntensity     : num 0.178
+##   .. .. ..$ precipIntensityError: num 0.094
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542088020
+##   .. .. ..$ precipIntensity     : num 0.18
+##   .. .. ..$ precipIntensityError: num 0.096
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##   .. ..$ :List of 5
+##   .. .. ..$ time                : int 1542088080
+##   .. .. ..$ precipIntensity     : num 0.179
+##   .. .. ..$ precipIntensityError: num 0.095
+##   .. .. ..$ precipProbability   : int 1
+##   .. .. ..$ precipType          : chr "rain"
+##  $ hourly   :List of 3
+##   ..$ summary: chr "Heavy rain until tomorrow morning, starting again tomorrow afternoon."
+##   ..$ icon   : chr "rain"
+##   ..$ data   :List of 49
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542081600
+##   .. .. ..$ summary            : chr "Heavy Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.267
+##   .. .. ..$ precipProbability  : int 1
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 45
+##   .. .. ..$ apparentTemperature: num 43.6
+##   .. .. ..$ dewPoint           : num 45
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1017
+##   .. .. ..$ windSpeed          : num 3.32
+##   .. .. ..$ windGust           : num 6.33
+##   .. .. ..$ windBearing        : int 15
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 3.12
+##   .. .. ..$ ozone              : num 230
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542085200
+##   .. .. ..$ summary            : chr "Heavy Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.261
+##   .. .. ..$ precipProbability  : int 1
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 45.6
+##   .. .. ..$ apparentTemperature: num 44.1
+##   .. .. ..$ dewPoint           : num 45.6
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1017
+##   .. .. ..$ windSpeed          : num 3.6
+##   .. .. ..$ windGust           : num 4.92
+##   .. .. ..$ windBearing        : int 339
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 2.88
+##   .. .. ..$ ozone              : num 230
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542088800
+##   .. .. ..$ summary            : chr "Heavy Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.265
+##   .. .. ..$ precipProbability  : int 1
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 45.7
+##   .. .. ..$ apparentTemperature: num 44.5
+##   .. .. ..$ dewPoint           : num 45.7
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 3.32
+##   .. .. ..$ windGust           : num 3.32
+##   .. .. ..$ windBearing        : int 338
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 2.87
+##   .. .. ..$ ozone              : num 229
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542092400
+##   .. .. ..$ summary            : chr "Heavy Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.275
+##   .. .. ..$ precipProbability  : num 0.88
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 45.5
+##   .. .. ..$ apparentTemperature: num 43
+##   .. .. ..$ dewPoint           : num 45.5
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 4.94
+##   .. .. ..$ windGust           : num 9.32
+##   .. .. ..$ windBearing        : int 326
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 2.41
+##   .. .. ..$ ozone              : num 229
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542096000
+##   .. .. ..$ summary            : chr "Heavy Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.222
+##   .. .. ..$ precipProbability  : num 0.87
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 45.2
+##   .. .. ..$ apparentTemperature: num 42.4
+##   .. .. ..$ dewPoint           : num 45.2
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 5.27
+##   .. .. ..$ windGust           : num 11.5
+##   .. .. ..$ windBearing        : int 326
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 3.08
+##   .. .. ..$ ozone              : num 230
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542099600
+##   .. .. ..$ summary            : chr "Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.156
+##   .. .. ..$ precipProbability  : num 0.86
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 45.1
+##   .. .. ..$ apparentTemperature: num 42.3
+##   .. .. ..$ dewPoint           : num 45.1
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 5.36
+##   .. .. ..$ windGust           : num 11.7
+##   .. .. ..$ windBearing        : int 316
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 5.06
+##   .. .. ..$ ozone              : num 230
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542103200
+##   .. .. ..$ summary            : chr "Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.104
+##   .. .. ..$ precipProbability  : num 0.85
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 44.3
+##   .. .. ..$ apparentTemperature: num 41.3
+##   .. .. ..$ dewPoint           : num 44.3
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 5.36
+##   .. .. ..$ windGust           : num 11.6
+##   .. .. ..$ windBearing        : int 330
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 5.9
+##   .. .. ..$ ozone              : num 230
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542106800
+##   .. .. ..$ summary            : chr "Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0693
+##   .. .. ..$ precipProbability  : num 0.84
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 43.2
+##   .. .. ..$ apparentTemperature: num 40.4
+##   .. .. ..$ dewPoint           : num 43.2
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 4.78
+##   .. .. ..$ windGust           : num 11.2
+##   .. .. ..$ windBearing        : int 335
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 7.32
+##   .. .. ..$ ozone              : num 230
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542110400
+##   .. .. ..$ summary            : chr "Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0659
+##   .. .. ..$ precipProbability  : num 0.82
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 42
+##   .. .. ..$ apparentTemperature: num 39.6
+##   .. .. ..$ dewPoint           : num 42
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : int 4
+##   .. .. ..$ windGust           : num 10.3
+##   .. .. ..$ windBearing        : int 327
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 8.55
+##   .. .. ..$ ozone              : num 231
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542114000
+##   .. .. ..$ summary            : chr "Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0647
+##   .. .. ..$ precipProbability  : num 0.78
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 42
+##   .. .. ..$ apparentTemperature: num 40.1
+##   .. .. ..$ dewPoint           : num 42
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 3.52
+##   .. .. ..$ windGust           : num 8.25
+##   .. .. ..$ windBearing        : int 327
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 9.46
+##   .. .. ..$ ozone              : num 232
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542117600
+##   .. .. ..$ summary            : chr "Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0542
+##   .. .. ..$ precipProbability  : num 0.71
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 43.4
+##   .. .. ..$ apparentTemperature: num 43.4
+##   .. .. ..$ dewPoint           : num 43.4
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1016
+##   .. .. ..$ windSpeed          : num 2.87
+##   .. .. ..$ windGust           : num 6.81
+##   .. .. ..$ windBearing        : int 298
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 1
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 233
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542121200
+##   .. .. ..$ summary            : chr "Light Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0458
+##   .. .. ..$ precipProbability  : num 0.61
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 44.7
+##   .. .. ..$ apparentTemperature: num 44.7
+##   .. .. ..$ dewPoint           : num 44.7
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1017
+##   .. .. ..$ windSpeed          : num 2.88
+##   .. .. ..$ windGust           : num 6.08
+##   .. .. ..$ windBearing        : int 281
+##   .. .. ..$ cloudCover         : num 0.98
+##   .. .. ..$ uvIndex            : int 2
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 234
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542124800
+##   .. .. ..$ summary            : chr "Light Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.029
+##   .. .. ..$ precipProbability  : num 0.56
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 46.4
+##   .. .. ..$ apparentTemperature: num 46.4
+##   .. .. ..$ dewPoint           : num 46.4
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1017
+##   .. .. ..$ windSpeed          : num 2.67
+##   .. .. ..$ windGust           : num 6.67
+##   .. .. ..$ windBearing        : int 287
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 3
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 234
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542128400
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0162
+##   .. .. ..$ precipProbability  : num 0.52
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 47.9
+##   .. .. ..$ apparentTemperature: num 47
+##   .. .. ..$ dewPoint           : num 47.9
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1017
+##   .. .. ..$ windSpeed          : num 3.33
+##   .. .. ..$ windGust           : num 7.77
+##   .. .. ..$ windBearing        : int 280
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 3
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 234
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542132000
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0124
+##   .. .. ..$ precipProbability  : num 0.52
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 48.7
+##   .. .. ..$ apparentTemperature: num 47.5
+##   .. .. ..$ dewPoint           : num 48.7
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1017
+##   .. .. ..$ windSpeed          : num 3.73
+##   .. .. ..$ windGust           : num 9.36
+##   .. .. ..$ windBearing        : int 286
+##   .. .. ..$ cloudCover         : num 0.96
+##   .. .. ..$ uvIndex            : int 3
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 234
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542135600
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0184
+##   .. .. ..$ precipProbability  : num 0.61
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 48.8
+##   .. .. ..$ apparentTemperature: num 47.1
+##   .. .. ..$ dewPoint           : num 48.8
+##   .. .. ..$ humidity           : int 1
+##   .. .. ..$ pressure           : num 1017
+##   .. .. ..$ windSpeed          : num 4.53
+##   .. .. ..$ windGust           : num 10.2
+##   .. .. ..$ windBearing        : int 310
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 2
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 234
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542139200
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0244
+##   .. .. ..$ precipProbability  : num 0.64
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 49.9
+##   .. .. ..$ apparentTemperature: num 47.6
+##   .. .. ..$ dewPoint           : num 49.5
+##   .. .. ..$ humidity           : num 0.99
+##   .. .. ..$ pressure           : num 1018
+##   .. .. ..$ windSpeed          : num 5.9
+##   .. .. ..$ windGust           : num 14.3
+##   .. .. ..$ windBearing        : int 318
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 1
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 233
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542142800
+##   .. .. ..$ summary            : chr "Light Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0278
+##   .. .. ..$ precipProbability  : num 0.66
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 50.3
+##   .. .. ..$ apparentTemperature: num 50.3
+##   .. .. ..$ dewPoint           : num 49.3
+##   .. .. ..$ humidity           : num 0.96
+##   .. .. ..$ pressure           : num 1018
+##   .. .. ..$ windSpeed          : num 7.01
+##   .. .. ..$ windGust           : num 17.4
+##   .. .. ..$ windBearing        : int 326
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 9.73
+##   .. .. ..$ ozone              : num 233
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542146400
+##   .. .. ..$ summary            : chr "Light Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0259
+##   .. .. ..$ precipProbability  : num 0.65
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 50
+##   .. .. ..$ apparentTemperature: num 46.9
+##   .. .. ..$ dewPoint           : num 48.6
+##   .. .. ..$ humidity           : num 0.95
+##   .. .. ..$ pressure           : num 1019
+##   .. .. ..$ windSpeed          : num 7.61
+##   .. .. ..$ windGust           : num 18.7
+##   .. .. ..$ windBearing        : int 332
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 8.79
+##   .. .. ..$ ozone              : num 234
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542150000
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0245
+##   .. .. ..$ precipProbability  : num 0.63
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 49.1
+##   .. .. ..$ apparentTemperature: num 45.6
+##   .. .. ..$ dewPoint           : num 47.6
+##   .. .. ..$ humidity           : num 0.94
+##   .. .. ..$ pressure           : num 1020
+##   .. .. ..$ windSpeed          : num 7.99
+##   .. .. ..$ windGust           : num 18.9
+##   .. .. ..$ windBearing        : int 336
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 8.16
+##   .. .. ..$ ozone              : num 236
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542153600
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.025
+##   .. .. ..$ precipProbability  : num 0.59
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 48.1
+##   .. .. ..$ apparentTemperature: num 44.3
+##   .. .. ..$ dewPoint           : num 46.5
+##   .. .. ..$ humidity           : num 0.94
+##   .. .. ..$ pressure           : num 1021
+##   .. .. ..$ windSpeed          : num 8.32
+##   .. .. ..$ windGust           : num 19.1
+##   .. .. ..$ windBearing        : int 339
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 8.23
+##   .. .. ..$ ozone              : num 238
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542157200
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0247
+##   .. .. ..$ precipProbability  : num 0.56
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 46.9
+##   .. .. ..$ apparentTemperature: num 42.6
+##   .. .. ..$ dewPoint           : num 45.3
+##   .. .. ..$ humidity           : num 0.94
+##   .. .. ..$ pressure           : num 1022
+##   .. .. ..$ windSpeed          : num 8.85
+##   .. .. ..$ windGust           : num 19.6
+##   .. .. ..$ windBearing        : int 342
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 9.44
+##   .. .. ..$ ozone              : num 239
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542160800
+##   .. .. ..$ summary            : chr "Light Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0273
+##   .. .. ..$ precipProbability  : num 0.55
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 45.7
+##   .. .. ..$ apparentTemperature: num 41
+##   .. .. ..$ dewPoint           : num 44
+##   .. .. ..$ humidity           : num 0.94
+##   .. .. ..$ pressure           : num 1023
+##   .. .. ..$ windSpeed          : num 9.37
+##   .. .. ..$ windGust           : num 20.1
+##   .. .. ..$ windBearing        : int 344
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 240
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542164400
+##   .. .. ..$ summary            : chr "Light Rain"
+##   .. .. ..$ icon               : chr "rain"
+##   .. .. ..$ precipIntensity    : num 0.0295
+##   .. .. ..$ precipProbability  : num 0.53
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 44.6
+##   .. .. ..$ apparentTemperature: num 39.5
+##   .. .. ..$ dewPoint           : num 42.8
+##   .. .. ..$ humidity           : num 0.94
+##   .. .. ..$ pressure           : num 1024
+##   .. .. ..$ windSpeed          : num 9.54
+##   .. .. ..$ windGust           : num 20.2
+##   .. .. ..$ windBearing        : int 346
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 241
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542168000
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0232
+##   .. .. ..$ precipProbability  : num 0.47
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 43.8
+##   .. .. ..$ apparentTemperature: num 38.7
+##   .. .. ..$ dewPoint           : num 41.8
+##   .. .. ..$ humidity           : num 0.93
+##   .. .. ..$ pressure           : num 1025
+##   .. .. ..$ windSpeed          : num 9.08
+##   .. .. ..$ windGust           : num 19.9
+##   .. .. ..$ windBearing        : int 346
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 241
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542171600
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0143
+##   .. .. ..$ precipProbability  : num 0.34
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 43
+##   .. .. ..$ apparentTemperature: num 38.2
+##   .. .. ..$ dewPoint           : num 40.9
+##   .. .. ..$ humidity           : num 0.92
+##   .. .. ..$ pressure           : num 1026
+##   .. .. ..$ windSpeed          : num 8.28
+##   .. .. ..$ windGust           : num 19.2
+##   .. .. ..$ windBearing        : int 345
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 242
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542175200
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0083
+##   .. .. ..$ precipProbability  : num 0.25
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 42.5
+##   .. .. ..$ apparentTemperature: num 37.9
+##   .. .. ..$ dewPoint           : int 40
+##   .. .. ..$ humidity           : num 0.91
+##   .. .. ..$ pressure           : num 1026
+##   .. .. ..$ windSpeed          : num 7.66
+##   .. .. ..$ windGust           : num 18.6
+##   .. .. ..$ windBearing        : int 346
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 242
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542178800
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.004
+##   .. .. ..$ precipProbability  : num 0.1
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 42.3
+##   .. .. ..$ apparentTemperature: num 37.7
+##   .. .. ..$ dewPoint           : num 39.1
+##   .. .. ..$ humidity           : num 0.88
+##   .. .. ..$ pressure           : num 1027
+##   .. .. ..$ windSpeed          : num 7.43
+##   .. .. ..$ windGust           : num 18.2
+##   .. .. ..$ windBearing        : int 352
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 243
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542182400
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0014
+##   .. .. ..$ precipProbability  : num 0.04
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 42.2
+##   .. .. ..$ apparentTemperature: num 37.6
+##   .. .. ..$ dewPoint           : num 38.2
+##   .. .. ..$ humidity           : num 0.86
+##   .. .. ..$ pressure           : num 1027
+##   .. .. ..$ windSpeed          : num 7.35
+##   .. .. ..$ windGust           : num 17.8
+##   .. .. ..$ windBearing        : int 1
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 243
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542186000
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 8e-04
+##   .. .. ..$ precipProbability  : num 0.02
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 41.9
+##   .. .. ..$ apparentTemperature: num 37.3
+##   .. .. ..$ dewPoint           : num 37.5
+##   .. .. ..$ humidity           : num 0.84
+##   .. .. ..$ pressure           : num 1027
+##   .. .. ..$ windSpeed          : num 7.37
+##   .. .. ..$ windGust           : num 17.7
+##   .. .. ..$ windBearing        : int 8
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 244
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542189600
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 5e-04
+##   .. .. ..$ precipProbability  : num 0.02
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 41.4
+##   .. .. ..$ apparentTemperature: num 36.6
+##   .. .. ..$ dewPoint           : num 36.9
+##   .. .. ..$ humidity           : num 0.84
+##   .. .. ..$ pressure           : num 1028
+##   .. .. ..$ windSpeed          : num 7.41
+##   .. .. ..$ windGust           : num 17.9
+##   .. .. ..$ windBearing        : int 14
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 246
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542193200
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 3e-04
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 40.5
+##   .. .. ..$ apparentTemperature: num 35.4
+##   .. .. ..$ dewPoint           : num 36.4
+##   .. .. ..$ humidity           : num 0.85
+##   .. .. ..$ pressure           : num 1029
+##   .. .. ..$ windSpeed          : num 7.51
+##   .. .. ..$ windGust           : num 18.2
+##   .. .. ..$ windBearing        : int 19
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 247
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542196800
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 3e-04
+##   .. .. ..$ precipProbability  : num 0.02
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 39.3
+##   .. .. ..$ apparentTemperature: num 33.9
+##   .. .. ..$ dewPoint           : num 35.5
+##   .. .. ..$ humidity           : num 0.86
+##   .. .. ..$ pressure           : num 1030
+##   .. .. ..$ windSpeed          : num 7.74
+##   .. .. ..$ windGust           : num 18.4
+##   .. .. ..$ windBearing        : int 24
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 248
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542200400
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 3e-04
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 37.9
+##   .. .. ..$ apparentTemperature: num 31.9
+##   .. .. ..$ dewPoint           : num 34.1
+##   .. .. ..$ humidity           : num 0.86
+##   .. .. ..$ pressure           : num 1031
+##   .. .. ..$ windSpeed          : num 8.29
+##   .. .. ..$ windGust           : num 18.4
+##   .. .. ..$ windBearing        : int 30
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 249
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542204000
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 3e-04
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 37.4
+##   .. .. ..$ apparentTemperature: num 30.9
+##   .. .. ..$ dewPoint           : num 32.5
+##   .. .. ..$ humidity           : num 0.82
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 8.97
+##   .. .. ..$ windGust           : num 18.3
+##   .. .. ..$ windBearing        : int 38
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 1
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 251
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542207600
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 4e-04
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 37.8
+##   .. .. ..$ apparentTemperature: num 31.2
+##   .. .. ..$ dewPoint           : num 31.1
+##   .. .. ..$ humidity           : num 0.76
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 9.4
+##   .. .. ..$ windGust           : num 17.9
+##   .. .. ..$ windBearing        : int 41
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 2
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 251
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542211200
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 5e-04
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 39
+##   .. .. ..$ apparentTemperature: num 32.6
+##   .. .. ..$ dewPoint           : num 30.2
+##   .. .. ..$ humidity           : num 0.71
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 9.44
+##   .. .. ..$ windGust           : num 16.8
+##   .. .. ..$ windBearing        : int 41
+##   .. .. ..$ cloudCover         : num 0.98
+##   .. .. ..$ uvIndex            : int 3
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 251
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542214800
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 5e-04
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 40.5
+##   .. .. ..$ apparentTemperature: num 34.6
+##   .. .. ..$ dewPoint           : num 29.7
+##   .. .. ..$ humidity           : num 0.65
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 9.22
+##   .. .. ..$ windGust           : num 15.5
+##   .. .. ..$ windBearing        : int 39
+##   .. .. ..$ cloudCover         : num 0.95
+##   .. .. ..$ uvIndex            : int 3
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 251
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542218400
+##   .. .. ..$ summary            : chr "Mostly Cloudy"
+##   .. .. ..$ icon               : chr "partly-cloudy-day"
+##   .. .. ..$ precipIntensity    : num 7e-04
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 41.6
+##   .. .. ..$ apparentTemperature: num 36
+##   .. .. ..$ dewPoint           : num 29.2
+##   .. .. ..$ humidity           : num 0.61
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 9.01
+##   .. .. ..$ windGust           : num 14.8
+##   .. .. ..$ windBearing        : int 37
+##   .. .. ..$ cloudCover         : num 0.93
+##   .. .. ..$ uvIndex            : int 3
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 251
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542222000
+##   .. .. ..$ summary            : chr "Mostly Cloudy"
+##   .. .. ..$ icon               : chr "partly-cloudy-day"
+##   .. .. ..$ precipIntensity    : num 0.0011
+##   .. .. ..$ precipProbability  : num 0.01
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 42
+##   .. .. ..$ apparentTemperature: num 36.6
+##   .. .. ..$ dewPoint           : num 28.9
+##   .. .. ..$ humidity           : num 0.59
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 8.9
+##   .. .. ..$ windGust           : num 15.1
+##   .. .. ..$ windBearing        : int 38
+##   .. .. ..$ cloudCover         : num 0.93
+##   .. .. ..$ uvIndex            : int 2
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 250
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542225600
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.002
+##   .. .. ..$ precipProbability  : num 0.02
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 42.1
+##   .. .. ..$ apparentTemperature: num 36.8
+##   .. .. ..$ dewPoint           : num 28.7
+##   .. .. ..$ humidity           : num 0.59
+##   .. .. ..$ pressure           : num 1031
+##   .. .. ..$ windSpeed          : num 8.78
+##   .. .. ..$ windGust           : num 16.1
+##   .. .. ..$ windBearing        : int 39
+##   .. .. ..$ cloudCover         : num 0.94
+##   .. .. ..$ uvIndex            : int 1
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 249
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542229200
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0029
+##   .. .. ..$ precipProbability  : num 0.02
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 41.8
+##   .. .. ..$ apparentTemperature: num 36.5
+##   .. .. ..$ dewPoint           : num 28.5
+##   .. .. ..$ humidity           : num 0.59
+##   .. .. ..$ pressure           : num 1031
+##   .. .. ..$ windSpeed          : num 8.61
+##   .. .. ..$ windGust           : num 17.2
+##   .. .. ..$ windBearing        : int 41
+##   .. .. ..$ cloudCover         : num 0.95
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 249
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542232800
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0034
+##   .. .. ..$ precipProbability  : num 0.02
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 41
+##   .. .. ..$ apparentTemperature: num 35.7
+##   .. .. ..$ dewPoint           : num 28.4
+##   .. .. ..$ humidity           : num 0.61
+##   .. .. ..$ pressure           : num 1031
+##   .. .. ..$ windSpeed          : num 8.29
+##   .. .. ..$ windGust           : num 18.2
+##   .. .. ..$ windBearing        : int 44
+##   .. .. ..$ cloudCover         : num 0.96
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 10
+##   .. .. ..$ ozone              : num 251
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542236400
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0036
+##   .. .. ..$ precipProbability  : num 0.03
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 40.1
+##   .. .. ..$ apparentTemperature: num 34.8
+##   .. .. ..$ dewPoint           : num 28.5
+##   .. .. ..$ humidity           : num 0.63
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 7.91
+##   .. .. ..$ windGust           : num 19.4
+##   .. .. ..$ windBearing        : int 47
+##   .. .. ..$ cloudCover         : num 0.97
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 9.94
+##   .. .. ..$ ozone              : num 252
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542240000
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0042
+##   .. .. ..$ precipProbability  : num 0.03
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 39.2
+##   .. .. ..$ apparentTemperature: num 33.8
+##   .. .. ..$ dewPoint           : num 28.4
+##   .. .. ..$ humidity           : num 0.65
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 7.77
+##   .. .. ..$ windGust           : num 20.4
+##   .. .. ..$ windBearing        : int 49
+##   .. .. ..$ cloudCover         : num 0.98
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 9.78
+##   .. .. ..$ ozone              : num 254
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542243600
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0056
+##   .. .. ..$ precipProbability  : num 0.04
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 38.7
+##   .. .. ..$ apparentTemperature: num 33
+##   .. .. ..$ dewPoint           : num 28.3
+##   .. .. ..$ humidity           : num 0.66
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 8.02
+##   .. .. ..$ windGust           : num 21.1
+##   .. .. ..$ windBearing        : int 50
+##   .. .. ..$ cloudCover         : num 0.99
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 9.42
+##   .. .. ..$ ozone              : num 256
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542247200
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0076
+##   .. .. ..$ precipProbability  : num 0.04
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 38.3
+##   .. .. ..$ apparentTemperature: num 32.2
+##   .. .. ..$ dewPoint           : num 28
+##   .. .. ..$ humidity           : num 0.66
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 8.5
+##   .. .. ..$ windGust           : num 21.6
+##   .. .. ..$ windBearing        : int 49
+##   .. .. ..$ cloudCover         : num 0.99
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : int 9
+##   .. .. ..$ ozone              : num 259
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542250800
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0099
+##   .. .. ..$ precipProbability  : num 0.04
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 37.9
+##   .. .. ..$ apparentTemperature: num 31.5
+##   .. .. ..$ dewPoint           : num 27.8
+##   .. .. ..$ humidity           : num 0.67
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : int 9
+##   .. .. ..$ windGust           : num 22.3
+##   .. .. ..$ windBearing        : int 49
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 8.69
+##   .. .. ..$ ozone              : num 260
+##   .. ..$ :List of 18
+##   .. .. ..$ time               : int 1542254400
+##   .. .. ..$ summary            : chr "Overcast"
+##   .. .. ..$ icon               : chr "cloudy"
+##   .. .. ..$ precipIntensity    : num 0.0121
+##   .. .. ..$ precipProbability  : num 0.06
+##   .. .. ..$ precipType         : chr "rain"
+##   .. .. ..$ temperature        : num 37.8
+##   .. .. ..$ apparentTemperature: num 31.2
+##   .. .. ..$ dewPoint           : num 27.4
+##   .. .. ..$ humidity           : num 0.66
+##   .. .. ..$ pressure           : num 1032
+##   .. .. ..$ windSpeed          : num 9.52
+##   .. .. ..$ windGust           : num 23.5
+##   .. .. ..$ windBearing        : int 50
+##   .. .. ..$ cloudCover         : int 1
+##   .. .. ..$ uvIndex            : int 0
+##   .. .. ..$ visibility         : num 8.58
+##   .. .. ..$ ozone              : num 262
+##  $ daily    :List of 3
+##   ..$ summary: chr "Rain today through Thursday, with high temperatures bottoming out at 43°F on Wednesday."
+##   ..$ icon   : chr "rain"
+##   ..$ data   :List of 8
+##   .. ..$ :List of 39
+##   .. .. ..$ time                       : int 1541998800
+##   .. .. ..$ summary                    : chr "Heavy rain starting in the afternoon."
+##   .. .. ..$ icon                       : chr "rain"
+##   .. .. ..$ sunriseTime                : int 1542023441
+##   .. .. ..$ sunsetTime                 : int 1542060697
+##   .. .. ..$ moonPhase                  : num 0.16
+##   .. .. ..$ precipIntensity            : num 0.095
+##   .. .. ..$ precipIntensityMax         : num 0.327
+##   .. .. ..$ precipIntensityMaxTime     : int 1542074400
+##   .. .. ..$ precipProbability          : num 0.96
+##   .. .. ..$ precipType                 : chr "rain"
+##   .. .. ..$ temperatureHigh            : num 46.4
+##   .. .. ..$ temperatureHighTime        : int 1542042000
+##   .. .. ..$ temperatureLow             : num 42
+##   .. .. ..$ temperatureLowTime         : int 1542110400
+##   .. .. ..$ apparentTemperatureHigh    : num 46.4
+##   .. .. ..$ apparentTemperatureHighTime: int 1542042000
+##   .. .. ..$ apparentTemperatureLow     : num 39.6
+##   .. .. ..$ apparentTemperatureLowTime : int 1542110400
+##   .. .. ..$ dewPoint                   : num 38.4
+##   .. .. ..$ humidity                   : num 0.91
+##   .. .. ..$ pressure                   : num 1026
+##   .. .. ..$ windSpeed                  : num 2.75
+##   .. .. ..$ windGust                   : num 12.4
+##   .. .. ..$ windGustTime               : int 1542067200
+##   .. .. ..$ windBearing                : int 39
+##   .. .. ..$ cloudCover                 : num 0.84
+##   .. .. ..$ uvIndex                    : int 3
+##   .. .. ..$ uvIndexTime                : int 1542038400
+##   .. .. ..$ visibility                 : num 7.06
+##   .. .. ..$ ozone                      : num 232
+##   .. .. ..$ temperatureMin             : num 33.5
+##   .. .. ..$ temperatureMinTime         : int 1542020400
+##   .. .. ..$ temperatureMax             : num 46.4
+##   .. .. ..$ temperatureMaxTime         : int 1542042000
+##   .. .. ..$ apparentTemperatureMin     : num 33.5
+##   .. .. ..$ apparentTemperatureMinTime : int 1542020400
+##   .. .. ..$ apparentTemperatureMax     : num 46.4
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542042000
+##   .. ..$ :List of 39
+##   .. .. ..$ time                       : int 1542085200
+##   .. .. ..$ summary                    : chr "Rain in the morning and afternoon."
+##   .. .. ..$ icon                       : chr "rain"
+##   .. .. ..$ sunriseTime                : int 1542109902
+##   .. .. ..$ sunsetTime                 : int 1542147054
+##   .. .. ..$ moonPhase                  : num 0.19
+##   .. .. ..$ precipIntensity            : num 0.0788
+##   .. .. ..$ precipIntensityMax         : num 0.275
+##   .. .. ..$ precipIntensityMaxTime     : int 1542092400
+##   .. .. ..$ precipProbability          : int 1
+##   .. .. ..$ precipType                 : chr "rain"
+##   .. .. ..$ temperatureHigh            : num 50.3
+##   .. .. ..$ temperatureHighTime        : int 1542142800
+##   .. .. ..$ temperatureLow             : num 37.9
+##   .. .. ..$ temperatureLowTime         : int 1542200400
+##   .. .. ..$ apparentTemperatureHigh    : num 50.3
+##   .. .. ..$ apparentTemperatureHighTime: int 1542142800
+##   .. .. ..$ apparentTemperatureLow     : num 31.9
+##   .. .. ..$ apparentTemperatureLowTime : int 1542200400
+##   .. .. ..$ dewPoint                   : num 45.6
+##   .. .. ..$ humidity                   : num 0.98
+##   .. .. ..$ pressure                   : num 1018
+##   .. .. ..$ windSpeed                  : num 5.31
+##   .. .. ..$ windGust                   : num 20.2
+##   .. .. ..$ windGustTime               : int 1542164400
+##   .. .. ..$ windBearing                : int 329
+##   .. .. ..$ cloudCover                 : int 1
+##   .. .. ..$ uvIndex                    : int 3
+##   .. .. ..$ uvIndexTime                : int 1542124800
+##   .. .. ..$ visibility                 : num 8.76
+##   .. .. ..$ ozone                      : num 234
+##   .. .. ..$ temperatureMin             : num 42
+##   .. .. ..$ temperatureMinTime         : int 1542110400
+##   .. .. ..$ temperatureMax             : num 50.3
+##   .. .. ..$ temperatureMaxTime         : int 1542142800
+##   .. .. ..$ apparentTemperatureMin     : num 38.7
+##   .. .. ..$ apparentTemperatureMinTime : int 1542168000
+##   .. .. ..$ apparentTemperatureMax     : num 50.3
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542142800
+##   .. ..$ :List of 39
+##   .. .. ..$ time                       : int 1542171600
+##   .. .. ..$ summary                    : chr "Overcast throughout the day."
+##   .. .. ..$ icon                       : chr "cloudy"
+##   .. .. ..$ sunriseTime                : int 1542196363
+##   .. .. ..$ sunsetTime                 : int 1542233412
+##   .. .. ..$ moonPhase                  : num 0.22
+##   .. .. ..$ precipIntensity            : num 0.0035
+##   .. .. ..$ precipIntensityMax         : num 0.0143
+##   .. .. ..$ precipIntensityMaxTime     : int 1542171600
+##   .. .. ..$ precipProbability          : num 0.58
+##   .. .. ..$ precipType                 : chr "rain"
+##   .. .. ..$ temperatureHigh            : num 42.1
+##   .. .. ..$ temperatureHighTime        : int 1542225600
+##   .. .. ..$ temperatureLow             : num 34.1
+##   .. .. ..$ temperatureLowTime         : int 1542286800
+##   .. .. ..$ apparentTemperatureHigh    : num 36.8
+##   .. .. ..$ apparentTemperatureHighTime: int 1542225600
+##   .. .. ..$ apparentTemperatureLow     : num 24.8
+##   .. .. ..$ apparentTemperatureLowTime : int 1542286800
+##   .. .. ..$ dewPoint                   : num 32.3
+##   .. .. ..$ humidity                   : num 0.74
+##   .. .. ..$ pressure                   : num 1030
+##   .. .. ..$ windSpeed                  : num 7.85
+##   .. .. ..$ windGust                   : num 23.5
+##   .. .. ..$ windGustTime               : int 1542254400
+##   .. .. ..$ windBearing                : int 31
+##   .. .. ..$ cloudCover                 : num 0.98
+##   .. .. ..$ uvIndex                    : int 3
+##   .. .. ..$ uvIndexTime                : int 1542211200
+##   .. .. ..$ visibility                 : int 10
+##   .. .. ..$ ozone                      : num 250
+##   .. .. ..$ temperatureMin             : num 37.4
+##   .. .. ..$ temperatureMinTime         : int 1542204000
+##   .. .. ..$ temperatureMax             : num 43
+##   .. .. ..$ temperatureMaxTime         : int 1542171600
+##   .. .. ..$ apparentTemperatureMin     : num 30.9
+##   .. .. ..$ apparentTemperatureMinTime : int 1542204000
+##   .. .. ..$ apparentTemperatureMax     : num 38.2
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542171600
+##   .. ..$ :List of 39
+##   .. .. ..$ time                       : int 1542258000
+##   .. .. ..$ summary                    : chr "Rain until evening."
+##   .. .. ..$ icon                       : chr "rain"
+##   .. .. ..$ sunriseTime                : int 1542282824
+##   .. .. ..$ sunsetTime                 : int 1542319773
+##   .. .. ..$ moonPhase                  : num 0.25
+##   .. .. ..$ precipIntensity            : num 0.084
+##   .. .. ..$ precipIntensityMax         : num 0.193
+##   .. .. ..$ precipIntensityMaxTime     : int 1542304800
+##   .. .. ..$ precipProbability          : num 0.95
+##   .. .. ..$ precipType                 : chr "rain"
+##   .. .. ..$ temperatureHigh            : num 42.8
+##   .. .. ..$ temperatureHighTime        : int 1542326400
+##   .. .. ..$ temperatureLow             : num 38.9
+##   .. .. ..$ temperatureLowTime         : int 1542373200
+##   .. .. ..$ apparentTemperatureHigh    : num 37.5
+##   .. .. ..$ apparentTemperatureHighTime: int 1542326400
+##   .. .. ..$ apparentTemperatureLow     : num 32.2
+##   .. .. ..$ apparentTemperatureLowTime : int 1542369600
+##   .. .. ..$ dewPoint                   : num 36.4
+##   .. .. ..$ humidity                   : num 0.93
+##   .. .. ..$ pressure                   : num 1021
+##   .. .. ..$ windSpeed                  : num 10.6
+##   .. .. ..$ windGust                   : num 38.6
+##   .. .. ..$ windGustTime               : int 1542283200
+##   .. .. ..$ windBearing                : int 30
+##   .. .. ..$ cloudCover                 : int 1
+##   .. .. ..$ uvIndex                    : int 3
+##   .. .. ..$ uvIndexTime                : int 1542301200
+##   .. .. ..$ visibility                 : num 6.24
+##   .. .. ..$ ozone                      : num 271
+##   .. .. ..$ temperatureMin             : num 34.1
+##   .. .. ..$ temperatureMinTime         : int 1542286800
+##   .. .. ..$ temperatureMax             : num 43.1
+##   .. .. ..$ temperatureMaxTime         : int 1542333600
+##   .. .. ..$ apparentTemperatureMin     : num 24.8
+##   .. .. ..$ apparentTemperatureMinTime : int 1542286800
+##   .. .. ..$ apparentTemperatureMax     : num 38.3
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542337200
+##   .. ..$ :List of 39
+##   .. .. ..$ time                       : int 1542344400
+##   .. .. ..$ summary                    : chr "Mostly cloudy starting in the afternoon."
+##   .. .. ..$ icon                       : chr "partly-cloudy-night"
+##   .. .. ..$ sunriseTime                : int 1542369285
+##   .. .. ..$ sunsetTime                 : int 1542406135
+##   .. .. ..$ moonPhase                  : num 0.28
+##   .. .. ..$ precipIntensity            : num 0.0012
+##   .. .. ..$ precipIntensityMax         : num 0.0054
+##   .. .. ..$ precipIntensityMaxTime     : int 1542344400
+##   .. .. ..$ precipProbability          : num 0.32
+##   .. .. ..$ precipType                 : chr "rain"
+##   .. .. ..$ temperatureHigh            : num 54.4
+##   .. .. ..$ temperatureHighTime        : int 1542398400
+##   .. .. ..$ temperatureLow             : num 33.7
+##   .. .. ..$ temperatureLowTime         : int 1542456000
+##   .. .. ..$ apparentTemperatureHigh    : num 54.4
+##   .. .. ..$ apparentTemperatureHighTime: int 1542398400
+##   .. .. ..$ apparentTemperatureLow     : num 31.5
+##   .. .. ..$ apparentTemperatureLowTime : int 1542452400
+##   .. .. ..$ dewPoint                   : num 38
+##   .. .. ..$ humidity                   : num 0.79
+##   .. .. ..$ pressure                   : num 1015
+##   .. .. ..$ windSpeed                  : num 7.36
+##   .. .. ..$ windGust                   : num 30.2
+##   .. .. ..$ windGustTime               : int 1542362400
+##   .. .. ..$ windBearing                : int 291
+##   .. .. ..$ cloudCover                 : num 0.53
+##   .. .. ..$ uvIndex                    : int 4
+##   .. .. ..$ uvIndexTime                : int 1542387600
+##   .. .. ..$ visibility                 : int 10
+##   .. .. ..$ ozone                      : num 265
+##   .. .. ..$ temperatureMin             : num 38.9
+##   .. .. ..$ temperatureMinTime         : int 1542373200
+##   .. .. ..$ temperatureMax             : num 54.4
+##   .. .. ..$ temperatureMaxTime         : int 1542398400
+##   .. .. ..$ apparentTemperatureMin     : num 32.2
+##   .. .. ..$ apparentTemperatureMinTime : int 1542369600
+##   .. .. ..$ apparentTemperatureMax     : num 54.4
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542398400
+##   .. ..$ :List of 38
+##   .. .. ..$ time                       : int 1542430800
+##   .. .. ..$ summary                    : chr "Mostly cloudy starting in the evening."
+##   .. .. ..$ icon                       : chr "partly-cloudy-night"
+##   .. .. ..$ sunriseTime                : int 1542455746
+##   .. .. ..$ sunsetTime                 : int 1542492499
+##   .. .. ..$ moonPhase                  : num 0.31
+##   .. .. ..$ precipIntensity            : int 0
+##   .. .. ..$ precipIntensityMax         : num 2e-04
+##   .. .. ..$ precipIntensityMaxTime     : int 1542510000
+##   .. .. ..$ precipProbability          : int 0
+##   .. .. ..$ temperatureHigh            : num 58.4
+##   .. .. ..$ temperatureHighTime        : int 1542484800
+##   .. .. ..$ temperatureLow             : num 36.8
+##   .. .. ..$ temperatureLowTime         : int 1542542400
+##   .. .. ..$ apparentTemperatureHigh    : num 58.4
+##   .. .. ..$ apparentTemperatureHighTime: int 1542484800
+##   .. .. ..$ apparentTemperatureLow     : num 34.8
+##   .. .. ..$ apparentTemperatureLowTime : int 1542538800
+##   .. .. ..$ dewPoint                   : num 37.5
+##   .. .. ..$ humidity                   : num 0.77
+##   .. .. ..$ pressure                   : num 1023
+##   .. .. ..$ windSpeed                  : num 3.52
+##   .. .. ..$ windGust                   : num 10.9
+##   .. .. ..$ windGustTime               : int 1542481200
+##   .. .. ..$ windBearing                : int 252
+##   .. .. ..$ cloudCover                 : num 0.21
+##   .. .. ..$ uvIndex                    : int 4
+##   .. .. ..$ uvIndexTime                : int 1542474000
+##   .. .. ..$ visibility                 : int 10
+##   .. .. ..$ ozone                      : num 268
+##   .. .. ..$ temperatureMin             : num 33.7
+##   .. .. ..$ temperatureMinTime         : int 1542456000
+##   .. .. ..$ temperatureMax             : num 58.4
+##   .. .. ..$ temperatureMaxTime         : int 1542484800
+##   .. .. ..$ apparentTemperatureMin     : num 31.5
+##   .. .. ..$ apparentTemperatureMinTime : int 1542452400
+##   .. .. ..$ apparentTemperatureMax     : num 58.4
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542484800
+##   .. ..$ :List of 38
+##   .. .. ..$ time                       : int 1542517200
+##   .. .. ..$ summary                    : chr "Mostly cloudy until evening."
+##   .. .. ..$ icon                       : chr "partly-cloudy-day"
+##   .. .. ..$ sunriseTime                : int 1542542207
+##   .. .. ..$ sunsetTime                 : int 1542578864
+##   .. .. ..$ moonPhase                  : num 0.35
+##   .. .. ..$ precipIntensity            : int 0
+##   .. .. ..$ precipIntensityMax         : num 2e-04
+##   .. .. ..$ precipIntensityMaxTime     : int 1542553200
+##   .. .. ..$ precipProbability          : int 0
+##   .. .. ..$ temperatureHigh            : num 60.6
+##   .. .. ..$ temperatureHighTime        : int 1542567600
+##   .. .. ..$ temperatureLow             : num 42.8
+##   .. .. ..$ temperatureLowTime         : int 1542628800
+##   .. .. ..$ apparentTemperatureHigh    : num 60.6
+##   .. .. ..$ apparentTemperatureHighTime: int 1542567600
+##   .. .. ..$ apparentTemperatureLow     : num 39.4
+##   .. .. ..$ apparentTemperatureLowTime : int 1542628800
+##   .. .. ..$ dewPoint                   : num 41
+##   .. .. ..$ humidity                   : num 0.8
+##   .. .. ..$ pressure                   : num 1023
+##   .. .. ..$ windSpeed                  : num 2.44
+##   .. .. ..$ windGust                   : num 12.8
+##   .. .. ..$ windGustTime               : int 1542600000
+##   .. .. ..$ windBearing                : int 264
+##   .. .. ..$ cloudCover                 : num 0.75
+##   .. .. ..$ uvIndex                    : int 3
+##   .. .. ..$ uvIndexTime                : int 1542560400
+##   .. .. ..$ visibility                 : int 10
+##   .. .. ..$ ozone                      : num 273
+##   .. .. ..$ temperatureMin             : num 36.8
+##   .. .. ..$ temperatureMinTime         : int 1542542400
+##   .. .. ..$ temperatureMax             : num 60.6
+##   .. .. ..$ temperatureMaxTime         : int 1542567600
+##   .. .. ..$ apparentTemperatureMin     : num 34.8
+##   .. .. ..$ apparentTemperatureMinTime : int 1542538800
+##   .. .. ..$ apparentTemperatureMax     : num 60.6
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542567600
+##   .. ..$ :List of 39
+##   .. .. ..$ time                       : int 1542603600
+##   .. .. ..$ summary                    : chr "Mostly cloudy throughout the day."
+##   .. .. ..$ icon                       : chr "partly-cloudy-day"
+##   .. .. ..$ sunriseTime                : int 1542628668
+##   .. .. ..$ sunsetTime                 : int 1542665232
+##   .. .. ..$ moonPhase                  : num 0.38
+##   .. .. ..$ precipIntensity            : num 1e-04
+##   .. .. ..$ precipIntensityMax         : num 7e-04
+##   .. .. ..$ precipIntensityMaxTime     : int 1542661200
+##   .. .. ..$ precipProbability          : num 0.08
+##   .. .. ..$ precipType                 : chr "rain"
+##   .. .. ..$ temperatureHigh            : num 55
+##   .. .. ..$ temperatureHighTime        : int 1542650400
+##   .. .. ..$ temperatureLow             : int 35
+##   .. .. ..$ temperatureLowTime         : int 1542715200
+##   .. .. ..$ apparentTemperatureHigh    : num 55
+##   .. .. ..$ apparentTemperatureHighTime: int 1542650400
+##   .. .. ..$ apparentTemperatureLow     : num 31.9
+##   .. .. ..$ apparentTemperatureLowTime : int 1542715200
+##   .. .. ..$ dewPoint                   : num 40
+##   .. .. ..$ humidity                   : num 0.77
+##   .. .. ..$ pressure                   : num 1022
+##   .. .. ..$ windSpeed                  : num 3.61
+##   .. .. ..$ windGust                   : num 13
+##   .. .. ..$ windGustTime               : int 1542603600
+##   .. .. ..$ windBearing                : int 349
+##   .. .. ..$ cloudCover                 : num 0.68
+##   .. .. ..$ uvIndex                    : int 3
+##   .. .. ..$ uvIndexTime                : int 1542643200
+##   .. .. ..$ visibility                 : int 10
+##   .. .. ..$ ozone                      : num 282
+##   .. .. ..$ temperatureMin             : num 39.8
+##   .. .. ..$ temperatureMinTime         : int 1542686400
+##   .. .. ..$ temperatureMax             : num 55
+##   .. .. ..$ temperatureMaxTime         : int 1542650400
+##   .. .. ..$ apparentTemperatureMin     : num 36.7
+##   .. .. ..$ apparentTemperatureMinTime : int 1542686400
+##   .. .. ..$ apparentTemperatureMax     : num 55
+##   .. .. ..$ apparentTemperatureMaxTime : int 1542650400
+##  $ alerts   :List of 2
+##   ..$ :List of 7
+##   .. ..$ title      : chr "Flash Flood Warning"
+##   .. ..$ regions    : chr [1:2] "Durham" "Orange"
+##   .. ..$ severity   : chr "warning"
+##   .. ..$ time       : int 1542073740
+##   .. ..$ expires    : int 1542102300
+##   .. ..$ description: chr "The National Weather Service in Raleigh has issued a * Flash Flood Warning for... Southeastern Orange County in"| __truncated__
+##   .. ..$ uri        : chr "https://alerts.weather.gov/cap/wwacapget.php?x=NC125AC8128A74.FlashFloodWarning.125AC813C164NC.RAHFFWRAH.2614e6"| __truncated__
+##   ..$ :List of 7
+##   .. ..$ title      : chr "Flood Advisory"
+##   .. ..$ regions    : chr [1:3] "Durham" "Orange" "Person"
+##   .. ..$ severity   : chr "advisory"
+##   .. ..$ time       : int 1542073740
+##   .. ..$ expires    : int 1542102300
+##   .. ..$ description: chr "The National Weather Service in Raleigh has issued a * Flood Advisory for... Alamance County in central North C"| __truncated__
+##   .. ..$ uri        : chr "https://alerts.weather.gov/cap/wwacapget.php?x=NC125AC812C82C.FloodAdvisory.125AC813C164NC.RAHFLSRAH.be8f1fda30"| __truncated__
+##  $ flags    :List of 3
+##   ..$ sources        : chr [1:11] "nearest-precip" "nwspa" "cmc" "gfs" ...
+##   ..$ nearest-station: num 0.81
+##   ..$ units          : chr "us"
+##  $ offset   : int -5
+```
+
+---
+
+## Complex `list`s - `str`
+
+.pull-left[
+
+```r
+str(durham, max.level=1)
+```
+
+```
+## List of 10
+##  $ latitude : num 36
+##  $ longitude: num -78.9
+##  $ timezone : chr "America/New_York"
+##  $ currently:List of 20
+##  $ minutely :List of 3
+##  $ hourly   :List of 3
+##  $ daily    :List of 3
+##  $ alerts   :List of 2
+##  $ flags    :List of 3
+##  $ offset   : int -5
+```
+]
+
+.pull-right[
+
+```r
+str(durham$currently, max.level=1)
+```
+
+```
+## List of 20
+##  $ time                : int 1542084522
+##  $ summary             : chr "Heavy Rain"
+##  $ icon                : chr "rain"
+##  $ nearestStormDistance: int 0
+##  $ precipIntensity     : num 0.229
+##  $ precipIntensityError: num 0.018
+##  $ precipProbability   : int 1
+##  $ precipType          : chr "rain"
+##  $ temperature         : num 45.5
+##  $ apparentTemperature : num 44.1
+##  $ dewPoint            : num 45.5
+##  $ humidity            : int 1
+##  $ pressure            : num 1017
+##  $ windSpeed           : num 3.45
+##  $ windGust            : num 5.18
+##  $ windBearing         : int 345
+##  $ cloudCover          : int 1
+##  $ uvIndex             : int 0
+##  $ visibility          : num 2.92
+##  $ ozone               : num 230
+```
+]
+
+---
+
+## Complex `list`s - `View`
+
+
+```r
+View(durham)
+```
+
+.pull-left[
+&lt;img src="imgs/View1.png" width="1461" /&gt;
+]
+
+.pull-right[
+&lt;img src="imgs/View2.png" width="1461" /&gt;
+]
+
+
+
+---
+
+## purrr
+
+.pull-left13[
+&lt;img src="imgs/purrr.png" width="2941" /&gt;
+]
+
+.pull-right23[
+`purrr` is a tidyverse package which improves the functional programming tools in R (i.e. `lapply`, `sapply`, etc.). It focuses on providing *pure* and *type stable* functions as well as several convenient shortcuts for common tasks.
+]
+
+--
+
+&lt;br/&gt;
+
+Key functions:
+
+&lt;div&gt;
+.pull-left[
+* `map()`
+
+* `map_lgl()`
+
+* `map_int()`
+
+* `map_dbl()`
+]
+
+.pull-right[
+* `map_chr()`
+
+* `map_df()` / `map_dfr()`
+
+* `map_dfc()`
+
+* `walk()`
+]
+&lt;/div&gt;
+
+---
+
+## Type Consistency
+
+R is a weakly / dynamically typed language which means there is no simple way to define a function which enforces the argument or return types of a function.
+
+This flexibility can be useful at times, but often it makes it hard to reason about your code and requires more verbose code to handle edge cases.
+
+.small[
+
+```r
+x = list(1:3, 4:6, 7:9)
+```
+
+.pull-left[
+
+```r
+sapply(x, mean)
+```
+
+```
+## [1] 2 5 8
+```
+
+```r
+lapply(x, mean)
+```
+
+```
+## [[1]]
+## [1] 2
+## 
+## [[2]]
+## [1] 5
+## 
+## [[3]]
+## [1] 8
+```
+]
+
+.pull-right[
+
+```r
+map_dbl(x, mean)
+```
+
+```
+## [1] 2 5 8
+```
+
+```r
+map_chr(x, mean)
+```
+
+```
+## [1] "2.000000" "5.000000" "8.000000"
+```
+
+```r
+map_int(x, mean)
+```
+
+```
+## Error: Can't coerce element 1 from a double to a integer
+```
+] ]
+
+---
+
+## Purrr shortcut - Lookups
+
+Very often we want to extract only certain (named) values from a list, `purrr` provides a shortcut for this operation by providing either a character or numeric value instead of a function to the `map` function.
+
+.small[
+
+.pull-left[
+
+```r
+json = jsonlite::fromJSON(
+'{
+  "bookList": [
+    {"title": "The Cat in the Hat",
+     "author": "Dr. Seuss",
+     "price": 6.99},
+    {"title": "Edgar Gets Ready for Bed",
+     "author": ["Jennifer Adams", "Ron Stucki"],
+     "price": 9.99},
+    {"title": "\\"More More More\\", Said the Baby",
+     "author": "Vera B Williams",
+     "price": 7.19}
+  ]
+}', simplifyVector = FALSE
+)
+```
+]
+
+.pull-right[
+
+```r
+str(json)
+```
+
+```
+## List of 1
+##  $ bookList:List of 3
+##   ..$ :List of 3
+##   .. ..$ title : chr "The Cat in the Hat"
+##   .. ..$ author: chr "Dr. Seuss"
+##   .. ..$ price : num 6.99
+##   ..$ :List of 3
+##   .. ..$ title : chr "Edgar Gets Ready for Bed"
+##   .. ..$ author:List of 2
+##   .. .. ..$ : chr "Jennifer Adams"
+##   .. .. ..$ : chr "Ron Stucki"
+##   .. ..$ price : num 9.99
+##   ..$ :List of 3
+##   .. ..$ title : chr "\"More More More\", Said the Baby"
+##   .. ..$ author: chr "Vera B Williams"
+##   .. ..$ price : num 7.19
+```
+]
+]
+
+
+---
+
+## Purrr shortcut - Lookups
+
+
+```r
+map_chr(json$bookList, "title")
+```
+
+```
+## [1] "The Cat in the Hat"                "Edgar Gets Ready for Bed"         
+## [3] "\"More More More\", Said the Baby"
+```
+
+--
+
+
+```r
+map_dbl(json$bookList, "price")
+```
+
+```
+## [1] 6.99 9.99 7.19
+```
+
+--
+
+
+```r
+map_chr(json$bookList, "author")
+```
+
+```
+## Error: Result 2 is not a length 1 atomic vector
+```
+
+--
+
+
+```r
+map_chr(json$bookList, list("author", 1))
+```
+
+```
+## [1] "Dr. Seuss"       "Jennifer Adams"  "Vera B Williams"
+```
+
+---
+class: middle
+
+.center[
+# Live Demo
+
+## Putting `purrr` to work
+
+#### [http://bit.ly/Rundel-DVS_darksky](http://bit.ly/Rundel-DVS_darksky)
+]
+    </textarea>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightStyle": "github",
+"highlightLines": true,
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function() {
+  var d = document, s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})();</script>
+
+<script>
+(function() {
+  var i, text, code, codes = document.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+})();
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

@@ -1,0 +1,213 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700);
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700);
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+.remark-slide-content { background-size: contain; }
+
+body { 
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #333333;
+}
+p {
+  padding: 0;
+  margin: 12px;
+}
+h2 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: bold;
+  color: #405C6D;
+  font-size: 12px;
+  margin: 0 0 1em 0;
+}
+h1, h3 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: bold;
+  color: #405C6D;
+}
+a, a > code {
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #405C6D;
+  text-decoration: none;
+}
+
+.footnote {
+  position: absolute;
+  bottom: 1em;
+  padding-right: 4em;
+}
+.remark-code, .remark-inline-code { 
+  font-family: 'Inconsolata', 'Lucida Console', Monaco, monospace; 
+}
+.remark-code-line-highlighted     { background-color: #ffff88; }
+
+.inverse {
+  background-color: #042A6D;
+  color: #ffffff;
+  /* text-shadow: 0 0 20px #333; */
+}
+.inverse h1, .inverse h2, .inverse h3 {
+  color: #f3f3f3;
+}
+
+/* Two-column layout */
+.left-column {
+  color: #777;
+  width: 20%;
+  height: 92%;
+  float: left;
+}
+
+.left-column h2:last-of-type, .left-column h3:last-child {
+  color: #000;
+}
+
+.right-column {
+  width: 75%;
+  float: right;
+  padding-top: 1em;
+}
+.center {
+  text-align:center;
+}
+.pull-left {
+  float: left;
+  width: 47%;
+}
+.pull-right {
+  float: right;
+  width: 47%;
+}
+.pull-right ~ * {
+  clear: both;
+}
+
+.pull-left13 {
+  float: left;
+  width: 30%;
+}
+.pull-right23 {
+  float: right;
+  width: 65%;
+}
+.pull-right23 ~ * {
+  clear: both;
+}
+
+
+
+.col1 {
+  float: left;
+  width: 32%;
+}
+
+.col2 {
+  float: left;
+  width: 32%;
+  padding-left: 2%;
+}
+
+.col3 {
+  float: right;
+  width: 32%;
+}
+
+.col3 ~ * {
+  clear: both;
+}
+
+
+.question {
+  background-color: #E1ECF8;
+  padding: 0.25px;
+}
+.instructions {
+  border-left: solid 5px #FFD748;
+  background-color: #FFD74850;
+  font-size: 90%;
+  padding: 1px 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.instructions li::before {
+  content: ">"; 
+  color: #FFD748;
+  display: inline-block; 
+  margin-left: -1.5em
+}
+
+blockquote {
+  border-left: solid 5px lightgray;
+  padding-left: 1em;
+}
+
+li{
+  margin: 10px 0;
+}
+
+.large { font-size: 130% }
+.midi { font-size: 90% }
+.small { font-size: 70% }
+
+.small .remark-code, .remark-inline-code { font-size: 85%; }
+
+img, video, iframe {
+  max-width: 100%;
+}
+table {
+  margin: auto;
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+}
+table thead th { border-bottom: 1px solid #ddd; }
+th, td { 
+  padding: 5px; 
+  padding-right: 30px;
+  padding-left: 10px;
+}
+thead, tfoot, tr:nth-child(even) { background: #eee }
+
+
+@page { margin: 0; }
+@media print {
+  .remark-slide-scaler {
+    width: 100% !important;
+    height: 100% !important;
+    transform: scale(1) !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+}
+
+.remark-slide-content{
+  font-size: 24px;
+}
+
+.remark-slide-content:after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    right: 810px;
+    height: 70px;
+    width: 81px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.middle .remark-slide-number {
+  display: none;
+}
+
+.title-slide {
+  background-image: url("imgs/data_gis_logo.png");
+  background-repeat: no-repeat;
+  background-size: auto;
+  background-position: bottom 10px right 10px; 
+}
+
+.element .style {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 685px;
+    width: 700px;
+}
