@@ -1,0 +1,3 @@
+ghclass: an R package for managing classes with GitHub
+
+In this talk we will present the details of the ghclass package which we have developed as a tool for managing statistical and data science courses with a computation component. The package is designed to automate the process of distributing and collecting assignments via git repositories hosted on GitHub. As part of this talk will discuss best practices for how these tools can be deployed in a variety of classroom settings from first year introductory courses through graduate level courses. Finally we will discuss how these tools fit into the larger context of modern statistical pedagogy with an emphasis on the role reproducible computing.
