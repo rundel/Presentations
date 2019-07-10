@@ -427,6 +427,35 @@ background-image: url("imgs/14_github_diff.png")
 background-position: center
 background-size: contain
 
+---
+
+## Putting it all together
+
+This is an example from my Organization folder for my Statistical Computing course last Spring:
+
+```r
+library(ghclass)
+library(dplyr)
+
+df = readr::read_csv("hw2_teams.csv")
+
+team_create("Sta323-Sp19", team = df$team)
+team_invite("Sta323-Sp19", df$github, df$team)
+
+repo_create("Sta323-Sp19", df$team)
+repo_add_team(org_repos("Sta323-Sp19","hw2-"), org_teams("Sta323-Sp19","hw2-"))
+
+mirror_repo("Sta323-Sp19/hw2", org_repos("Sta323-Sp19","hw2-"))
+
+wercker_add(repo = org_repos("Sta323-Sp19","hw2-"), wercker_org = "Sta323-Sp19")
+
+branch_create(
+  repo = paste0("Sta323-Sp19/", df$team),
+  cur_branch = "master",
+  new_branch = df$github
+)
+```
+
 
 ---
 
@@ -439,8 +468,6 @@ background-size: contain
 * Support for GitHub actions for automated feedback ([rundel/wercker](https://github.com/rundel/wercker) replacement)
 
 * Support more workflows, if you GitHub based workflow for teaching that was not reflected here please get in touch.
-
----
 
 ---
 
