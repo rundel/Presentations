@@ -131,6 +131,8 @@ Some design principals behind this package:
 
 4. Most actions are non-destructive and/or backed by git, the handful of dangerous operations will warn you.
 
+5. Follow the unix design philosophy when possible, work towards simple & composable functions
+
 ---
 
 ## Org & Roster
@@ -481,27 +483,37 @@ branch_create(
 <table class="contact" style="text-align: left; font-size: 120%; margin-left:auto; margin-right:auto; width:50%;">
 <tbody>
 <tr>
-  <td style="vertical-align: middle;"> <i class="fas fa-envelope fa-fw fa-3x"></i> </td>
+  <td style="vertical-align: middle;"> <i class="fas fa-box fa-fw fa-2x"></i> </td>
   <td> 
-    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a>
+    <a href="https://github.com/rundel/ghclass">rundel/ghclass</a>
   </td>
 </tr>
+<tr><td><br/></td></tr>
 <tr>
-  <td style="vertical-align: middle;"> <i class="fab fa-github-square fa-fw fa-3x"></i> </td>
+  <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-2x"></i> </td>
+  <td> 
+      <a href="http://bit.ly/User2019_ghclass">bit.ly/User2019_ghclass</a>
+  </td>
+</tr>
+<tr><td><br/></td></tr>
+<tr>
+  <td style="vertical-align: middle;"> <i class="fab fa-github-square fa-fw fa-2x"></i> </td>
   <td> 
     <a href="https://github.com/rundel">github.com/rundel</a>
   </td>
 </tr>
+<tr><td><br/></td></tr>
 <tr>
-  <td style="vertical-align: middle;"> <i class="fab fa-twitter-square fa-fw fa-3x"></i> </td>
+  <td style="vertical-align: middle;"> <i class="fas fa-envelope fa-fw fa-2x"></i> </td>
   <td> 
-    <a href="https://twitter.com/rundel">@rundel</a>
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a>
   </td>
 </tr>
+<tr><td><br/></td></tr>
 <tr>
-  <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-3x"></i> </td>
+  <td style="vertical-align: middle;"> <i class="fab fa-twitter-square fa-fw fa-2x"></i> </td>
   <td> 
-      <a href="http://bit.ly/User2019_ghclass">bit.ly/User2019_ghclass</a>
+    <a href="https://twitter.com/rundel">@rundel</a>
   </td>
 </tr>
 </tbody>
