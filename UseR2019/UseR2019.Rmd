@@ -51,7 +51,12 @@ an R package for managing classes with GitHub
 
 
 .conference[
+.name[
 UseR!2019 &middot; Toulouse
+]
+.bitly[
+[bit.ly/User2019_ghclass](http://bit.ly/User2019_ghclass)
+]
 ]
 
 .author[
@@ -441,9 +446,12 @@ background-size: contain
 
 # Thank you!
 
+<br/>
+
 .middle[ .center[
 
-<table class="contact" style="width: 50%; text-align: left; font-size: 120%;">
+<div style="width: 98%">
+<table class="contact" style="text-align: left; font-size: 120%; margin-left:auto; margin-right:auto; width:50%;">
 <tbody>
 <tr>
   <td style="vertical-align: middle;"> <i class="fas fa-envelope fa-fw fa-3x"></i> </td>
@@ -466,10 +474,10 @@ background-size: contain
 <tr>
   <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-3x"></i> </td>
   <td> 
-      <a href="http://github.com/rundel/Presentations">rundel/Presentations/UseR2019</a>
+      <a href="http://bit.ly/User2019_ghclass">bit.ly/User2019_ghclass</a>
   </td>
 </tr>
 </tbody>
 </table>
-
+</div>
 ] ]

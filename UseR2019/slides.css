@@ -15,9 +15,35 @@ body {
   visibility: hidden;
 }
 
+a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:link {
+  color: #041E42;
+}
+
+a:visited {
+  color: #041E42;
+}
+
+a:hover {
+  color: #041E42;
+}
+
+a:active {
+  color: #041E42;
+}
+
 .title_bg {
   background-color: #041E42;
   color: #FFFFFF  ;
+}
+
+.title_bg a {
+  color: #FFFFFF;
+  font-weight: normal;
 }
 
 .title {
@@ -38,12 +64,27 @@ body {
 
 .conference {
   font-size: 32px;
+  text-align: left;
+  padding-left: 1em;
   position: absolute; 
   bottom: 0;
   left: 0;
-  margin-bottom: 0.5em;
-  padding-left: 1em;
 }
+
+.conference .name p {
+  margin-bottom: 0;
+}
+
+.conference .bitly {
+  font-size: 20px;
+}
+
+.conference .bitly p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+
 
 .author {
   font-size: 32px;
@@ -129,25 +170,4 @@ body {
   width: auto;
   max-width: 66%;
   margin: 0 auto;
-}
-
-a {
-  text-decoration: none;
-  font-weight: bold;
-}
-
-a:link {
-  color: #041E42;
-}
-
-a:visited {
-  color: #041E42;
-}
-
-a:hover {
-  color: #041E42;
-}
-
-a:active {
-  color: #041E42;
 }
