@@ -422,24 +422,29 @@ background-size: contain
 
 # Thank you!
 
-<br/>
-
 .middle[ .center[
 
 <div style="width: 98%">
 <table class="contact" style="text-align: left; font-size: 120%; margin-left:auto; margin-right:auto; width:50%;">
 <tbody>
 <tr>
-  <td style="vertical-align: middle;"> <i class="fas fa-box fa-fw fa-2x"></i> </td>
+  <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-2x"></i> </td>
   <td> 
-    <a href="https://github.com/rundel/ghclass">rundel/ghclass</a>
+      <a href="http://bit.ly/User2019_ghclass">bit.ly/JSM2019_ghclass</a>
   </td>
 </tr>
 <tr><td><br/></td></tr>
 <tr>
-  <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-2x"></i> </td>
+  <td style="vertical-align: middle;"> <i class="fas fa-box fa-fw fa-2x"></i> </td>
   <td> 
-      <a href="http://bit.ly/User2019_ghclass">bit.ly/JSM2019_ghclass</a>
+    <a href="https://github.com/rundel/ghclass">rundel/ghclass</a> <br/>
+  </td>
+</tr>
+<tr><td><br/></td></tr>
+<tr>
+  <td style="vertical-align: middle;"> <i class="fas fa-map fa-fw fa-2x"></i> </td>
+  <td> 
+    <a href="https://rundel.github.io/ghclass">rundel.github.io/ghclass</a>
   </td>
 </tr>
 <tr><td><br/></td></tr>
