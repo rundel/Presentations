@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+  <head>
+    <title>ghclass</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Colin Rundel" />
+    <meta name="date" content="2019-07-31" />
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+exclude: true
+
+
+
+
+
+
+
+---
+class: title_bg
+
+.title[
+ghclass
+]
+
+.subtitle[
+an R package for managing classes with GitHub
+]
+
+
+.conference[
+.name[
+JSM 2019 &amp;middot; Denver
+]
+.bitly[
+[bit.ly/JSM2019_ghclass](http://bit.ly/JSM2019_ghclass)
+]
+]
+
+.author[
+.name[
+Colin Rundel
+]
+.school[
+Univ of Edinburgh &amp;middot;
+Duke Univ
+]
+]
+
+---
+
+## Reproducible Assignments
+
+
+---
+
+## Setup
+
+1. .sep[ Signup for a GitHub Account
+
+[github.com]() ]
+
+2. .sep[ Get a GitHub personal access token (PAT)
+
+[github.com/settings/tokens](https://github.com/settings/tokens) ]
+
+3. .sep[ Setup git and GitHub access in R
+
+[`usethis` setup vignette](https://usethis.r-lib.org/articles/articles/usethis-setup.html) &amp; &lt;br/&gt; [happy git with R](https://happygitwithr.com/) ]
+
+3. .sep[ Signup for GitHub Education
+
+[education.github.com/benefits](https://education.github.com/benefits) ]
+
+4. .sep[ Create a GitHub Organization for your class 
+
+[github.com/organizations/new](https://github.com/organizations/new) ]
+
+&lt;br/&gt;
+
+--
+
+.center[
+Only *Step 5* needs to be repeated for a new class!
+]
+
+---
+
+## Introduction to `ghclass`
+
+
+```r
+remotes::install_github("rundel/ghclass")
+library(ghclass)
+```
+
+--
+
+&lt;br/&gt;
+
+Some design principals behind this package:
+
+1. Functions are prefixed with `org`, `repo`, `team`, `github` or `local_repo` to indicate what they operate on.
+
+2. Functions are vectorized over their parameters, batch related operations.
+
+3. Be verbose about what is happening, report failures but don't halt execution.
+
+4. Most actions are non-destructive (backed by git), the handful of dangerous operations will warn you.
+
+5. Follow the unix design philosophy, work towards simple &amp; composable functions
+
+---
+
+## Org &amp; Roster
+
+We will be using [ghclass-demo](https://github.com/ghclass-demo) as our class organization, hopefully your Org has a slightly more informative name .
+
+--
+
+.center[
+(I find `course#`-`semester` works well, e.g. `Sta323-Sp19`).
+]
+
+--
+
+&lt;br/&gt;&lt;br/&gt;
+
+
+```r
+(roster = readr::read_csv("files/roster.csv"))
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #949494;'&gt;# A tibble: 6 x 4&lt;/span&gt;&lt;span&gt;
+##   netid email              github          hw01       
+##   &lt;/span&gt;&lt;span style='color: #949494;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt; &lt;/span&gt;&lt;span style='color: #949494;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;              &lt;/span&gt;&lt;span style='color: #949494;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;           &lt;/span&gt;&lt;span style='color: #949494;font-style: italic;'&gt;&amp;lt;chr&amp;gt;&lt;/span&gt;&lt;span&gt;      
+## &lt;/span&gt;&lt;span style='color: #BCBCBC;'&gt;1&lt;/span&gt;&lt;span&gt; za17  anya@school.edu    ghclass-anya    hw01-team01
+## &lt;/span&gt;&lt;span style='color: #BCBCBC;'&gt;2&lt;/span&gt;&lt;span&gt; kb34  bruno@school.edu   ghclass-bruno   hw01-team01
+## &lt;/span&gt;&lt;span style='color: #BCBCBC;'&gt;3&lt;/span&gt;&lt;span&gt; ac13  celine@school.edu  ghclass-celine  hw01-team02
+## &lt;/span&gt;&lt;span style='color: #BCBCBC;'&gt;4&lt;/span&gt;&lt;span&gt; bd88  diego@school.edu   ghclass-diego   hw01-team02
+## &lt;/span&gt;&lt;span style='color: #BCBCBC;'&gt;5&lt;/span&gt;&lt;span&gt; se01  elijah@school.edu  ghclass-elijah  hw01-team03
+## &lt;/span&gt;&lt;span style='color: #BCBCBC;'&gt;6&lt;/span&gt;&lt;span&gt; df00  francis@school.edu ghclass-francis hw01-team03
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+background-image: url("imgs/01_github_empty.png")
+background-position: center
+background-size: contain
+
+---
+
+## Checking your git / GitHub config
+
+
+```r
+usethis::git_sitrep()
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='font-weight: bold;'&gt;Git user&lt;/span&gt;&lt;span&gt;
+## * Name: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Colin Rundel'&lt;/span&gt;&lt;span&gt;
+## * Email: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'rundel@gmail.com'&lt;/span&gt;&lt;span&gt;
+## * Vaccinated: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;TRUE&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;usethis + git2r&lt;/span&gt;&lt;span&gt;
+## * Default usethis protocol: &lt;/span&gt;&lt;span style='color: #555555;'&gt;&amp;lt;unset&amp;gt;&lt;/span&gt;&lt;span&gt;
+## * git2r supports SSH: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;TRUE&lt;/span&gt;&lt;span&gt;
+## * Credentials: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'&amp;lt;user-provided git2r credential object with class cred_ssh_key&amp;gt;'&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;GitHub&lt;/span&gt;&lt;span&gt;
+## * Personal access token: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'&amp;lt;found in env var&amp;gt;'&lt;/span&gt;&lt;span&gt;
+## * User: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'rundel'&lt;/span&gt;&lt;span&gt;
+## * Name: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Colin Rundel'&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;Repo&lt;/span&gt;&lt;span&gt;
+## * Path: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'/Users/rundel/Desktop/Presentations/.git'&lt;/span&gt;&lt;span&gt;
+## * Local branch -&amp;gt; remote tracking branch: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'master'&lt;/span&gt;&lt;span&gt; -&amp;gt; &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'origin/master'&lt;/span&gt;&lt;span&gt;
+## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;GitHub pull request readiness&lt;/span&gt;&lt;span&gt;
+## * origin: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;rundel/Presentations&lt;/span&gt;&lt;span&gt;, &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;can push&lt;/span&gt;&lt;span&gt;
+## * upstream: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'&amp;lt;no such remote&amp;gt;'&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+
+```r
+github_test_token()
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Your github token is functioning correctly.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+
+## Inviting Students
+
+
+```r
+org_invite(org = "ghclass-demo", user = roster$github)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Invited user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-anya'&lt;/span&gt;&lt;span&gt; to org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Invited user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-bruno'&lt;/span&gt;&lt;span&gt; to org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Invited user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-celine'&lt;/span&gt;&lt;span&gt; to org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Invited user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-diego'&lt;/span&gt;&lt;span&gt; to org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Invited user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-elijah'&lt;/span&gt;&lt;span&gt; to org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Invited user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-francis'&lt;/span&gt;&lt;span&gt; to org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+
+```r
+org_members("ghclass-demo", include_admins = FALSE)
+```
+
+```
+## character(0)
+```
+
+
+```r
+org_pending_members("ghclass-demo")
+```
+
+```
+## [1] "ghclass-anya"    "ghclass-bruno"   "ghclass-diego"   "ghclass-elijah" 
+## [5] "ghclass-francis" "ghclass-celine"
+```
+
+---
+background-image: url("imgs/02_github_members.png")
+background-position: center
+background-size: contain
+
+---
+background-image: url("imgs/03_github_pending.png")
+background-position: center
+background-size: contain
+
+---
+
+## A few days later ...
+
+
+
+
+```r
+org_members("ghclass-demo", include_admins = FALSE)
+```
+
+```
+## [1] "ghclass-anya"   "ghclass-bruno"  "ghclass-celine" "ghclass-diego"
+```
+
+
+```r
+org_pending_members("ghclass-demo")
+```
+
+```
+## [1] "ghclass-elijah"  "ghclass-francis"
+```
+
+--
+
+&lt;br/&gt;
+
+## several emails and a week later  ...
+
+
+
+
+```r
+org_members("ghclass-demo", include_admins = FALSE)
+```
+
+```
+## [1] "ghclass-anya"    "ghclass-bruno"   "ghclass-celine"  "ghclass-diego"  
+## [5] "ghclass-elijah"  "ghclass-francis"
+```
+
+
+```r
+org_pending_members("ghclass-demo")
+```
+
+```
+## character(0)
+```
+
+---
+background-image: url("imgs/04_github_accepted.png")
+background-position: center
+background-size: contain
+
+---
+
+## Team Assignment
+
+
+```r
+org_create_assignment(org = "ghclass-demo", repo = roster$hw01, user = roster$github, 
+                      team = roster$hw01, source_repo = "Sta323-Sp19/hw1")
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt; in org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt; in org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt; in org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-anya'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-bruno'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-celine'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-diego'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-elijah'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-francis'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Sta323-Sp19/hw1'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Removed local copy of &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Sta323-Sp19/hw1'&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+background-image: url("imgs/05_github_hw01_repos.png")
+background-position: center
+background-size: contain
+
+---
+
+
+
+.smaller[
+
+```r
+team_create("ghclass-demo", team = roster$hw01)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt; in org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt; in org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt; in org &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+team_invite("ghclass-demo", user = roster$github, team = roster$hw01)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-anya'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-bruno'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-celine'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-diego'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-elijah'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-francis'&lt;/span&gt;&lt;span&gt; to team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+repo_create("ghclass-demo", name = roster$hw01)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+repo_add_team(repo = org_repos("ghclass-demo", filter = "hw01-"), 
+              team = org_teams("ghclass-demo", filter = "hw01-"))
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team01'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team02'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added team &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw01-team03'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+```r
+repo_mirror(source_repo = "Sta323-Sp19/hw1", 
+            target_repo = org_repos("ghclass-demo", filter = "hw01-"))
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Sta323-Sp19/hw1'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'hw1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Removed local copy of &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Sta323-Sp19/hw1'&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+]
+
+---
+
+## Individual Assignment
+
+
+```r
+org_create_assignment(org = "ghclass-demo", repo = paste0("mid1-", roster$github),
+                      user = roster$github, source_repo = "Sta323-Sp19/midterm1")
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-anya'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-bruno'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-celine'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-diego'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-elijah'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-francis'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-anya'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-anya'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-bruno'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-bruno'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-celine'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-celine'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-diego'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-diego'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-elijah'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-elijah'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added user &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-francis'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-francis'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Sta323-Sp19/midterm1'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'midterm1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-anya'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'midterm1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-bruno'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'midterm1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-celine'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'midterm1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-diego'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'midterm1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-elijah'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Pushed (mirror) &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'midterm1'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-francis'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Removed local copy of &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'Sta323-Sp19/midterm1'&lt;/span&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+background-image: url("imgs/06_github_mid1_repos.png")
+background-position: center
+background-size: contain
+
+---
+
+## What about GitHub Classroom?
+
+&lt;img src="imgs/classroom.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Making Changes
+
+
+```r
+repo_add_file(repo = org_repos("ghclass-demo", "hw01-"),
+              file = "files/fizzbuzz.png")
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #BB0000;'&gt;✖&lt;/span&gt;&lt;span&gt; Failed to add file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'fizzbuzz.png'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;:  already exists.
+##   If you want to force-add this file, re-run the command with &lt;/span&gt;&lt;span style='color: #555555;'&gt;`overwrite = TRUE`&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;✖&lt;/span&gt;&lt;span&gt; Failed to add file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'fizzbuzz.png'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;:  already exists.
+##   If you want to force-add this file, re-run the command with &lt;/span&gt;&lt;span style='color: #555555;'&gt;`overwrite = TRUE`&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #BB0000;'&gt;✖&lt;/span&gt;&lt;span&gt; Failed to add file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'fizzbuzz.png'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;:  already exists.
+##   If you want to force-add this file, re-run the command with &lt;/span&gt;&lt;span style='color: #555555;'&gt;`overwrite = TRUE`&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+
+```r
+repo_add_file(repo = org_repos("ghclass-demo", "hw01-"),
+              file = "files/fizzbuzz.png", overwrite = TRUE)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'fizzbuzz.png'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'fizzbuzz.png'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Added file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'fizzbuzz.png'&lt;/span&gt;&lt;span&gt; to repo &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+---
+background-image: url("imgs/10_github_readme1.png")
+background-position: center
+background-size: contain
+
+---
+
+## Modify a file
+
+
+```r
+repo_modify_file(repo = org_repos("ghclass-demo", "hw01-"), file = "README.md",
+                 pattern = "on Thursday 1/24/2019.", content = "on Wednesday 10/07/2019.")
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Modified file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01/README.md'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Modified file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team02/README.md'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Modified file &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team03/README.md'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+&lt;img src="imgs/12_github_readme3.png" width="75%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Collect student work
+
+
+```r
+local_repo_clone(repo = org_repos("ghclass-demo", "mid1-"), local_path = "mid1")
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-anya'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-bruno'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-celine'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-diego'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-elijah'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/mid1-ghclass-francis'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+&lt;img src="imgs/13_github_clone.png" width="65%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Organize student work
+
+
+```r
+local_repo_rename(repo_dir = "mid1", pattern = roster$github, 
+                  replacement = paste0(roster$netid, "-(\\1)"))
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Renaming &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-ghclass-anya'&lt;/span&gt;&lt;span&gt; to &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-za17-(ghclass-anya)'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Renaming &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-ghclass-bruno'&lt;/span&gt;&lt;span&gt; to &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-kb34-(ghclass-bruno)'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Renaming &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-ghclass-celine'&lt;/span&gt;&lt;span&gt; to &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-ac13-(ghclass-celine)'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Renaming &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-ghclass-diego'&lt;/span&gt;&lt;span&gt; to &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-bd88-(ghclass-diego)'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Renaming &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-ghclass-elijah'&lt;/span&gt;&lt;span&gt; to &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-se01-(ghclass-elijah)'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Renaming &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-ghclass-francis'&lt;/span&gt;&lt;span&gt; to &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'mid1/mid1-df00-(ghclass-francis)'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+&lt;img src="imgs/14_local_rename.png" width="65%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Feedback?
+
+
+
+
+```r
+repo_style("ghclass-demo/hw01-team01", files = "*.Rmd", draft = TRUE)
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created branch &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'styler'&lt;/span&gt;&lt;span&gt; from &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Cloned &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01@styler'&lt;/span&gt;&lt;span&gt;.
+## &lt;/span&gt;&lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Created pull request for &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'ghclass-demo/hw01-team01 (master &amp;lt;= styler)'&lt;/span&gt;&lt;span&gt;.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+&lt;img src="imgs/15_github_pull_req.png" width="60%" style="display: block; margin: auto;" /&gt;
+
+---
+background-image: url("imgs/16_github_diff.png")
+background-position: center
+background-size: contain
+
+---
+
+## Future Work
+
+* We will be submitting to CRAN in the next month
+
+* Active summer project adding functionality for peer review by Mine Cetinkaya-Rundel and Therese Anders
+
+* Support for GitHub actions for automated feedback ([rundel/wercker](https://github.com/rundel/wercker) replacement)
+
+* Support more workflows, if you use a GitHub based workflow for teaching that was not reflected here please get in touch.
+
+---
+
+# Thank you!
+
+&lt;br/&gt;
+
+.middle[ .center[
+
+&lt;div style="width: 98%"&gt;
+&lt;table class="contact" style="text-align: left; font-size: 120%; margin-left:auto; margin-right:auto; width:50%;"&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fas fa-box fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://github.com/rundel/ghclass"&gt;rundel/ghclass&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="far fa-file-powerpoint fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+      &lt;a href="http://bit.ly/User2019_ghclass"&gt;bit.ly/JSM2019_ghclass&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fab fa-github-square fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://github.com/rundel"&gt;github.com/rundel&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fas fa-envelope fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="mailto:rundel@gmail.com"&gt;rundel@gmail.com&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fab fa-twitter-square fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://twitter.com/rundel"&gt;@rundel&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+] ]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://use.fontawesome.com/releases/v5.9.0/js/all.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "monokai-sublime",
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();</script>
+
+<script>
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

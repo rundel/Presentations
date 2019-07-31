@@ -1,0 +1,85 @@
+
+## Setup Teams
+
+```{r}
+roster
+```
+
+--
+
+```{r teams}
+team_create("ghclass-demo", team = roster$hw01)
+```
+
+--
+
+```{r team_invite}
+team_invite("ghclass-demo", user = roster$github, team = roster$hw01)
+```
+---
+background-image: url("imgs/05_github_org_teams.png")
+background-position: center
+background-size: contain
+
+---
+background-image: url("imgs/06_github_teams.png")
+background-position: center
+background-size: contain
+
+---
+
+## Setup Repos
+
+```{r repos1}
+roster$hw01
+```
+
+--
+
+```{r repos2}
+repo_create("ghclass-demo", name = roster$hw01)
+```
+
+--
+
+```{r repos3}
+repo_add_team(repo = org_repos("ghclass-demo", filter = "hw01-"), 
+              team = org_teams("ghclass-demo", filter = "hw01-"))
+```
+
+---
+background-image: url("imgs/07_github_repos.png")
+background-position: center
+background-size: contain
+
+---
+background-image: url("imgs/08_github_repo_empty.png")
+background-position: center
+background-size: contain
+
+---
+
+## Provide Template Code
+
+```{r mirror1}
+(repos = org_repos("ghclass-demo", filter = "hw01-"))
+```
+
+--
+
+```{r mirror2}
+repo_mirror(source_repo = "Sta323-Sp19/hw1", 
+            target_repo = repos)
+```
+
+---
+background-image: url("imgs/09_github_mirrored.png")
+background-position: center
+background-size: contain
+
+---
+background-image: url("imgs/10_github_readme1.png")
+background-position: center
+background-size: contain
+
+---
