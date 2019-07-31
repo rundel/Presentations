@@ -54,6 +54,32 @@ Duke Univ
 ## Reproducible Assignments
 
 
+**Goals**:
+
+* Teach (enforce) version control and reproducible workflows
+
+* Encourage (enforce) collaboration
+
+* Embrace modern tools and methods
+
+--
+
+&lt;br/&gt;
+
+**Organization**:
+
+* Core toolkit: R + RStudio + RMarkdown
+
+* Spend 1 lecture on git / GitHub
+
+* GitHub setup:
+  
+  * 1 organization / course
+
+  * 1 repo / (team | student) / assignment
+  
+* Randomly assigned teams of 3-4 students / assignment
+
 ---
 
 ## Setup
@@ -80,10 +106,8 @@ Duke Univ
 
 &lt;br/&gt;
 
---
-
 .center[
-Only *Step 5* needs to be repeated for a new class!
+Only **Step 5** needs to be repeated for a new class!
 ]
 
 ---
@@ -92,7 +116,7 @@ Only *Step 5* needs to be repeated for a new class!
 
 
 ```r
-remotes::install_github("rundel/ghclass")
+devtools::install_github("rundel/ghclass")
 library(ghclass)
 ```
 
@@ -104,7 +128,7 @@ Some design principals behind this package:
 
 1. Functions are prefixed with `org`, `repo`, `team`, `github` or `local_repo` to indicate what they operate on.
 
-2. Functions are vectorized over their parameters, batch related operations.
+2. Functions are vectorized over their parameters  (batch related operations).
 
 3. Be verbose about what is happening, report failures but don't halt execution.
 
@@ -154,6 +178,18 @@ background-size: contain
 ## Checking your git / GitHub config
 
 
+
+
+```r
+github_test_token()
+```
+
+&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Your github token is functioning correctly.
+&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
+
+--
+
+
 ```r
 usethis::git_sitrep()
 ```
@@ -176,16 +212,6 @@ usethis::git_sitrep()
 ## &lt;/span&gt;&lt;span style='font-weight: bold;'&gt;GitHub pull request readiness&lt;/span&gt;&lt;span&gt;
 ## * origin: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;rundel/Presentations&lt;/span&gt;&lt;span&gt;, &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;can push&lt;/span&gt;&lt;span&gt;
 ## * upstream: &lt;/span&gt;&lt;span style='color: #0000BB;'&gt;'&amp;lt;no such remote&amp;gt;'&lt;/span&gt;&lt;span&gt;
-&lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
-
---
-
-
-```r
-github_test_token()
-```
-
-&lt;PRE class="fansi fansi-output"&gt;&lt;CODE&gt;## &lt;span style='color: #00BB00;'&gt;✔&lt;/span&gt;&lt;span&gt; Your github token is functioning correctly.
 &lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
