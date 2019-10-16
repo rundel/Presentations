@@ -1,0 +1,81 @@
+Homework 1
+========================================================
+
+### Task 1 - Implementation
+
+
+
+In this function, I used a simple for loop and a series of "if" and "else if" statements.
+The "if" statements are broken up into those that check for errors in inputs such as "Inf",
+negative values, and non-integers. After working through the possible errors presented, the
+second chunk of if statements categorizes the values that are inputted into those divisible
+by 3, 5, both, or neither and outputs the corresponding values.
+
+This code was created mainly from my prior knowledge of R as well as class lectures, but I did
+seek help from StackOverflow in finding a way to test for integers, linked here: https://stackoverflow.com/questions/3476782/check-if-the-number-is-integer.
+
+
+```{r}
+fizzbuzz = function(v) {
+  for (i in v){ #iterates through the values defined in v
+    
+    #Error cases
+    if ((is.integer(i) == FALSE) & (is.double(i) == FALSE)){
+      stop("Value is non-numeric")
+    }
+    else if ((i <= 0) || (i == Inf)){
+      stop("Value is not in the acceptable range")
+    }
+    else if (i%%1 != 0){
+      stop("Value is not an integer")
+    }
+    
+    
+    #Constructing working cases options
+    else if ((i%%3 == 0) & (i%%5 == 0)){
+      print("FizzBuzz")
+    }
+    else if (i%%3 == 0){
+      print("Fizz")
+    }
+    else if (i%%5 == 0){
+      print("Buzz")
+    }
+    else{
+      print(i)
+    }
+  }
+}
+```
+
+### Task 2 - Validation & Testing
+
+#### Good Inputs
+
+```{r}
+fizzbuzz(1)
+fizzbuzz(3)
+fizzbuzz(5)
+fizzbuzz(15)
+
+fizzbuzz(9:15)
+fizzbuzz(15:9)
+```
+
+
+#### Bad Inputs
+
+```{r error=TRUE}
+fizzbuzz(-1)
+fizzbuzz(-3)
+fizzbuzz(-5)
+
+fizzbuzz(Inf)
+fizzbuzz(-Inf)
+
+fizzbuzz("A")
+fizzbuzz(1.5)
+fizzbuzz(1i)
+fizzbuzz(4i)
+```
+
