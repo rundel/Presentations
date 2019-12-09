@@ -72,7 +72,9 @@ Previously at Duke,
 
 * Reproducible computing
 
-* Software Engineering
+* Software engineering
+
+* Collaboration
 
 --
 
@@ -112,19 +114,13 @@ Lectures mostly structured around a traditional format,
 
 &gt; "Live-coding is an approach to teaching programming by writing actual code during class as part of the lectures. In a live-coding session, the instructor thinks aloud while writing code and the students are able to understand the process of programming by observing the thought processes of the instructor." - [Raj, et al. (2018)](http://pages.cs.wisc.edu/~gerald/papers/LiveCoding.pdf)
 
-
----
-class: center, middle
-
-# Demonstration 
-
 ---
 
 ## Exercise
 
 Using the `flights` data from `nycflights13` answer the following question:
 
-1. How many flights from JFK to Los Angeles (LAX) did each carrier have in May?
+1. How many flights from New York (JFK) to Los Angeles (LAX) did each carrier have in May?
 
 ---
 
@@ -132,6 +128,7 @@ Using the `flights` data from `nycflights13` answer the following question:
 
 
 ```r
+library(dplyr)
 library(nycflights13)
 
 flights %&gt;%
@@ -152,6 +149,12 @@ flights %&gt;%
 &lt;/span&gt;&lt;/CODE&gt;&lt;/PRE&gt;
 
 ---
+class: center, middle
+
+# Approach 2 - Demo 
+
+
+---
 
 ## Benefits
 
@@ -159,9 +162,9 @@ flights %&gt;%
 
 * Modeling problem solving process
 
-* Interactivity and experimentation
-
 * Modeling debugging processes / finding help
+
+* Interactivity and experimentation
 
 * Comparing alternative solutions
 
@@ -175,7 +178,7 @@ Common issue with live coding:
 
 * they ignore the narrative and miss the context of the problem / solution.
 
-* non-native english speakers tend to have a particularly hard time
+* non-native english speakers can have a harder time
 
 --
 
