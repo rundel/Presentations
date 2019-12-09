@@ -39,8 +39,13 @@ for teaching computation
 
 .conference[
 .name[
-ECME 2019
+ECME, Dec 2019
 ]
+
+.bitly[
+[bit.ly/rundel_ecme2019](http://bit.ly/rundel_ecme2019)
+]
+
 ]
 
 .author[
