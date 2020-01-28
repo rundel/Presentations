@@ -1,0 +1,148 @@
+---
+title: "livecode"
+author: "Colin Rundel"
+date: "2020-01-30"
+output:
+  xaringan::moon_reader:
+    css: "slides.css"
+    seal: FALSE
+    includes:
+      after_body:
+        - 'jquery.html'
+    nature:
+      highlightLines: true
+      countIncrementalSlides: false
+      ratio: '16:9'
+      beforeInit: ["https://use.fontawesome.com/releases/v5.9.0/js/all.js"]
+
+---
+exclude: true
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+fansi::set_knit_hooks(knitr::knit_hooks)
+options(crayon.enabled = TRUE)
+
+knitr::opts_chunk$set(cache = TRUE, fig.align="center")
+```
+
+---
+class: title_bg
+
+.title[
+livecode
+]
+
+.subtitle[
+broadcast your live coding sessions from and to RStudio
+]
+
+
+.conference[
+.name[
+RStudioConf 2020 &middot; San Francisco
+]
+.bitly[
+[bit.ly/RSConf2020_livecode](http://bit.ly/RSConf2020_livecode)
+]
+]
+
+.author[
+.name[
+Colin Rundel
+]
+.school[
+Univ of Edinburgh &middot;
+Duke Univ
+]
+]
+
+---
+class: text
+
+## Live Coding
+
+> "the process of designing and implementing a [coding] project in front of class during lecture period" - [Paxton (2002)](https://dl.acm.org/citation.cfm?id=771332)
+
+<br/>
+
+> "Live-coding is an approach to teaching programming by writing actual code during class as part of the lectures. In a live-coding session, the instructor thinks aloud while writing code and the students are able to understand the process of programming by observing the thought processes of the instructor." - [Raj, et al. (2018)](http://pages.cs.wisc.edu/~gerald/papers/LiveCoding.pdf)
+
+---
+
+```{r echo=FALSE, out.width="90%"}
+knitr::include_graphics("video/server_start.gif")
+```
+
+---
+background-color: #ECECEC
+
+```r
+> s = livecode::serve_file(
+    file = "example.R",
+    ip = "10.20.58.39", port = 7982,
+    auto_save = TRUE, 
+    interval = 2,
+    bitly = TRUE
+)
+
+✔ Started sharing 'example.R' at 'http://10.20.58.39:7982'.
+✖ The current ip address ('10.20.58.39') for the server 
+  is private, only users on the same local network are 
+  likely to be able to connect.
+✔ Created bitlink 'http://bit.ly/2t86w0o' for 
+  'http://10.20.58.39:7982'.
+```
+
+---
+
+```{r echo=FALSE, out.height="90%"}
+knitr::include_graphics("video/server_send_msg.gif")
+```
+
+---
+
+# Thank you!
+
+.middle[ .center[
+
+<div style="width: 98%">
+<table class="contact" style="text-align: left; font-size: 120%; margin-left:auto; margin-right:auto; width:50%;">
+<tbody>
+<tr>
+  <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-2x"></i> </td>
+  <td> 
+      <a href="http://bit.ly/RSConf2020_livecode">bit.ly/RSConf2020_livecode</a>
+  </td>
+</tr>
+<tr><td><br/></td></tr>
+<tr>
+  <td style="vertical-align: middle;"> <i class="fas fa-box fa-fw fa-2x"></i> </td>
+  <td> 
+    <a href="https://github.com/rundel/livecode">rundel/livecode</a> <br/>
+  </td>
+</tr>
+<tr><td><br/></td></tr>
+<tr>
+  <td style="vertical-align: middle;"> <i class="fab fa-github-square fa-fw fa-2x"></i> </td>
+  <td> 
+    <a href="https://github.com/rundel">github.com/rundel</a>
+  </td>
+</tr>
+<tr><td><br/></td></tr>
+<tr>
+  <td style="vertical-align: middle;"> <i class="fas fa-envelope fa-fw fa-2x"></i> </td>
+  <td> 
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a>
+  </td>
+</tr>
+<tr><td><br/></td></tr>
+<tr>
+  <td style="vertical-align: middle;"> <i class="fab fa-twitter-square fa-fw fa-2x"></i> </td>
+  <td> 
+    <a href="https://twitter.com/rundel">@rundel</a>
+  </td>
+</tr>
+</tbody>
+</table>
+</div>
+] ]
