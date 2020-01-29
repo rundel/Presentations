@@ -58,6 +58,13 @@ class: text
 &gt; "Live-coding is an approach to teaching programming by writing actual code during class as part of the lectures. In a live-coding session, the instructor thinks aloud while writing code and the students are able to understand the process of programming by observing the thought processes of the instructor." - [Raj, et al. (2018)](http://pages.cs.wisc.edu/~gerald/papers/LiveCoding.pdf)
 
 ---
+class: middle, center
+
+.large[
+**active** vs. **passive** learning
+]
+
+---
 
 &lt;img src="video/server_start.gif" width="90%" style="display: block; margin: auto;" /&gt;
 
@@ -65,7 +72,9 @@ class: text
 background-color: #ECECEC
 
 ```r
-&gt; s = livecode::serve_file(
+## devtools::install_github("rundel/livecode")
+
+s = livecode::serve_file(
     file = "example.R",
     ip = "10.20.58.39", port = 7982,
     auto_save = TRUE, 
@@ -73,19 +82,20 @@ background-color: #ECECEC
     bitly = TRUE
 )
 
-✔ Started sharing 'example.R' at 'http://10.20.58.39:7982'.
-✖ The current ip address ('10.20.58.39') for the server 
-  is private, only users on the same local network are 
-  likely to be able to connect.
-✔ Created bitlink 'http://bit.ly/2t86w0o' for 
-  'http://10.20.58.39:7982'.
+## ✔ Started sharing 'example.R' at 'http://10.20.58.39:7982'.
+## ✖ The current ip address ('10.20.58.39') for the server 
+##   is private, only users on the same local network are 
+##   likely to be able to connect.
+## ✔ Created bitlink 'http://bit.ly/2t86w0o' for 
+##   'http://10.20.58.39:7982'.
 ```
 
 ---
 
-&lt;img src="video/server_send_msg.gif" height="90%" style="display: block; margin: auto;" /&gt;
+&lt;img src="video/server_send_msg.gif" width="90%" style="display: block; margin: auto;" /&gt;
 
 ---
+class: text
 
 # Thank you!
 
@@ -197,11 +207,6 @@ if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
   }
   preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
 })(document);</script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
-
-<script>
-jQuery(".remark-slide-content:has(iframe)").css("padding",0)
-</script>
 
 <script>
 (function() {

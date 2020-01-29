@@ -6,9 +6,6 @@ output:
   xaringan::moon_reader:
     css: "slides.css"
     seal: FALSE
-    includes:
-      after_body:
-        - 'jquery.html'
     nature:
       highlightLines: true
       countIncrementalSlides: false
@@ -68,6 +65,13 @@ class: text
 > "Live-coding is an approach to teaching programming by writing actual code during class as part of the lectures. In a live-coding session, the instructor thinks aloud while writing code and the students are able to understand the process of programming by observing the thought processes of the instructor." - [Raj, et al. (2018)](http://pages.cs.wisc.edu/~gerald/papers/LiveCoding.pdf)
 
 ---
+class: middle, center
+
+.large[
+**active** vs. **passive** learning
+]
+
+---
 
 ```{r echo=FALSE, out.width="90%"}
 knitr::include_graphics("video/server_start.gif")
@@ -77,7 +81,9 @@ knitr::include_graphics("video/server_start.gif")
 background-color: #ECECEC
 
 ```r
-> s = livecode::serve_file(
+## devtools::install_github("rundel/livecode")
+
+s = livecode::serve_file(
     file = "example.R",
     ip = "10.20.58.39", port = 7982,
     auto_save = TRUE, 
@@ -85,21 +91,22 @@ background-color: #ECECEC
     bitly = TRUE
 )
 
-✔ Started sharing 'example.R' at 'http://10.20.58.39:7982'.
-✖ The current ip address ('10.20.58.39') for the server 
-  is private, only users on the same local network are 
-  likely to be able to connect.
-✔ Created bitlink 'http://bit.ly/2t86w0o' for 
-  'http://10.20.58.39:7982'.
+## ✔ Started sharing 'example.R' at 'http://10.20.58.39:7982'.
+## ✖ The current ip address ('10.20.58.39') for the server 
+##   is private, only users on the same local network are 
+##   likely to be able to connect.
+## ✔ Created bitlink 'http://bit.ly/2t86w0o' for 
+##   'http://10.20.58.39:7982'.
 ```
 
 ---
 
-```{r echo=FALSE, out.height="90%"}
+```{r echo=FALSE, out.width="90%"}
 knitr::include_graphics("video/server_send_msg.gif")
 ```
 
 ---
+class: text
 
 # Thank you!
 

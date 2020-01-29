@@ -6,6 +6,18 @@ body {
   font-size: 32px;
 }
 
+h2 { 
+  margin-block-start: 0;
+}
+
+.large { 
+  font-size: 54px;
+}
+
+.large strong {
+  font-size: 80px;
+}
+
 .remark-code, .remark-inline-code {
   font-family: 'Fira Code', 'Lucida Console', Monaco, monospace;
   font-size: 28px;
