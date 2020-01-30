@@ -1,4 +1,4 @@
-# `livecode`: broadcast your live coding sessions from and to RStudio
+## `livecode`: broadcast your live coding sessions from and to RStudio
 
 ## Abstract
 
