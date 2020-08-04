@@ -120,13 +120,17 @@ This is often the first course where students engaged with models that cannot be
 
 ## Infrastructure
 
-The platform provided for students matter:
+The platform provided for students matter (labs vs. servers vs. student laptops):
 
 * Configuration / Administration
 
 * Performance
 
 * Workflows
+
+.footnote[
+Çetinkaya-Rundel & Rundel (2018) - [Infrastructure and Tools for Teaching Computing Throughout the Statistical Curriculum](https://amstat.tandfonline.com/doi/abs/10.1080/00031305.2017.1397549)
+]
 
 ---
 
