@@ -1,0 +1,24 @@
+name: Check Repo
+on: 
+  push:
+    branches:
+    - master
+jobs:
+  knit:
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/tidyverse:latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Check
+      run:  Rscript -e "rmarkdown::render('hw1.Rmd')"
+  allowed-files:
+    runs-on: ubuntu-latest
+    container:
+      image: rocker/r-ver:latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Check
+      run: Rscript -e "source('https://raw.githubusercontent.com/statprog-s1-2019/hw1/master/hw1_whitelist.R')"
+      
+      

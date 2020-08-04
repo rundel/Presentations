@@ -1,0 +1,626 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Using git and GitHub in the Classroom</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Colin Rundel" />
+    <meta name="date" content="2020-04-23" />
+    <script src="ECME2020_files/header-attrs-2.1/header-attrs.js"></script>
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+exclude: true
+
+
+
+
+
+
+
+
+
+---
+class: title_bg
+
+.title[
+Using git and GitHub in the Classroom
+]
+
+.conference[
+  .name[ 
+    ECME, April 2020 
+  ]
+  .bitly[ 
+    
+  ] 
+]
+
+.author[
+.name[
+Colin Rundel
+]
+.school[
+Univ of Edinburgh
+]
+]
+
+---
+class: middle, center
+
+## Teaching Reproducible Workflows
+
+---
+
+## Reproducible vs Replicable
+
+&lt;img src="imgs/leek_repro.jpeg" width="50%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+Source: Patil, Peng, Leek (2019) A visual tool for defining reproducibility and replicability. &lt;i&gt;Nature Human Behaviour&lt;/i&gt;
+]
+
+---
+
+## Reproducibility as a trust scale
+
+&lt;br/&gt;&lt;br/&gt;
+
+&lt;img src="imgs/trustscale3.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+
+.footnote[
+Source: Gabriel Becker - &lt;a href="https://gmbecker.github.io/MayInstituteKeynote2019/outline.html"&gt;Keynote&lt;/a&gt; - Advanced R Course - May Institute for Computational Proteomics 2019
+]
+
+---
+
+## Reproducibility details
+
+&lt;br/&gt;
+
+- Are the tables and figures reproducible from the code and data?
+
+- Does the code actually do what you think it does?
+
+- In addition to what was done, is it clear *why* it was done? (e.g. how were hyper / tuning parameters chosen?)
+
+- Can the code be used for other data?
+
+- Can you extend the code to do other things?
+
+---
+
+## Reproducibility Toolchain
+
+&lt;br/&gt;
+
+.larger[ .center[
+Scriptability `\(\rightarrow\)` R &lt;br/&gt; &lt;br/&gt;
+] ]
+
+--
+
+.larger[ .center[
+Literate programming `\(\rightarrow\)` R Markdown &lt;br/&gt; &lt;br/&gt;
+] ]
+
+--
+
+.larger[ .center[
+Version control `\(\rightarrow\)` `git` / GitHub &lt;br/&gt; &lt;br/&gt;
+] ]
+
+---
+class: middle, center
+
+## Version Control
+
+---
+
+## What is version control?
+
+Version control is a (formal) system that records changes to a file (or a set of files) over time so that you can retrieve specific versions later.
+
+---
+
+## Minimal Version Control
+
+&lt;img src="imgs/phd_comics_vc.gif" width="40%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+Source: [Piled Higher and Deeper](http://www.phdcomics.com) by Jorge Cham
+]
+
+---
+
+## Version control systems
+
+- Start with a initial version of a document / file.
+
+- When you "save" just record the pieces of the file that changed.
+
+&lt;img src="imgs/play-changes.png" width="25%" style="display: block; margin: auto;" /&gt;
+
+- This creates a timeline for each and every file being tracked that lets you move backwards and forwards in time by adding or removing these diffs.
+
+- "Playing back" different sets of diffs onto the original document allows for multiple versions of any file to exist at the same time.
+
+&lt;img src="imgs/merge.png" width="15%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+Source: [Software Carpentry](https://software-carpentry.org/).
+]
+
+---
+
+## git
+
+&gt; Git is a distributed version-control system for tracking changes in source code during software development. It is designed for coordinating work among programmers, but it can be used to track changes in any set of files. Its goals include speed, data integrity, and support for distributed, non-linear workflows.
+
+
+.footnote[
+Source: Wikipedia - [git](https://en.wikipedia.org/wiki/Git).
+]
+
+---
+
+## git in practice
+
+&lt;img src="imgs/git_workflow.png" width="49%" /&gt;
+&lt;img src="imgs/git_memorize.jpg" width="49%" /&gt;
+
+.footnote[
+https://github.com/pcottle/learnGitBranching
+]
+
+---
+
+## GitHub
+
+&lt;img src="imgs/github_org.png" width="100%" /&gt;
+
+---
+class: center,  middle
+
+# Some Terminology
+
+---
+
+## Repository (Repo)
+
+&lt;img src="imgs/repo.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## History
+
+&lt;img src="imgs/history.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Commit
+
+&lt;img src="imgs/commit.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: center, middle
+
+# In the classroom
+
+---
+
+## Context
+
+* Last semester I was the course organizer for Math 11176 - Statistical Programming
+  * MSc course w/ ~200 students enrolled
+
+* Multiple marked assignments (both individual and team based)
+
+* For each assignment we distribute:
+  * Instruction document
+  * Template `Rmd` for solutions
+  * Data and other support files
+  
+* Need to collect: 
+  * Completed template `Rmd`
+  * Rendered output (`pdf`, `html`, `md`, etc.) 
+
+---
+
+## GitHub Structure
+
+* 1 organization / course
+
+* Students are added as (anonymous) members of the organization
+
+* 1 template repo / assignment
+
+* 1 private repo / assignment / (team | individual)
+
+* Automate the distribution, collection, and feedback using GitHub's API
+
+---
+
+## Template Example - hw1
+
+&lt;img src="imgs/github_hw1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+class: center, middle
+
+## Using `ghclass`
+
+---
+
+## Creating a team assignment
+
+
+```r
+org_create_assignment(
+  org = "ghclass-demo", 
+  repo = c("hw01-team01", "hw01-team01", "hw01-team02", "hw01-team02"),
+  user = c("ghclass-anya", "ghclass-bruno", "ghclass-celine", "ghclass-diego"),
+  team = c("hw01-team01", "hw01-team01", "hw01-team02", "hw01-team02"),
+  source_repo = "statprog-s1-2019/hw1"
+)
+```
+
+```
+## ✓ Mirrored 'statprog-s1-2019/hw1' to 'ghclass-demo/hw01-team01'.
+```
+
+```
+## ✓ Mirrored 'statprog-s1-2019/hw1' to 'ghclass-demo/hw01-team02'.
+```
+
+```
+## ✓ Created team 'hw01-team01' in org 'ghclass-demo'.
+```
+
+```
+## ✓ Created team 'hw01-team02' in org 'ghclass-demo'.
+```
+
+```
+## ✓ Added 'ghclass-anya' to team 'hw01-team01'.
+```
+
+```
+## ✓ Added 'ghclass-bruno' to team 'hw01-team01'.
+```
+
+```
+## ✓ Added 'ghclass-celine' to team 'hw01-team02'.
+```
+
+```
+## ✓ Added 'ghclass-diego' to team 'hw01-team02'.
+```
+
+```
+## ✓ Added team 'hw01-team01' to repo 'ghclass-demo/hw01-team01'.
+```
+
+```
+## ✓ Added team 'hw01-team02' to repo 'ghclass-demo/hw01-team02'.
+```
+
+.footnote[
+[demo](https://github.com/ghclass-demo/hw01-team01)
+]
+---
+
+## Creating an individual assignments
+
+
+```r
+user = c("ghclass-anya", "ghclass-bruno", "ghclass-celine", "ghclass-diego")
+
+org_create_assignment(
+  org = "ghclass-demo", 
+  repo = paste0("proj1-", user),
+  user = user,
+  source_repo = "statprog-s1-2019/proj1"
+)
+```
+
+```
+## ✓ Mirrored 'statprog-s1-2019/proj1' to 'ghclass-demo/proj1-ghclass-anya'.
+```
+
+```
+## ✓ Mirrored 'statprog-s1-2019/proj1' to 'ghclass-demo/proj1-ghclass-bruno'.
+```
+
+```
+## ✓ Mirrored 'statprog-s1-2019/proj1' to 'ghclass-demo/proj1-ghclass-celine'.
+```
+
+```
+## ✓ Mirrored 'statprog-s1-2019/proj1' to 'ghclass-demo/proj1-ghclass-diego'.
+```
+
+```
+## ✓ Added user 'ghclass-anya' to repo 'ghclass-demo/proj1-ghclass-anya'.
+```
+
+```
+## ✓ Added user 'ghclass-bruno' to repo 'ghclass-demo/proj1-ghclass-bruno'.
+```
+
+```
+## ✓ Added user 'ghclass-celine' to repo 'ghclass-demo/proj1-ghclass-celine'.
+```
+
+```
+## ✓ Added user 'ghclass-diego' to repo 'ghclass-demo/proj1-ghclass-diego'.
+```
+
+.footnote[
+[demo](https://github.com/ghclass-demo/proj1-ghclass-anya)
+]
+---
+
+## Update files
+
+
+```r
+repo_add_file(repo = org_repos(org = "ghclass-demo", filter = "hw01-"),
+              file = "files/fizzbuzz.png", overwrite = TRUE)
+```
+
+```
+## ✓ Added file 'fizzbuzz.png' to repo 'ghclass-demo/hw01-team01'.
+```
+
+```
+## ✓ Added file 'fizzbuzz.png' to repo 'ghclass-demo/hw01-team02'.
+```
+
+```r
+repo_add_file(repo = org_repos(org = "ghclass-demo", filter = "hw01-"),
+              file = "files/data.csv", overwrite = TRUE)
+```
+
+```
+## ✓ Added file 'data.csv' to repo 'ghclass-demo/hw01-team01'.
+```
+
+```
+## ✓ Added file 'data.csv' to repo 'ghclass-demo/hw01-team02'.
+```
+
+.footnote[
+[demo](https://github.com/ghclass-demo/hw01-team01)
+]
+
+---
+
+## Collect student work
+
+
+
+
+```r
+local_repo_clone(repo = org_repos(org = "ghclass-demo", "hw01-"), 
+                 local_path = "hw01")
+```
+
+```
+## ✓ Cloned 'ghclass-demo/hw01-team01'.
+```
+
+```
+## ✓ Cloned 'ghclass-demo/hw01-team02'.
+```
+
+--
+
+&lt;img src="imgs/github_clone.png" width="65%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Contributor statistics
+
+
+```r
+repo_contributors(repo = "statprog-s1-2019/hw02-lab01-team03") %&gt;% 
+  mutate(username = LETTERS[1:4]) %&gt;%
+  arrange(desc(commits))
+```
+
+```
+## # A tibble: 4 x 3
+##   repo                               username commits
+##   &lt;chr&gt;                              &lt;chr&gt;      &lt;int&gt;
+## 1 statprog-s1-2019/hw02-lab01-team03 D              8
+## 2 statprog-s1-2019/hw02-lab01-team03 C              5
+## 3 statprog-s1-2019/hw02-lab01-team03 B              4
+## 4 statprog-s1-2019/hw02-lab01-team03 A              3
+```
+
+```r
+repo_contributors(repo = "statprog-s1-2019/hw02-lab01-team10") %&gt;%
+  mutate(username = 1:5) %&gt;%
+  arrange(desc(commits))
+```
+
+```
+## # A tibble: 5 x 3
+##   repo                               username commits
+##   &lt;chr&gt;                                 &lt;int&gt;   &lt;int&gt;
+## 1 statprog-s1-2019/hw02-lab01-team10        5      17
+## 2 statprog-s1-2019/hw02-lab01-team10        4       9
+## 3 statprog-s1-2019/hw02-lab01-team10        3       4
+## 4 statprog-s1-2019/hw02-lab01-team10        1       1
+## 5 statprog-s1-2019/hw02-lab01-team10        2       1
+```
+
+
+---
+class: middle, center
+
+## GitHub Actions
+
+
+
+.footnote[
+[demo](http://github.com/ghclass-demo/hw01-team01)
+]
+
+---
+background-image: url("imgs/github_badge.png")
+background-position: center
+background-size: contain
+
+---
+background-image: url("imgs/github_actions_result.png")
+background-position: center
+background-size: contain
+
+---
+background-image: url("imgs/github_actions.png")
+background-position: center
+background-size: contain
+
+---
+
+## Ongoing and future work
+
+* Peer evaluation (Mine and Therese Anders)
+
+* Automated rendering
+
+* Automated report generation / assignment dashboards
+
+  * Structured assignments
+  
+  * Code similarity comparisons
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://use.fontawesome.com/releases/v5.9.0/js/all.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightLines": true,
+"highlightStyle": "monokai-sublime",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
