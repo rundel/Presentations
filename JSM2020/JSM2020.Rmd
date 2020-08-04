@@ -1,7 +1,7 @@
 ---
 title: "Computation infrastructure for teaching Bayesian modeling"
 author: "Colin Rundel"
-date: "2020-04-23"
+date: "2020-08-04"
 output:
   xaringan::moon_reader:
     css: "slides.css"
