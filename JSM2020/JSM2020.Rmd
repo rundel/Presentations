@@ -79,7 +79,7 @@ knitr::include_graphics("imgs/dlm-2.png")
 .col[
 Violent Crime in Baltimore City
 
-```{r echo=FALSE, out.width="60%", fig.align="center"}
+```{r echo=FALSE, out.width="57%", fig.align="center"}
 knitr::include_graphics("imgs/baltimore1.png")
 knitr::include_graphics("imgs/baltimore2.png")
 ```
