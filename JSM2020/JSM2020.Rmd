@@ -25,7 +25,7 @@ Computation infrastructure for<br/>teaching Bayesian modeling
     JSM 2020 
   ]
   .bitly[ 
-    
+    [bit.ly/JSM2020_Sta444](https://bit.ly/JSM2020_Sta444)
   ] 
 ]
 
