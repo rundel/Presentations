@@ -278,6 +278,8 @@ knitr::include_graphics("imgs/github_actions2.png")
 
 * [Implementing version control with Git as a learning objective in statistics courses](https://arxiv.org/abs/2001.01988) <br/> Matthew Beckman, Mine Çetinkaya-Rundel, Nicholas Horton, Colin Rundel, Adam Sullivan, Maria Tackett (2020), *Journal of Statistics Education (in review)*
 
+* [Teaching Statistics and Data Science Online Workshops](https://centreforstatistics.maths.ed.ac.uk/cfs/events/past-events-and-recordings/2020-events/teaching-statistics-and-data-science-online) <br/> Mine Çetinkaya-Rundel, Colin Rundel (2020), *Centre for Statistics Online Workshop*
+
 ---
 
 # Thank you!
@@ -293,6 +295,7 @@ knitr::include_graphics("imgs/github_actions2.png")
   <td></td>
   <td> 
     <a href="mailto:rundel@gmail.com">rundel@gmail.com</a>
+    <a href="mailto:colin.rundel@ed.ac.uk">colin.rundel@ed.ac.uk</a>
   </td>
 </tr>
 <tr><td><br/></td></tr>
