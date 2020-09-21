@@ -53,10 +53,10 @@ Teaching computing<br/>using git and GitHub
 
 .conference[
   .name[ 
-    TALMO, Sept 2020 
+    TLMSCO, Sept 2020 
   ]
   .bitly[ 
-    http://bit.ly/talmo_rundel
+    [bit.ly/tlmsco_rundel](https://bit.ly/tlmsco_rundel)
   ] 
 ]
 
@@ -308,7 +308,7 @@ knitr::include_graphics("imgs/github_actions2.png")
   <td style="vertical-align: middle;"> <i class="far fa-file-powerpoint fa-fw fa-2x"></i> </td>
   <td></td>
   <td> 
-      <a href="http://bit.ly/talmo_rundel">bit.ly/JSM2020_Sta444</a>
+      <a href="http://bit.ly/tlmsco_rundel">bit.ly/tlmsco_rundel</a>
   </td>
 </tr>
 <tr><td><br/></td></tr>

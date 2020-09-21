@@ -4,4 +4,4 @@ In this talk we will discuss how Git (a version control system) and GitHub (a re
 
 Conference website - https://sites.google.com/view/rssteachingstatisticssig/research-meetings/teaching-and-learning-of-maths-and-stats-computing-online
 
-Slides - [html]() | [pdf]()
+Slides - [html](https://rundel.github.io/Presentations/TLMSCO2020/TLMSCO2020.html) | [pdf](https://rundel.github.io/Presentations/TLMSCO2020/TLMSCO2020.pdf)
