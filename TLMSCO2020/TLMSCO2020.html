@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>Teaching computing using git and GitHub</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Colin Rundel" />
+    <meta name="date" content="2020-09-21" />
+    <script src="TLMSCO2020_files/header-attrs-2.3/header-attrs.js"></script>
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+exclude: true
+
+
+
+
+
+
+
+
+
+---
+class: title_bg
+
+.title[
+Teaching computing&lt;br/&gt;using git and GitHub
+]
+
+.conference[
+  .name[ 
+    TALMO, Sept 2020 
+  ]
+  .bitly[ 
+    http://bit.ly/talmo_rundel
+  ] 
+]
+
+.author[
+.name[
+Dr. Colin Rundel
+]
+.school[
+Univ of Edinburgh
+]
+]
+
+---
+class: middle, center
+
+# Teaching Reproducible Workflows
+
+---
+
+## Reproducible vs Replicable
+
+&lt;img src="imgs/leek_repro.jpeg" width="50%" style="display: block; margin: auto;" /&gt;
+
+.footnote[
+Source: Patil, Peng, Leek (2019) A visual tool for defining reproducibility and replicability. &lt;i&gt;Nature Human Behaviour&lt;/i&gt;
+]
+
+---
+
+## Reproducibility in practice
+
+&lt;br/&gt;
+
+- Can you recreate the tables and figures reproducible from the code and data?
+
+- Does the code actually do what you think it does?
+
+- In addition to what was done, is it clear *why* it was done? (e.g. how were hyper / tuning parameters chosen?)
+
+- Can the code be used for other data?
+
+- Can you hand the code off to someone else and expect it to work?
+
+---
+
+## Core pieces
+
+&lt;img src="imgs/repro_pieces.png" width="50%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Context
+
+* I am the course organizer for Math 11176 - Statistical Programming
+  * Course with ~200 Maths MSC students enrolled
+
+* 100% coursework, multiple marked assignments (individual and team based)
+
+* For each assignment we distribute:
+  * Instruction document
+  * Template `Rmd` for solutions
+  * Data and other support files
+  
+* Need to collect: 
+  * Completed template `Rmd`
+  * Rendered output (`pdf`, `html`, `md`, etc.) 
+
+---
+
+## GitHub Organization
+
+* 1 organization / course
+
+* Students are added (anonymously) members of the organization
+
+* 1 template repository / assignment
+
+* 1 private repository / assignment / (team | individual)
+
+* Automate the distribution, collection, and feedback using GitHub's API (`ghclass`)
+
+
+---
+
+## GitHub Organization
+
+&lt;img src="imgs/github_org.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Template Example - hw1
+
+&lt;img src="imgs/github_hw1.png" width="80%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## `ghclass`
+
+An R package that enables instructors to automate the management of courses on GitHub.
+
+Key features:
+
+- Repository creation, mirroring, updating, collecting, etc.
+
+- Organization management (members, teams, etc.)
+
+- Summary statistics (e.g. commits) by repo or over the org
+
+- Many other common tasks (issues, PR, etc.)
+
+
+For more details see the package website - https://rundel.github.io/ghclass/
+
+---
+
+## Creating a team assignment
+
+
+```r
+org_create_assignment(
+  org = "ghclass-demo", 
+  repo = c("hw01-team01", "hw01-team01", "hw01-team02", "hw01-team02"),
+  user = c("ghclass-anya", "ghclass-bruno", "ghclass-celine", "ghclass-diego"),
+  team = c("hw01-team01", "hw01-team01", "hw01-team02", "hw01-team02"),
+  source_repo = "statprog-s1-2019/hw1"
+)
+```
+
+```
+## ✓ Mirrored repo 'statprog-s1-2019/hw1' to repo 'ghclass-demo/hw01-team01'.
+```
+
+```
+## ✓ Mirrored repo 'statprog-s1-2019/hw1' to repo 'ghclass-demo/hw01-team02'.
+```
+
+```
+## ✓ Created team 'hw01-team01' in org 'ghclass-demo'.
+```
+
+```
+## ✓ Created team 'hw01-team02' in org 'ghclass-demo'.
+```
+
+```
+## ✓ Added user 'ghclass-anya' to team 'hw01-team01'.
+```
+
+```
+## ✓ Added user 'ghclass-bruno' to team 'hw01-team01'.
+```
+
+```
+## ✓ Added user 'ghclass-celine' to team 'hw01-team02'.
+```
+
+```
+## ✓ Added user 'ghclass-diego' to team 'hw01-team02'.
+```
+
+```
+## ✓ Added team 'hw01-team01' to repo 'ghclass-demo/hw01-team01' with 'push' access.
+```
+
+```
+## ✓ Added team 'hw01-team02' to repo 'ghclass-demo/hw01-team02' with 'push' access.
+```
+
+---
+
+## Collecting student work
+
+
+
+
+```r
+local_repo_clone(repo = org_repos(org = "ghclass-demo", "hw01-"), 
+                 local_path = "hw01")
+```
+
+```
+## ✓ Cloned 'ghclass-demo/hw01-team01'.
+```
+
+```
+## ✓ Cloned 'ghclass-demo/hw01-team02'.
+```
+
+--
+
+&lt;img src="imgs/github_clone.png" width="65%" style="display: block; margin: auto;" /&gt;
+
+---
+
+## Contributor statistics
+
+
+```r
+repo_contributors(repo = "statprog-s1-2019/hw02-lab01-team03") %&gt;% 
+  mutate(username = LETTERS[1:4]) %&gt;%
+  arrange(desc(commits))
+```
+
+```
+## # A tibble: 4 x 3
+##   repo                               username commits
+##   &lt;chr&gt;                              &lt;chr&gt;      &lt;int&gt;
+## 1 statprog-s1-2019/hw02-lab01-team03 D              8
+## 2 statprog-s1-2019/hw02-lab01-team03 B              5
+## 3 statprog-s1-2019/hw02-lab01-team03 C              5
+## 4 statprog-s1-2019/hw02-lab01-team03 A              3
+```
+
+```r
+repo_contributors(repo = "statprog-s1-2019/hw02-lab01-team10") %&gt;%
+  mutate(username = LETTERS[12+1:5]) %&gt;%
+  arrange(desc(commits))
+```
+
+```
+## # A tibble: 5 x 3
+##   repo                               username commits
+##   &lt;chr&gt;                              &lt;chr&gt;      &lt;int&gt;
+## 1 statprog-s1-2019/hw02-lab01-team10 Q             17
+## 2 statprog-s1-2019/hw02-lab01-team10 P              9
+## 3 statprog-s1-2019/hw02-lab01-team10 O              5
+## 4 statprog-s1-2019/hw02-lab01-team10 M              1
+## 5 statprog-s1-2019/hw02-lab01-team10 N              1
+```
+
+---
+
+## Automated feedback
+
+&lt;img src="imgs/github_actions0.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Automated feedback
+
+&lt;img src="imgs/github_actions1.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+---
+
+## Automated feedback
+
+&lt;img src="imgs/github_actions2.png" width="100%" style="display: block; margin: auto;" /&gt;
+
+
+
+---
+
+## Related ongoing work
+
+* Peer evaluation (Mine Cetinkaya-Rundel and Therese Anders)
+
+* Simplifying the automated feedback process:
+
+    * `checklist` - R package for simplifying automated checks &lt;br/&gt; https://github.com/rundel/checklist
+
+    * `parsermd` - R package for programmatic interaction with R markdown documents &lt;br/&gt; https://rundel.github.io/parsermd/ 
+    
+---
+
+## Additional Resources
+
+* [Happy Git and GitHyb for the useR](https://happygitwithr.com/) &lt;br/&gt; Jenny Bryan, Jim Hester
+
+* [Excuse me, do you have a moment to talk about version control?](https://peerj.com/preprints/3159/) &lt;br/&gt; Jenny Bryan (2018), *The American Statistician*.
+
+* [Using GitHub Classroom To Teach Statistics](https://www.tandfonline.com/doi/full/10.1080/10691898.2019.1617089) &lt;br/&gt; Jacob Fiksel, Leah Jager, Johannna Hardin, and Margaret Taub (2019), &lt;br/&gt;
+*Journal of Statistics Education*.
+
+* [Implementing version control with Git as a learning objective in statistics courses](https://arxiv.org/abs/2001.01988) &lt;br/&gt; Matthew Beckman, Mine Çetinkaya-Rundel, Nicholas Horton, Colin Rundel, Adam Sullivan, Maria Tackett (2020), *Journal of Statistics Education (in review)*
+
+---
+
+# Thank you!
+
+.middle[ .center[
+
+&lt;div style="width: 98%"&gt;
+&lt;table class="contact" style="text-align: left; margin-left:auto; margin-right:auto; width:50%;"&gt;
+&lt;tbody&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;td&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fas fa-envelope fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt;&lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="mailto:rundel@gmail.com"&gt;rundel@gmail.com&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fab fa-twitter-square fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt;&lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://twitter.com/rundel"&gt;@rundel&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="far fa-file-powerpoint fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt;&lt;/td&gt;
+  &lt;td&gt; 
+      &lt;a href="http://bit.ly/talmo_rundel"&gt;bit.ly/JSM2020_Sta444&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;&lt;td&gt;&lt;br/&gt;&lt;/td&gt;&lt;/tr&gt;
+&lt;tr&gt;
+  &lt;td style="vertical-align: middle;"&gt; &lt;i class="fas fa-chalkboard-teacher fa-fw fa-2x"&gt;&lt;/i&gt; &lt;/td&gt;
+  &lt;td&gt;&lt;/td&gt;
+  &lt;td&gt; 
+    &lt;a href="https://statprog-s1-2019.github.io/"&gt;statprog-s1-2019.github.io/&lt;/a&gt;
+  &lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;/div&gt;
+] ]
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script src="https://use.fontawesome.com/releases/v5.9.0/js/all.js"></script>
+<script>var slideshow = remark.create({
+"ratio": "16:9",
+"highlightLines": true,
+"highlightStyle": "monokai-sublime",
+"countIncrementalSlides": false
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
