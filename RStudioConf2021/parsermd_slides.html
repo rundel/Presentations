@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <title>parsermd</title>
+
+  <!--
+  <link rel="stylesheet" href="reveal.js-4.1.0/dist/reset.css">
+	<link rel="stylesheet" href="reveal.js-4.1.0/dist/reveal.css">
+	<link rel="stylesheet" href="reveal.js-4.1.0/dist/theme/black.css" id="theme">
+	<link rel="stylesheet" href="reveal.js-4.1.0/plugin/highlight/monokai.css" id="highlight-theme">
+  -->
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reveal.min.css" integrity="sha512-zu0eodDPCBAZf1vnIgwZ6qchMBt1xqgGkS9vBjVmunoH8pU7cc9OQKBiSQCclpvqySupy9Y1pLZc87VB40G4Sw==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/theme/black.min.css" integrity="sha512-zB0aIw1hR3hViObaUdwCG3ICqkblcZFhSLursL3P8mAqFJQvItchD/FoXo539E1lUZTqC/cTxmugRp1b5NsQRA==" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/highlight/monokai.min.css" integrity="sha512-z8wQkuDRFwCBfoj7KOiu1MECaRVoXx6rZQWL21x0BsVVH7JkqCp1Otf39qve6CrCycOOL5o9vgfII5Smds23rg==" crossorigin="anonymous" />
+
+  <script src="https://use.fontawesome.com/70c2dc3526.js"></script>
+
+  <style>
+    .hljs-ln-numbers {
+      font-size: 0;
+    }
+
+    .reveal pre code {
+      max-height: 600px;
+    }
+
+    .reveal i{
+      font-family: 'FontAwesome';
+      font-style: normal;
+    }
+
+    .reveal table td {
+      border-bottom: 0;
+    }
+
+    .reveal .strike {
+      text-decoration: line-through;
+      text-decoration-color: #379DF8;
+      text-decoration-thickness: 0.066em;
+    }
+
+    .fab, .fas {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+
+  </style>
+</head>
+
+<body>
+
+
+<div class="reveal"> <div class="slides">
+
+<section>
+  <h1>Parsing RMarkdown <br/> for fun <span class="strike">&thinsp;and profit&thinsp;</span></h1>
+  <p>A brief look at the <code>parsermd</code> package</p>
+  <p>
+    <a href="https://github.com/rundel/parsermd">
+      <i class="fab fa-github fa-lg" style="vertical-align: middle"></i>
+      rundel/parsermd
+    </a>
+  </p>
+
+  <p>&nbsp;<br/></p>
+  <p>&nbsp;<br/></p>
+  <p>&nbsp;<br/></p>
+
+  <div style="position: absolute; bottom: 0; left: 0; font-size: 75%; text-align: left;">
+    Colin Rundel<br/>
+    Univ of Edinburgh / Duke Univ <br/>
+    <br/>
+    <span class="fa-flip-vertical">
+     <i class="fas fa-link"></i>
+    </span>
+    <a href="https://bit.ly/rsg_parsermd">bit.ly/rsg_parsermd</a>
+  </div>
+
+</section>
+
+
+<section>
+
+<code>hw01.Rmd</code>
+<pre><code class="plaintext" data-trim data-noescape data-line-numbers="|1-4|6,14,22|16-20,24-25,29-30|8-11">
+---
+title: "Homework 01 - Hello R"
+output: html_document
+---
+
+### Load packages
+
+```{r setup, message=FALSE}
+library(tidyverse)
+library(datasauRus)
+```
+
+
+### Exercise 1
+
+Based on the help file, how many rows and how many columns does the
+`datasaurus_dozen` file have? What are the variables included in the
+data frame? Add your responses to your lab report. When you’re done,
+commit your changes with the commit message “Added answer for Ex 1”,
+and push.
+
+#### Solution
+
+(Type your answer to Exercise 1 here. This exercise does not require
+any R code.)
+
+### Exercise 2
+
+Plot `y` vs. `x` for the `dino` dataset. Then, calculate the correlation
+coefficient between x and y for this dataset.
+
+#### Solution
+
+(The answers for this Exercise are given for you below. But you should
+clean up some of the narrative so that it only includes what you want to
+turn in.)
+
+First lets plot the data in the dino dataset:
+
+```{r plot-dino, fig.height=3, fig.width=6}
+dino_data <- datasaurus_dozen %>%
+  filter(dataset == "dino")
+
+ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+  geom_point()
+```
+
+And next calculate the correlation between `x` and `y` in this dataset:
+
+```{r cor-dino}
+dino_data %>%
+  summarize(r = cor(x, y))
+```
+
+### Exercise 3
+
+Plot `y` vs. `x` for the `star` dataset. You can (and should) reuse code we
+introduced above, just replace the dataset name with the desired dataset. Then,
+calculate the correlation coefficient between x and y for this dataset. How
+does this value compare to the r of dino?
+
+#### Solution
+
+(Add code and narrative as needed. Note that the R chunks are labeled with
+`plot-star` and `cor-star` to provide spaces to place the code for plotting
+and calculating the correlation coefficient. To finish, clean up the narrative
+by removing these instructions.)
+
+```{r plot-star}
+
+```
+
+This is some text, you should replace me with more meaningful text...
+
+```{r cor-star}
+
+```
+</code></pre>
+</section>
+
+
+<section>
+<pre><code class="r" data-trim data-noescape>
+library(parsermd)
+parse_rmd(&quot;hw01.Rmd&quot;)
+</code></pre>
+<pre><code data-trim data-noescape data-line-numbers="|1|2,4,6,17,10,15|5,7,9,11,13,16,18,20|3,12,14,19,21">
+## ├── YAML <span style='color: #555555;'>[2 lines]</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Load packages</span><span>
+## │   └── Chunk </span><span style='color: #555555;'>[r, 1 opt, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>setup</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 1</span><span>
+## │   ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       └── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 2</span><span>
+## │   ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[4 lines]</span><span>
+## │       ├── Chunk </span><span style='color: #555555;'>[r, 2 opts, 5 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-dino</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## │       └── Chunk </span><span style='color: #555555;'>[r, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-dino</span><span>
+## └── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 3</span><span>
+##     ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+##     └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[4 lines]</span><span>
+##         ├── Chunk </span><span style='color: #555555;'>[r, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-star</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+##         └── Chunk </span><span style='color: #555555;'>[r, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-star</span><span>
+</span>
+</code></pre>
+</section>
+
+
+<section>
+
+<pre><code class="r" data-trim data-noescape>
+parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  as_tibble()
+</code></pre>
+<pre><code class="plaintext" data-trim data-noescape data-line-numbers>
+## <span style='color: #949494;'># A tibble: 21 x 5</span><span>
+##    </span><span style='font-weight: bold;'>sec_h3</span><span>        </span><span style='font-weight: bold;'>sec_h4</span><span>   </span><span style='font-weight: bold;'>type</span><span>          </span><span style='font-weight: bold;'>label</span><span>         </span><span style='font-weight: bold;'>ast</span><span>
+##    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;rmd_ast&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 1</span><span> </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>       rmd_yaml_list </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>yaml</span><span style='color: #949494;'>&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 2</span><span> Load packages </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>       rmd_heading   </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>heading</span><span style='color: #949494;'> [h3]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 3</span><span> Load packages </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>       rmd_chunk     setup </span>        <span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>chunk</span><span style='color: #949494;'> [r]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 4</span><span> Exercise 1    </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>       rmd_heading   </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>heading</span><span style='color: #949494;'> [h3]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 5</span><span> Exercise 1    </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>       rmd_markdown  </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>markdown</span><span style='color: #949494;'> [2]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 6</span><span> Exercise 1    Solution rmd_heading   </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>heading</span><span style='color: #949494;'> [h4]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 7</span><span> Exercise 1    Solution rmd_markdown  </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>markdown</span><span style='color: #949494;'> [2]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 8</span><span> Exercise 2    </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>       rmd_heading   </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>heading</span><span style='color: #949494;'> [h3]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'> 9</span><span> Exercise 2    </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>       rmd_markdown  </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>markdown</span><span style='color: #949494;'> [2]&gt;</span><span>
+## </span><span style='color: #BCBCBC;'>10</span><span> Exercise 2    Solution rmd_heading   </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>            </span><span style='color: #949494;'>&lt;</span><span style='color: #949494;font-weight: bold;'>heading</span><span style='color: #949494;'> [h4]&gt;</span><span>
+## </span><span style='color: #949494;'># … with 11 more rows</span><span>
+</span>
+</code></pre>
+
+</section>
+
+<section>
+
+  <h1>AST WTF?!?!</h1>
+
+</section>
+
+
+
+<section data-auto-animate>
+
+<pre data-id="code"><code class="r" data-trim data-line-numbers>
+parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise 1&quot;, &quot;Solution&quot;))
+</code></pre>
+<pre data-id="output"><code data-trim data-noescape data-line-numbers>
+## ├── YAML <span style='color: #555555;'>[2 lines]</span><span>
+## └── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 1</span><span>
+##     └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+##         └── Markdown </span><span style='color: #555555;'>[3 lines]</span><span>
+</span>
+</code></pre>
+
+</section>
+
+
+
+
+<section data-auto-animate>
+
+<pre data-id="code"><code class="r" data-trim data-line-numbers>
+parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup = TRUE)
+</code></pre>
+<pre data-id="output"><code data-trim data-noescape data-line-numbers>
+## ├── YAML <span style='color: #555555;'>[2 lines]</span><span>
+## ├── Chunk </span><span style='color: #555555;'>[r, 1 opt, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>setup</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 1</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       └── Markdown </span><span style='color: #555555;'>[3 lines]</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 2</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[6 lines]</span><span>
+## │       ├── Chunk </span><span style='color: #555555;'>[r, 2 opts, 5 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-dino</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## │       └── Chunk </span><span style='color: #555555;'>[r, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-dino</span><span>
+## └── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 3</span><span>
+##     └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[5 lines]</span><span>
+##         ├── Chunk </span><span style='color: #555555;'>[r, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-star</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+##         └── Chunk </span><span style='color: #555555;'>[r, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-star</span>
+</code></pre>
+
+</section>
+
+
+
+<section data-auto-animate>
+
+<pre data-id="code"><code class="r" data-trim data-line-numbers>
+parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup = TRUE) %&gt;%
+  rmd_set_options(error = TRUE)
+</code></pre>
+<pre data-id="output"><code data-trim data-noescape data-line-numbers>
+## ├── YAML <span style='color: #555555;'>[2 lines]</span><span>
+## ├── Chunk </span><span style='color: #555555;'>[r, 2 opts, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>setup</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 1</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       └── Markdown </span><span style='color: #555555;'>[3 lines]</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 2</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[6 lines]</span><span>
+## │       ├── Chunk </span><span style='color: #555555;'>[r, 3 opts, 5 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-dino</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## │       └── Chunk </span><span style='color: #555555;'>[r, 1 opt, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-dino</span><span>
+## └── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 3</span><span>
+##     └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[5 lines]</span><span>
+##         ├── Chunk </span><span style='color: #555555;'>[r, 1 opt, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-star</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+##         └── Chunk </span><span style='color: #555555;'>[r, 1 opt, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-star</span><span>
+</span>
+</code></pre>
+
+</section>
+
+
+<section data-auto-animate>
+
+<pre data-id="code"><code class="r" data-trim data-line-numbers>
+parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup = TRUE) %&gt;%
+  rmd_set_options(error = TRUE) %&gt;%
+  as_document(collapse = &quot;\n&quot;) %&gt;%
+  cat()
+</code></pre>
+
+<pre data-id="output"><code class="plaintext" data-trim data-noescape data-line-numbers>
+## ---
+## title: Homework 01 - Hello R
+## output: html_document
+## ---
+##
+## ```{r setup, message = FALSE, error = TRUE}
+## library(tidyverse)
+## library(datasauRus)
+## ```
+##
+## ### Exercise 1
+##
+## #### Solution
+##
+## (Type your answer to Exercise 1 here. This exercise does not require
+## any R code.)
+##
+##
+## ### Exercise 2
+##
+## #### Solution
+##
+## (The answers for this Exercise are given for you below. But you should
+## clean up some of the narrative so that it only includes what you want to
+## turn in.)
+##
+## First lets plot the data in the dino dataset:
+##
+##
+## ```{r plot-dino, fig.height = 3, fig.width = 6, error = TRUE}
+## dino_data &lt;- datasaurus_dozen %&gt;%
+##   filter(dataset == "dino")
+##
+## ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+##   geom_point()
+## ```
+##
+## And next calculate the correlation between `x` and `y` in this dataset:
+##
+##
+## ```{r cor-dino, error = TRUE}
+## dino_data %&gt;%
+##   summarize(r = cor(x, y))
+## ```
+##
+## ### Exercise 3
+##
+## #### Solution
+##
+## (Add code and narrative as needed. Note that the R chunks are labeled with
+## `plot-star` and `cor-star` to provide spaces to place the code for plotting
+## and calculating the correlation coefficient. To finish, clean up the narrative
+## by removing these instructions.)
+##
+##
+## ```{r plot-star, error = TRUE}
+##
+## ```
+##
+## This is some text, you should replace me with more meaningful text...
+##
+##
+## ```{r cor-star, error = TRUE}
+##
+## ```
+</code></pre>
+
+</section>
+
+
+<section data-auto-animate>
+
+<pre data-id="code"><code class="r" data-trim data-line-numbers>
+parse_rmd(&quot;hw01-student.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup = TRUE) %&gt;%
+  rmd_set_options(error = TRUE) %&gt;%
+  render(name=&quot;hw01_sol&quot;)
+</code></pre>
+
+<pre data-id="output"><code data-trim data-noescape data-line-numbers>
+## processing file: hw01_sol.Rmd
+...
+## Output created: hw01_sol.html
+</code></pre>
+
+<iframe src="hw01_sol.html" width="1000px" height="500px" class="fragment" style="padding: 5px;">
+</iframe>
+
+
+</section>
+
+
+<section>
+
+<h1>In practice</h1>
+
+</section>
+
+
+<section data-auto-animate>
+
+<pre data-id="code"><code class="r" data-trim data-line-numbers>
+parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;)) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise 3&quot;, &quot;Solution&quot;), type_refs = &quot;rmd_markdown&quot;, exclude = TRUE) %&gt;%
+  rmd_template()
+</code></pre>
+<pre data-id="output"><code class="plaintext" data-trim data-noescape data-line-numbers>
+## <span style='color: #949494;'># A tibble: 8 x 4</span><span>
+##   </span><span style='font-weight: bold;'>sec_h3</span><span>     </span><span style='font-weight: bold;'>sec_h4</span><span>   </span><span style='font-weight: bold;'>type</span><span>          </span><span style='font-weight: bold;'>label</span><span>
+##   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>
+## </span><span style='color: #BCBCBC;'>1</span><span> Exercise 1 Solution rmd_markdown  </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>
+## </span><span style='color: #BCBCBC;'>2</span><span> Exercise 2 Solution rmd_markdown  </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>
+## </span><span style='color: #BCBCBC;'>3</span><span> Exercise 2 Solution rmd_chunk     plot-dino
+## </span><span style='color: #BCBCBC;'>4</span><span> Exercise 2 Solution rmd_markdown  </span><span style='color: rgba(255,126,121,0.5);'>NA</span><span>
+## </span><span style='color: #BCBCBC;'>5</span><span> Exercise 2 Solution rmd_chunk     cor-dino
+## </span><span style='color: #BCBCBC;'>6</span><span> Exercise 3 Solution rmd_chunk     plot-star
+## </span><span style='color: #BCBCBC;'>7</span><span> Exercise 3 Solution rmd_chunk     cor-star</span>
+</code></pre>
+
+</section>
+
+
+<section data-auto-animate>
+
+<pre data-id="code"><code class="r" data-trim data-line-numbers>
+parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;)) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise 3&quot;, &quot;Solution&quot;), type_refs = &quot;rmd_markdown&quot;, exclude = TRUE) %&gt;%
+  rmd_template() %&gt;%
+  rmd_check_template(&quot;hw01-student.Rmd&quot;, .)
+</code></pre>
+
+<pre data-id="output" class="fragment"><code class="plaintext" data-trim data-noescape data-line-numbers>
+## <span style='color: rgba(255,126,121,0.5);'>x</span><span> The following required elements were missing in the document:
+##   ● Section <span style='color: #555555;font-style: italic;'>"Exercise 1"</span><span style='font-style: italic;'> &gt; </span><span style='color: #555555;font-style: italic;'>"Solution"</span><span> is missing required </span><span style='color: #379DF8;'>markdown text</span><span>.
+##   ● Section <span style='color: #555555;font-style: italic;'>"Exercise 2"</span><span style='font-style: italic;'> &gt; </span><span style='color: #555555;font-style: italic;'>"Solution"</span><span> is missing a required </span><span style='color: #379DF8;'>code chunk</span> <span>named</span> <span style='color: #379DF8;'>'cor-dino'</span><span>.</span>
+</code></pre>
+
+<br/>
+
+<div class="fragment">
+<p>Feedback given to students via GitHub Actions</p>
+
+<p>Example repo and workflows <a href="https://github.com/rundel/hw01"><i class="fab fa-github"></i> rundel/hw01</a></p>
+</div>
+
+</section>
+
+
+<section>
+
+<h2>Thank you!</h2>
+
+<br/><br/>
+
+<table>
+  <tr>
+    <td><i class="fab fa-github fa-lg"></i></td>
+    <td><a href="https://github.com/rundel/parsermd">rundel/parsermd</a></td>
+  </tr>
+  <tr>
+    <td><i class="fab fa-twitter"></i></td>
+    <td><a href="https://twitter.com/rundel">rundel</a></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-envelope"></i></td>
+    <td><a href="mailto:rundel@gmail.com">rundel@gmail.com</a></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-link fa-flip-vertical"></i></td>
+    <td><a href="https://bit.ly/rsg_parsermd">bit.ly/rsg_parsermd</a> (slides)</td>
+  </tr>
+  <tr>
+    <td></td>
+    <td><a href="https://bit.ly/rsg_parsermd">bit.ly/rsg_parsermd</a> (repo)</td>
+  </tr>
+</table>
+
+
+</section>
+
+
+
+
+
+
+    </div>
+  </div>
+
+  <!--
+  <script src="reveal.js-4.1.0/js/reveal.js"></script>
+
+  <script src="reveal.js-4.1.0/dist/reveal.js"></script>
+	<script src="reveal.js-4.1.0/plugin/notes/notes.js"></script>
+	<script src="reveal.js-4.1.0/plugin/markdown/markdown.js"></script>
+	<script src="reveal.js-4.1.0/plugin/highlight/highlight.js"></script>
+	-->
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reveal.min.js" integrity="sha512-Xu/cezKABTI81MGnaBm64vdiS7XkttHeYGOgr2Mdga0bTplSBGongLq2lhK2HwL79wefKM0u4uTCLD0ha1sRzQ==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/notes/notes.min.js" integrity="sha512-FYeeQscKqibmYKr0+nE2+fN5prBsFwgjsBVwkrA88O6mN2+ai6EvRkSi6txuhXlWsyK1MUfoV+94+q6HLouJSQ==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/markdown/markdown.min.js" integrity="sha512-eZZqO4ECmVvGhCt+6VZ7ian2bCu4S6yrjSFH9fXLY1zTokpAWsxAxQwM4x6+7G+G4ha5tFIe0jY0XjpBUqS49Q==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/highlight/highlight.min.js" integrity="sha512-NA5UCab7xDKQPXGsmIp8iEuId5BAKGPiqHZsZQcBuySfp1n3dZrwBDKpPNL23Db5upay1nULxU14JV1ggFOD2A==" crossorigin="anonymous"></script>
+
+	<script>
+		// More info about initialization & config:
+		// - https://revealjs.com/initialization/
+		// - https://revealjs.com/config/
+		Reveal.initialize({
+			hash: true,
+			width: 1920,
+			height: 1080,
+			margin: 0.01,
+
+			// Learn about plugins: https://revealjs.com/plugins/
+			plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
+		});
+	</script>
+
+
+  </body>
+</html>

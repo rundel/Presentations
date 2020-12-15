@@ -1,0 +1,100 @@
+---
+title: "parsermd"
+author: "Colin Rundel"
+date: "2020-10-28"
+output:
+  xaringan::moon_reader:
+    css: "slides.css"
+    seal: FALSE
+    nature:
+      highlightLines: true
+      highlightStyle: monokai-sublime
+      countIncrementalSlides: false
+      ratio: '16:9'
+      beforeInit: ["https://use.fontawesome.com/releases/v5.9.0/js/all.js"]
+
+---
+exclude: true
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+library(parsermd)
+library(magrittr)
+```
+
+---
+class: title_bg
+
+.title[
+parsermd
+]
+
+.subtitle[
+parsing R Markdown for fun ~~and profit~~
+]
+
+
+.conference[
+.name[
+RStudioConf 2021
+]
+.bitly[
+]
+]
+
+.author[
+.name[
+Colin Rundel
+]
+.school[
+Univ of Edinburgh &middot;
+Duke Univ
+]
+]
+
+---
+
+## Parsing R Markdown
+
+.columns[
+
+.col[
+```
+---
+title: "Untitled"
+author: "Colin Rundel"
+date: "8/28/2020"
+output: html_document
+---
+
+    ```{r setup, include=FALSE}`r ''`
+    knitr::opts_chunk$set(echo = TRUE)
+    ```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+    ```{r cars}`r ''`
+    summary(cars)
+    ```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+    ```{r pressure, echo=FALSE}`r ''`
+    plot(pressure)
+    ```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```
+]
+
+.col[
+```{r}
+parse_rmd("Untitled.Rmd")
+```
+]
+]

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Colin Rundel" />
+
+<meta name="date" content="2020-10-28" />
+
+<title>parsermd</title>
+
+<script src="helper_files/header-attrs-2.5/header-attrs.js"></script>
+<script src="helper_files/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="helper_files/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="helper_files/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="helper_files/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="helper_files/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="helper_files/navigation-1.1/tabsets.js"></script>
+<link href="helper_files/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="helper_files/highlightjs-9.12.0/highlight.js"></script>
+<link href="helper_files/anchor-sections-1.0/anchor-sections.css" rel="stylesheet" />
+<script src="helper_files/anchor-sections-1.0/anchor-sections.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">parsermd</h1>
+<h4 class="author">Colin Rundel</h4>
+<h4 class="date">2020-10-28</h4>
+
+</div>
+
+
+<hr />
+<hr />
+<hr />
+<pre class="r"><code>parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise 1&quot;, &quot;Solution&quot;))</code></pre>
+<pre class="stretch"><code data-trim data-noescape>## ├── YAML <span style='color: #555555;'>[2 lines]</span><span>
+## └── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 1</span><span>
+##     └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+##         └── Markdown </span><span style='color: #555555;'>[3 lines]</span><span>
+</span></code></pre>
+<hr />
+<pre class="r"><code>parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup=TRUE)</code></pre>
+<pre class="stretch"><code data-trim data-noescape>## ├── YAML <span style='color: #555555;'>[2 lines]</span><span>
+## ├── Chunk </span><span style='color: #555555;'>[r, 1 opt, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>setup</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 1</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       └── Markdown </span><span style='color: #555555;'>[3 lines]</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 2</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[6 lines]</span><span>
+## │       ├── Chunk </span><span style='color: #555555;'>[r, 2 opts, 5 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-dino</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## │       └── Chunk </span><span style='color: #555555;'>[r, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-dino</span><span>
+## └── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 3</span><span>
+##     └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[5 lines]</span><span>
+##         ├── Chunk </span><span style='color: #555555;'>[r, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-star</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+##         └── Chunk </span><span style='color: #555555;'>[r, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-star</span><span>
+</span></code></pre>
+<hr />
+<pre class="r"><code>parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup=TRUE) %&gt;%
+  rmd_set_options(error = TRUE)</code></pre>
+<pre class="stretch"><code data-trim data-noescape>## ├── YAML <span style='color: #555555;'>[2 lines]</span><span>
+## ├── Chunk </span><span style='color: #555555;'>[r, 2 opts, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>setup</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 1</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       └── Markdown </span><span style='color: #555555;'>[3 lines]</span><span>
+## ├── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 2</span><span>
+## │   └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[6 lines]</span><span>
+## │       ├── Chunk </span><span style='color: #555555;'>[r, 3 opts, 5 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-dino</span><span>
+## │       ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+## │       └── Chunk </span><span style='color: #555555;'>[r, 1 opt, 2 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-dino</span><span>
+## └── Heading </span><span style='color: #555555;'>[h3] - </span><span style='color: #555555;font-weight: bold;'>Exercise 3</span><span>
+##     └── Heading </span><span style='color: #555555;'>[h4] - </span><span style='color: #555555;font-weight: bold;'>Solution</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[5 lines]</span><span>
+##         ├── Chunk </span><span style='color: #555555;'>[r, 1 opt, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>plot-star</span><span>
+##         ├── Markdown </span><span style='color: #555555;'>[2 lines]</span><span>
+##         └── Chunk </span><span style='color: #555555;'>[r, 1 opt, 1 lines] - </span><span style='color: #555555;font-weight: bold;'>cor-star</span><span>
+</span></code></pre>
+<hr />
+<pre class="r"><code>parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup=TRUE) %&gt;%
+  rmd_set_options(error = TRUE) %&gt;%
+  as_document(collapse = &quot;\n&quot;) %&gt;%
+  cat()</code></pre>
+<pre class="stretch"><code data-trim data-noescape>## ---
+## title: Homework 01 - Hello R
+## output: html_document
+## ---
+## 
+## ```{r setup, message = FALSE, error = TRUE}
+## library(tidyverse)
+## library(datasauRus)
+## ```
+## 
+## ### Exercise 1
+## 
+## #### Solution
+## 
+## (Type your answer to Exercise 1 here. This exercise does not require
+## any R code.)
+## 
+## 
+## ### Exercise 2
+## 
+## #### Solution
+## 
+## (The answers for this Exercise are given for you below. But you should
+## clean up some of the narrative so that it only includes what you want to
+## turn in.)
+## 
+## First lets plot the data in the dino dataset:
+## 
+## 
+## ```{r plot-dino, fig.height = 3, fig.width = 6, error = TRUE}
+## dino_data &lt;- datasaurus_dozen %&gt;%
+##   filter(dataset == "dino")
+## 
+## ggplot(data = dino_data, mapping = aes(x = x, y = y)) +
+##   geom_point()
+## ```
+## 
+## And next calculate the correlation between `x` and `y` in this dataset:
+## 
+## 
+## ```{r cor-dino, error = TRUE}
+## dino_data %&gt;%
+##   summarize(r = cor(x, y))
+## ```
+## 
+## ### Exercise 3
+## 
+## #### Solution
+## 
+## (Add code and narrative as needed. Note that the R chunks are labeled with
+## `plot-star` and `cor-star` to provide spaces to place the code for plotting
+## and calculating the correlation coefficient. To finish, clean up the narrative
+## by removing these instructions.)
+## 
+## 
+## ```{r plot-star, error = TRUE}
+## 
+## ```
+## 
+## This is some text, you should replace me with more meaningful text...
+## 
+## 
+## ```{r cor-star, error = TRUE}
+## 
+## ```
+</code></pre>
+<hr />
+<pre class="r"><code>parse_rmd(&quot;hw01-student.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;), keep_setup=TRUE) %&gt;%
+  rmd_set_options(error = TRUE) %&gt;%
+  render(name=&quot;hw01_sol&quot;)</code></pre>
+<pre class="r"><code>parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;)) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise 3&quot;, &quot;Solution&quot;), type_refs = &quot;rmd_markdown&quot;, exclude = TRUE) %&gt;%
+  rmd_template()</code></pre>
+<pre class="stretch"><code data-trim data-noescape>## <span style='color: #949494;'># A tibble: 8 x 4</span><span>
+##   </span><span style='font-weight: bold;'>sec_h3</span><span>     </span><span style='font-weight: bold;'>sec_h4</span><span>   </span><span style='font-weight: bold;'>type</span><span>          </span><span style='font-weight: bold;'>label</span><span>    
+##   </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>      </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>         </span><span style='color: #949494;font-style: italic;'>&lt;chr&gt;</span><span>    
+## </span><span style='color: #BCBCBC;'>1</span><span> </span><span style='color: #BB0000;'>NA</span><span>         </span><span style='color: #BB0000;'>NA</span><span>       rmd_yaml_list </span><span style='color: #BB0000;'>NA</span><span>       
+## </span><span style='color: #BCBCBC;'>2</span><span> Exercise 1 Solution rmd_markdown  </span><span style='color: #BB0000;'>NA</span><span>       
+## </span><span style='color: #BCBCBC;'>3</span><span> Exercise 2 Solution rmd_markdown  </span><span style='color: #BB0000;'>NA</span><span>       
+## </span><span style='color: #BCBCBC;'>4</span><span> Exercise 2 Solution rmd_chunk     plot-dino
+## </span><span style='color: #BCBCBC;'>5</span><span> Exercise 2 Solution rmd_markdown  </span><span style='color: #BB0000;'>NA</span><span>       
+## </span><span style='color: #BCBCBC;'>6</span><span> Exercise 2 Solution rmd_chunk     cor-dino 
+## </span><span style='color: #BCBCBC;'>7</span><span> Exercise 3 Solution rmd_chunk     plot-star
+## </span><span style='color: #BCBCBC;'>8</span><span> Exercise 3 Solution rmd_chunk     cor-star
+</span></code></pre>
+<pre class="r"><code>parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise *&quot;, &quot;Solution&quot;)) %&gt;%
+  rmd_subset(sec_refs = c(&quot;Exercise 3&quot;, &quot;Solution&quot;), type_refs = &quot;rmd_markdown&quot;, exclude = TRUE) %&gt;%
+  rmd_template() %&gt;%
+  rmd_check_template(&quot;hw01-student.Rmd&quot;, .)</code></pre>
+<pre class="stretch"><code data-trim data-noescape>## <span style='color: #BB0000;'>x</span><span> The following required elements were missing in the document:
+</span></code></pre>
+<pre class="stretch"><code data-trim data-noescape>##   ● Section <span style='color: #555555;font-style: italic;'>"Exercise 1"</span><span style='font-style: italic;'> &gt; </span><span style='color: #555555;font-style: italic;'>"Solution"</span><span> is missing required </span><span style='color: #0000BB;'>markdown text</span><span>.
+</span></code></pre>
+<pre class="stretch"><code data-trim data-noescape>##   ● Section <span style='color: #555555;font-style: italic;'>"Exercise 2"</span><span style='font-style: italic;'> &gt; </span><span style='color: #555555;font-style: italic;'>"Solution"</span><span> is missing a required </span><span style='color: #0000BB;'>code chunk</span><span> named
+##     </span><span style='color: #0000BB;'>'cor-dino'</span><span>.
+</span></code></pre>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

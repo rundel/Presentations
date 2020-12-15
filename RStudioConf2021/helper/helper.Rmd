@@ -1,0 +1,120 @@
+---
+title: "parsermd"
+author: "Colin Rundel"
+date: "2020-10-28"
+output: 
+  html_document:
+    self_contained: False
+---
+
+
+
+```{r, echo = FALSE, message = FALSE, error = TRUE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "##")
+library(tibble)
+
+options(crayon.enabled = TRUE)
+options(pillar.bold = TRUE)
+
+#knitr::opts_chunk$set(collapse = TRUE, comment = pillar::style_subtle("##"))
+
+colourise_chunk <- function(type) {
+  function(x, options) {
+    lines <- x
+      
+    paste0(
+      '<pre class="stretch"><code data-trim data-noescape>',
+      paste0(
+        sgr_to_html(htmltools::htmlEscape(lines)),
+        collapse = "\n"
+      ),
+      "</code></pre>"
+    )
+  }
+}
+
+knitr::knit_hooks$set(
+  output = colourise_chunk("output"),
+  message = colourise_chunk("message"),
+  warning = colourise_chunk("warning"),
+  error = colourise_chunk("error")
+)
+
+# Fallback if fansi is missing
+sgr_to_html <- identity
+sgr_to_html <- fansi::sgr_to_html
+```
+
+```{r setup, include=FALSE}
+library(parsermd)
+library(magrittr)
+```
+
+---
+
+```{r include=FALSE}
+parse_rmd("hw01.Rmd")
+```
+
+---
+
+```{r include=FALSE}
+parse_rmd("hw01.Rmd") %>%
+  as_tibble()
+```
+
+---
+
+```{r}
+parse_rmd("hw01.Rmd") %>%
+  rmd_subset(sec_refs = c("Exercise 1", "Solution"))
+```
+
+---
+
+```{r}
+parse_rmd("hw01.Rmd") %>%
+  rmd_subset(sec_refs = c("Exercise *", "Solution"), keep_setup=TRUE)
+```
+
+---
+
+```{r}
+parse_rmd("hw01.Rmd") %>%
+  rmd_subset(sec_refs = c("Exercise *", "Solution"), keep_setup=TRUE) %>%
+  rmd_set_options(error = TRUE)
+```
+
+---
+
+```{r}
+parse_rmd("hw01.Rmd") %>%
+  rmd_subset(sec_refs = c("Exercise *", "Solution"), keep_setup=TRUE) %>%
+  rmd_set_options(error = TRUE) %>%
+  as_document(collapse = "\n") %>%
+  cat()
+```
+
+---
+
+```{r eval=FALSE}
+parse_rmd("hw01-student.Rmd") %>%
+  rmd_subset(sec_refs = c("Exercise *", "Solution"), keep_setup=TRUE) %>%
+  rmd_set_options(error = TRUE) %>%
+  render(name="hw01_sol")
+```
+
+```{r}
+parse_rmd("hw01.Rmd") %>%
+  rmd_subset(sec_refs = c("Exercise *", "Solution")) %>%
+  rmd_subset(sec_refs = c("Exercise 3", "Solution"), type_refs = "rmd_markdown", exclude = TRUE) %>%
+  rmd_template()
+```
+
+```{r}
+parse_rmd("hw01.Rmd") %>%
+  rmd_subset(sec_refs = c("Exercise *", "Solution")) %>%
+  rmd_subset(sec_refs = c("Exercise 3", "Solution"), type_refs = "rmd_markdown", exclude = TRUE) %>%
+  rmd_template() %>%
+  rmd_check_template("hw01-student.Rmd", .)
+```
