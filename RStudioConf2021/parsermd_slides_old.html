@@ -7,17 +7,12 @@
 
   <title>parsermd</title>
 
-  <!--
   <link rel="stylesheet" href="reveal.js-4.1.0/dist/reset.css">
 	<link rel="stylesheet" href="reveal.js-4.1.0/dist/reveal.css">
 	<link rel="stylesheet" href="reveal.js-4.1.0/dist/theme/black.css" id="theme">
-	<link rel="stylesheet" href="reveal.js-4.1.0/plugin/highlight/monokai.css" id="highlight-theme">
-  -->
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reset.min.css" integrity="sha512-Mjxkx+r7O/OLQeKeIBCQ2yspG1P5muhAtv/J+p2/aPnSenciZWm5Wlnt+NOUNA4SHbnBIE/R2ic0ZBiCXdQNUg==" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reveal.min.css" integrity="sha512-zu0eodDPCBAZf1vnIgwZ6qchMBt1xqgGkS9vBjVmunoH8pU7cc9OQKBiSQCclpvqySupy9Y1pLZc87VB40G4Sw==" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/theme/black.min.css" integrity="sha512-zB0aIw1hR3hViObaUdwCG3ICqkblcZFhSLursL3P8mAqFJQvItchD/FoXo539E1lUZTqC/cTxmugRp1b5NsQRA==" crossorigin="anonymous" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/highlight/monokai.min.css" integrity="sha512-z8wQkuDRFwCBfoj7KOiu1MECaRVoXx6rZQWL21x0BsVVH7JkqCp1Otf39qve6CrCycOOL5o9vgfII5Smds23rg==" crossorigin="anonymous" />
+	<!-- Theme used for syntax highlighted code -->
+	<link rel="stylesheet" href="reveal.js-4.1.0/plugin/highlight/monokai.css" id="highlight-theme">
 
   <script src="https://use.fontawesome.com/70c2dc3526.js"></script>
 
@@ -42,7 +37,6 @@
     .reveal .strike {
       text-decoration: line-through;
       text-decoration-color: #379DF8;
-      text-decoration-thickness: 0.066em;
     }
 
     .fab, .fas {
@@ -60,7 +54,7 @@
 <div class="reveal"> <div class="slides">
 
 <section>
-  <h1>Parsing RMarkdown <br/> for fun <span class="strike">&thinsp;and profit&thinsp;</span></h1>
+  <h1>Parsing RMarkdown for fun <span class="strike">and profit</span></h1>
   <p>A brief look at the <code>parsermd</code> package</p>
   <p>
     <a href="https://github.com/rundel/parsermd">
@@ -68,30 +62,26 @@
       rundel/parsermd
     </a>
   </p>
-
-  <p>&nbsp;<br/></p>
-  <p>&nbsp;<br/></p>
-  <p>&nbsp;<br/></p>
+  <br/><br/><br/><br/>
 
   <div style="position: absolute; bottom: 0; left: 0; font-size: 75%; text-align: left;">
     Colin Rundel<br/>
-    Univ of Edinburgh / Duke Univ <br/>
-    <br/>
-    <a href="https://bit.ly/rsg_parsermd_slides">
-    <span class="fa-flip-vertical">
-     <i class="fas fa-link"></i>
-    </span>
-    bit.ly/rsg_parsermd_slides
-    </a>
+    Univ of Edinburgh / Duke Univ
   </div>
 
+  <div style="position: absolute; bottom: 0; right: 0; font-size: 75%; text-align: right;">
+     <span class="fa-flip-vertical">
+     <i class="fas fa-link"></i>
+     </span>
+     <a href="https://bit.ly/rsg_parsermd">bit.ly/rsg_parsermd</a>
+  </div>
 </section>
 
 
 <section>
 
 <code>hw01.Rmd</code>
-<pre><code class="plaintext" data-trim data-noescape data-line-numbers="|1-4|6,14,22|16-20,24-25,29-30|40-46">
+<pre><code class="plaintext" data-trim data-noescape data-line-numbers="|1-4|6,14,22|16-20,24-25,29-30|8-11">
 ---
 title: "Homework 01 - Hello R"
 output: html_document
@@ -238,7 +228,7 @@ parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
 </section>
 
 
-<!--
+
 <section data-auto-animate>
 
 <pre data-id="code"><code class="r" data-trim data-line-numbers>
@@ -254,7 +244,6 @@ parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
 </code></pre>
 
 </section>
--->
 
 
 
@@ -416,7 +405,7 @@ parse_rmd(&quot;hw01-student.Rmd&quot;) %&gt;%
 ## Output created: hw01_sol.html
 </code></pre>
 
-<iframe src="hw01_sol.html" width="1000px" height="500px" class="fragment" style="padding: 5px;">
+<iframe src="hw01_sol.html" width="1070px" height="500px" class="fragment">
 </iframe>
 
 
@@ -467,7 +456,8 @@ parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
 <pre data-id="output" class="fragment"><code class="plaintext" data-trim data-noescape data-line-numbers>
 ## <span style='color: rgba(255,126,121,0.5);'>x</span><span> The following required elements were missing in the document:
 ##   ● Section <span style='color: #555555;font-style: italic;'>"Exercise 1"</span><span style='font-style: italic;'> &gt; </span><span style='color: #555555;font-style: italic;'>"Solution"</span><span> is missing required </span><span style='color: #379DF8;'>markdown text</span><span>.
-##   ● Section <span style='color: #555555;font-style: italic;'>"Exercise 2"</span><span style='font-style: italic;'> &gt; </span><span style='color: #555555;font-style: italic;'>"Solution"</span><span> is missing a required </span><span style='color: #379DF8;'>code chunk</span> <span>named</span> <span style='color: #379DF8;'>'cor-dino'</span><span>.</span>
+##   ● Section <span style='color: #555555;font-style: italic;'>"Exercise 2"</span><span style='font-style: italic;'> &gt; </span><span style='color: #555555;font-style: italic;'>"Solution"</span><span> is missing a required </span><span style='color: #379DF8;'>code chunk</span>
+## <span>    named</span> <span style='color: #379DF8;'>'cor-dino'</span><span>.</span>
 </code></pre>
 
 <br/>
@@ -475,7 +465,7 @@ parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
 <div class="fragment">
 <p>Feedback given to students via GitHub Actions</p>
 
-<p>Example repo and workflows <a href="https://github.com/rundel/hw01"><i class="fab fa-github"></i> rundel/hw01</a></p>
+<p>Example repo and workflows <a href="https://github.com/rundel/hw01"><i class="fab fa-github"></i> rundel/hw1</a></p>
 </div>
 
 </section>
@@ -502,11 +492,11 @@ parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
   </tr>
   <tr>
     <td><i class="fas fa-link fa-flip-vertical"></i></td>
-    <td><a href="https://bit.ly/rsg_parsermd">bit.ly/rsg_parsermd</a> (repo)</td>
+    <td><a href="https://bit.ly/rsg_parsermd">bit.ly/rsg_parsermd</a> (slides)</td>
   </tr>
   <tr>
     <td></td>
-    <td><a href="https://bit.ly/rsg_parsermd_slides">bit.ly/rsg_parsermd_slides</a> (slides)</td>
+    <td><a href="https://bit.ly/rsg_parsermd">bit.ly/rsg_parsermd</a> (repo)</td>
   </tr>
 </table>
 
@@ -521,29 +511,21 @@ parse_rmd(&quot;hw01.Rmd&quot;) %&gt;%
     </div>
   </div>
 
-  <!--
   <script src="reveal.js-4.1.0/js/reveal.js"></script>
 
   <script src="reveal.js-4.1.0/dist/reveal.js"></script>
 	<script src="reveal.js-4.1.0/plugin/notes/notes.js"></script>
 	<script src="reveal.js-4.1.0/plugin/markdown/markdown.js"></script>
 	<script src="reveal.js-4.1.0/plugin/highlight/highlight.js"></script>
-	-->
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/reveal.min.js" integrity="sha512-Xu/cezKABTI81MGnaBm64vdiS7XkttHeYGOgr2Mdga0bTplSBGongLq2lhK2HwL79wefKM0u4uTCLD0ha1sRzQ==" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/notes/notes.min.js" integrity="sha512-FYeeQscKqibmYKr0+nE2+fN5prBsFwgjsBVwkrA88O6mN2+ai6EvRkSi6txuhXlWsyK1MUfoV+94+q6HLouJSQ==" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/markdown/markdown.min.js" integrity="sha512-eZZqO4ECmVvGhCt+6VZ7ian2bCu4S6yrjSFH9fXLY1zTokpAWsxAxQwM4x6+7G+G4ha5tFIe0jY0XjpBUqS49Q==" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.1.0/plugin/highlight/highlight.min.js" integrity="sha512-NA5UCab7xDKQPXGsmIp8iEuId5BAKGPiqHZsZQcBuySfp1n3dZrwBDKpPNL23Db5upay1nULxU14JV1ggFOD2A==" crossorigin="anonymous"></script>
-
 	<script>
 		// More info about initialization & config:
 		// - https://revealjs.com/initialization/
 		// - https://revealjs.com/config/
 		Reveal.initialize({
 			hash: true,
-			width: 1920,
-			height: 1080,
-			margin: 0.01,
+			width: 1200,
+			height: 800,
+			margin: 0.05,
 
 			// Learn about plugins: https://revealjs.com/plugins/
 			plugins: [ RevealMarkdown, RevealHighlight, RevealNotes ]
