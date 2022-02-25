@@ -2,7 +2,7 @@
 title: "Teaching Statistical Computing <br/> with Git and Github<br/>"
 author: <br/> Colin Rundel <br/> Duke University
 format:
-  revealjs: 
+  revealjs:
     theme: dark
     slide-number: true
     chalkboard: 
