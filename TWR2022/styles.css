@@ -1,0 +1,62 @@
+:root {
+  --r-main-font-size: 40px;
+}
+
+
+.border {
+  border: 1px solid #dee2e6;
+}
+
+.border-thick {
+  border-width: 3px;
+}
+
+.reveal h1 {
+    font-size: 50px;
+}
+
+.reveal h2 {
+  padding-bottom: 50px;
+}
+
+
+.reveal .footer {
+  font-size: 18px;
+}
+
+.center {
+  text-align: center;
+}
+
+.right {
+  text-align: right;
+}
+
+.col-blue {
+  color: #1b91ff;
+}
+
+.col-green {
+  color: #17ff2e
+}
+
+.footnote {
+  font-size: 24px;
+  position: absolute; 
+  bottom: 0; 
+  right: 0;
+  text-align: right;
+}
+
+.small {
+  font-size: 24px;
+}
+
+.details {
+  font-size: 36px;
+}
+
+.reveal table th, .reveal table td  {
+  border-bottom: 0;
+  border-top: 0;
+}

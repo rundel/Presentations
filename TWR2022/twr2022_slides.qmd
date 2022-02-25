@@ -1,0 +1,482 @@
+---
+title: "Teaching Statistical Computing <br/> with Git and Github<br/>"
+author: <br/> Colin Rundel <br/> Duke University
+format:
+  revealjs: 
+    theme: dark
+    slide-number: true
+    chalkboard: 
+      buttons: false
+    preview-links: auto
+    css: styles.css
+    footer: <a href="https://bit.ly/twr2022_rundel">bit.ly/twr2022_rundel</a>
+---
+
+## Who am I?
+
+::: columns
+::: {.column width="60%"}
+What I teach:
+
+-   Sta 323 - Statistical Computing
+
+-   Sta 523 - Programming for Statistical Science
+
+-   STA 663 - Statistical Computing and Computation
+:::
+
+::: {.column width="40%"}
+What I work on:
+
+-   [ghclass](https://rundel.github.io/ghclass/)
+
+-   [parsermd](https://rundel.github.io/parsermd/)
+
+-   [checklist](https://rundel.github.io/checklist/)
+:::
+:::
+
+------------------------------------------------------------------------
+
+## Foundations of Reproducibility
+
+<br/>
+
+::: center
+Scriptability
+
+::: {.fragment .col-green}
+R / Python
+:::
+
+:::
+
+<br/>
+<br/>
+<br/>
+
+::: columns
+::: {.column width="50%"}
+Literate Programming
+
+::: {.fragment .col-green}
+RMarkdown / Jupyter / Quarto
+:::
+
+:::
+
+::: {.right .column width="50%"}
+Version Control
+
+::: {.fragment .col-green}
+Git / GitHub
+:::
+
+:::
+:::
+
+------------------------------------------------------------------------
+
+## GitHub as LMS
+
+Every class is an organization on GitHub,
+
+- Students are invited as members (private)
+
+- Each assignment is a repository (private)
+
+- Assignments turned in and collected from GitHub
+
+- Feedback via Issues
+
+------------------------------------------------------------------------
+
+## Why GitHub?
+
+Leverage the power of the ecosystem,
+
+* Use the API for automation (ghclass)
+
+* Accountability via commit history
+
+* Centralized collaboration
+
+* Scalability
+
+* Relevant beyond the course
+
+------------------------------------------------------------------------
+
+## Anatomy of an Assignment
+
+```{r fig.align="center"}
+knitr::include_graphics("img/assingment_repo.png")
+```
+
+------------------------------------------------------------------------
+
+## hw1.Rmd
+
+``````{.rmarkdown code-line-numbers="|5-8|15-18|20-26"}
+---
+title: "Homework 1"
+output: html_document
+author: 
+- teammate 1
+- teammate 2
+- teammate 3
+- teammate 4
+---
+
+### Task 1 - Implement fizzbuzz
+
+#### Write up
+
+<!-- 
+In this section include your write up for this task - do not include it within these html comment tags. 
+The write up must appear in the rendered document.
+-->
+
+#### Function
+
+```{r fizzbuzz}`r ''`
+fizzbuzz = function(input) {
+  input
+}
+```
+
+#### Testing - Valid Inputs
+
+```{r good_inputs, error = TRUE}`r ''`
+stopifnot( fizzbuzz(1)  == "1"       )
+stopifnot( fizzbuzz(3)  == "Fizz"    )
+stopifnot( fizzbuzz(5)  == "Buzz"    )
+stopifnot( fizzbuzz(15) == "FizzBuzz")
+stopifnot(all( fizzbuzz(1:5) == c("1", "2", "Fizz", "4", "Buzz") ))
+stopifnot(all( fizzbuzz(9:15) == c("Fizz", "Buzz", "11", "Fizz", "13", "14", "FizzBuzz") ))
+stopifnot(all( fizzbuzz(15:9) == c("FizzBuzz", "14", "13", "Fizz", "11", "Buzz", "Fizz") ))
+```
+``````
+
+------------------------------------------------------------------------
+
+## Distributing hw1 with ghclass
+
+```{.r code-line-numbers="|1-4|2,3|4|7-9|10-12|13-18|19-21"}
+ghclass::org_create_assignment(
+  org = "ghclass-demo", user = roster$github,
+  repo = roster$hw1,    team = roster$hw1,
+  source_repo = "Sta323-Sp19/hw1"
+)
+
+#> ✓ Mirrored repo "Sta323-Sp19/hw1" to repo "ghclass-demo/hw1-team01".
+#> ✓ Mirrored repo "Sta323-Sp19/hw1" to repo "ghclass-demo/hw1-team02".
+#> ✓ Mirrored repo "Sta323-Sp19/hw1" to repo "ghclass-demo/hw1-team03".
+#> ✓ Created team "hw1-team01" in org "ghclass-demo".
+#> ✓ Created team "hw1-team02" in org "ghclass-demo".
+#> ✓ Created team "hw1-team03" in org "ghclass-demo".
+#> ✓ Added user "ghclass-anya" to team "hw1-team01".
+#> ✓ Added user "ghclass-bruno" to team "hw1-team02".
+#> ✓ Added user "ghclass-celine" to team "hw1-team03".
+#> ✓ Added user "ghclass-diego" to team "hw1-team01".
+#> ✓ Added user "ghclass-elijah" to team "hw1-team02".
+#> ✓ Added user "ghclass-francis" to team "hw1-team03".
+#> ✓ Team "hw1-team01" given "push" access to repo "ghclass-demo/hw1-team01"
+#> ✓ Team "hw1-team02" given "push" access to repo "ghclass-demo/hw1-team02"
+#> ✓ Team "hw1-team03" given "push" access to repo "ghclass-demo/hw1-team03"
+```
+
+------------------------------------------------------------------------
+
+## Making Corrections
+
+```{.r code-line-numbers="|1-4|6-11|7-10|13-15"}
+(repos = ghclass::org_repos("ghclass-demo",  filter="hw1-"))
+
+#> [1] "ghclass-demo/hw1-team01" "ghclass-demo/hw1-team02" 
+#> [3] "ghclass-demo/hw1-team03"
+
+ghclass::repo_modify_file(
+  repo = r, path = "README.md", 
+  pattern = "Thursday 1/24/2019",
+  content = "Friday 2022/03/04",
+  method = "replace"
+)
+
+#> ✓ Modified file "ghclass-demo/hw1-team01/README.md".
+#> ✓ Modified file "ghclass-demo/hw1-team02/README.md".
+#> ✓ Modified file "ghclass-demo/hw1-team03/README.md".
+```
+
+
+------------------------------------------------------------------------
+
+## Assessing participation
+
+```{.r code-line-numbers="|1,2|7-10|11-13|14"}
+repos = ghclass::org_repos("sta323-sp22", filter="hw01_")
+ghclass::repo_contributors(repos)
+
+#> # A tibble: 68 × 4
+#>    repo                          username commits weekly_stats    
+#>    <chr>                         <chr>      <int> <list>          
+#>  1 Sta323-Sp22/hw01_lab01_team01 anya           1 <tibble [6 × 4]>
+#>  2 Sta323-Sp22/hw01_lab01_team01 bruno          7 <tibble [6 × 4]>
+#>  3 Sta323-Sp22/hw01_lab01_team01 celine         4 <tibble [6 × 4]>
+#>  4 Sta323-Sp22/hw01_lab01_team01 diego          2 <tibble [6 × 4]>
+#>  5 Sta323-Sp22/hw01_lab01_team02 elijah         6 <tibble [6 × 4]>
+#>  6 Sta323-Sp22/hw01_lab01_team02 francis        3 <tibble [6 × 4]>
+#>  7 Sta323-Sp22/hw01_lab01_team02 greta          8 <tibble [6 × 4]>
+#>  8 Sta323-Sp22/hw01_lab01_team03 hugo           6 <tibble [6 × 4]>
+...
+```
+
+::: footnote
+Participation is also assessed by peer evaluations for each assignment
+:::
+
+------------------------------------------------------------------------
+
+## Automated feedback
+
+```{r fig.align="center"}
+knitr::include_graphics("img/actions2.png")
+```
+
+------------------------------------------------------------------------
+
+## Automated feedback {visibility="uncounted"}
+```{r fig.align="center"}
+knitr::include_graphics("img/actions3.png")
+```
+
+------------------------------------------------------------------------
+
+## Automated feedback {visibility="uncounted"}
+```{r fig.align="center"}
+knitr::include_graphics("img/actions4.png")
+```
+
+------------------------------------------------------------------------
+
+## Action Implementation
+
+```{.yaml code-line-numbers="|4-19|9-10|11-19|5|6-7"}
+on: push
+name: Repo Checks
+jobs:
+  check_allowed_files:
+    runs-on: self-hosted
+    container:
+      image: ghcr.io/sta323-sp22/sta323-base:main
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Check Files
+      run: |
+        checklist::quit_on_failure({
+          checklist::check_allowed_files(
+            c("hw1.Rmd", "hw1.Rproj", "README.md", "fizzbuzz.png")
+          )
+        })
+      shell: Rscript {0}
+      
+  check_renders:
+    needs: check_allowed_files
+    runs-on: self-hosted
+    container:
+      image: ghcr.io/sta323-sp22/sta323-base:main
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Install Missing Packages
+      run: |
+        checklist::install_missing_pkgs(dir = "./")
+      shell: Rscript {0}
+    - name: Check Renders
+      run: |
+        checklist::check_rmd_renders("hw1.Rmd")
+      shell: Rscript {0}
+    - name: Archive html
+      uses: actions/upload-artifact@v2
+      with:
+        name: hw1.html
+        path: hw1.html
+```
+
+------------------------------------------------------------------------
+
+## Action Status
+
+```{.r }
+ghclass::action_status(repos)
+
+#> # A tibble: 42 × 5
+#>    repo                          name        branch result  created            
+#>    <chr>                         <chr>       <chr>  <chr>   <dttm>             
+#>  1 Sta323-Sp22/hw01_lab01_team01 Repo Checks main   success 2022-01-26 22:18:42
+#>  2 Sta323-Sp22/hw01_lab01_team02 Repo Checks main   success 2022-01-26 21:03:37
+#>  3 Sta323-Sp22/hw01_lab01_team03 Repo Checks main   success 2022-01-28 04:01:17
+#>  4 Sta323-Sp22/hw01_lab01_team04 Repo Checks main   success 2022-01-28 19:17:04
+#>  5 Sta323-Sp22/hw01_lab01_team05 Repo Checks main   success 2022-01-28 19:24:01
+#>  6 Sta323-Sp22/hw01_lab01_team06 Repo Checks main   success 2022-01-28 19:59:49
+#>  7 Sta323-Sp22/hw01_lab01_team07 Repo Checks main   success 2022-01-28 04:27:54
+#>  8 Sta323-Sp22/hw01_lab01_team08 Repo Checks main   success 2022-01-28 08:38:43
+#>  9 Sta323-Sp22/hw01_lab02_team09 Repo Checks main   success 2022-01-27 05:42:33
+#> 10 Sta323-Sp22/hw01_lab03_team10 Repo Checks main   success 2022-01-27 19:12:23
+#> # … with 32 more rows
+```
+
+------------------------------------------------------------------------
+
+## Artifacts
+
+```{r fig.align="center", out.width="50%"}
+knitr::include_graphics("img/artifacts.png")
+```
+
+------------------------------------------------------------------------
+
+## Artifacts {visibility="uncounted"}
+
+```{.r}
+ghclass::action_artifact_download(repos, dir = "hw1/")
+
+#> ✓ Downloaded artifact 169864663 from repo "Sta323-Sp22/hw01_lab01_team01" to "hw1/hw01_lab01_team01.html".
+#> ✓ Downloaded artifact 168163146 from repo "Sta323-Sp22/hw01_lab01_team02" to "hw1/hw01_lab01_team02.html".
+#> ✓ Downloaded artifact 169850317 from repo "Sta323-Sp22/hw01_lab01_team03" to "hw1/hw01_lab01_team03.html".
+#> ✓ Downloaded artifact 169193983 from repo "Sta323-Sp22/hw01_lab01_team04" to "hw1/hw01_lab01_team04.html".
+#> ✓ Downloaded artifact 167358274 from repo "Sta323-Sp22/hw01_lab01_team05" to "hw1/hw01_lab01_team05.html".
+#> ✓ Downloaded artifact 169775975 from repo "Sta323-Sp22/hw01_lab01_team06" to "hw1/hw01_lab01_team06.html".
+#> ✓ Downloaded artifact 169901996 from repo "Sta323-Sp22/hw01_lab01_team07" to "hw1/hw01_lab01_team07.html".
+#> ✓ Downloaded artifact 169884929 from repo "Sta323-Sp22/hw01_lab01_team08" to "hw1/hw01_lab01_team08.html".
+#> ✓ Downloaded artifact 169816311 from repo "Sta323-Sp22/hw01_lab01_team09" to "hw1/hw01_lab01_team09.html".
+#> ✓ Downloaded artifact 169902066 from repo "Sta323-Sp22/hw01_lab01_team10" to "hw1/hw01_lab01_team10.html".
+#> ✓ Downloaded artifact 167612940 from repo "Sta323-Sp22/hw01_lab02_team01" to "hw1/hw01_lab02_team01.html".
+#> ✓ Downloaded artifact 169887422 from repo "Sta323-Sp22/hw01_lab02_team02" to "hw1/hw01_lab02_team02.html".
+#> ✓ Downloaded artifact 169886118 from repo "Sta323-Sp22/hw01_lab02_team03" to "hw1/hw01_lab02_team03.html".
+#> ✓ Downloaded artifact 169305846 from repo "Sta323-Sp22/hw01_lab02_team04" to "hw1/hw01_lab02_team04.html".
+#> ✓ Downloaded artifact 169712856 from repo "Sta323-Sp22/hw01_lab02_team05" to "hw1/hw01_lab02_team05.html".
+#> ✓ Downloaded artifact 169894290 from repo "Sta323-Sp22/hw01_lab02_team06" to "hw1/hw01_lab02_team06.html".
+```
+
+::: footnote
+`ghclass::action_artifact_download()` will be included in the next ghclass release
+:::
+
+------------------------------------------------------------------------
+
+## parsermd
+
+```{.r}
+parsermd::parse_rmd("hw1.Rmd")
+
+#> ├── YAML [2 lines]
+#> ├── Heading [h3] - Task 1 - Implement fizzbuzz
+#> │   ├── Heading [h4] - Write up
+#> │   │   └── Markdown [2 lines]
+#> │   ├── Heading [h4] - Function
+#> │   │   ├── Markdown [5 lines]
+#> │   │   └── Chunk [r, 24 lines] - fizzbuzz
+#> │   ├── Heading [h4] - Testing - Valid Inputs
+#> │   │   ├── Markdown [2 lines]
+#> │   │   ├── Chunk [r, 1 opt, 9 lines] - good_inputs
+#> │   │   └── Chunk [r, 5 lines] - extra_good
+#> │   └── Heading [h4] - Testing - Bad Inputs
+#> │       ├── Markdown [4 lines]
+#> │       ├── Chunk [r, 4 lines] - throws_error
+#> │       ├── Chunk [r, 1 opt, 15 lines] - bad_inputs
+#> │       └── Chunk [r, 6 lines] - extra_bad_inputs
+#> └── Heading [h3] - Task 2 - Re-Implement fizzbuzz
+#>     ├── Heading [h4] - Write up
+#>     │   └── Markdown [2 lines]
+#>     ├── Heading [h4] - Function
+#>     │   ├── Markdown [11 lines]
+#>     │   └── Chunk [r, 40 lines] - fizzbuzz_s3
+#>     └── Heading [h4] - Testing
+#>         └── Markdown [1 lines]
+```
+
+------------------------------------------------------------------------
+
+## parsermd {visibility="uncounted"}
+
+```{.r code-line-numbers="|4,5|7-12"}
+parsermd::rmd_check_template(system.file("hw01-student.Rmd", package = "parsermd"), template)
+
+#> ✖ The following required elements were missing in the document:
+#>   • Section "Exercise 3" > "Solution" is missing required "markdown text".
+#>   • Section "Exercise 3" > "Solution" is missing required "markdown text".
+#> ✖ The following document elements were unmodified from the template:
+#>   • Section "Exercise 2" > "Solution" has a "code chunk" named "plot-dino"
+#>     which has not been modified.
+#>   • Section "Exercise 2" > "Solution" has "markdown text" which has not been
+#>     modified.
+#>   • Section "Exercise 2" > "Solution" has a "code chunk" named "cor-dino"
+#>     which has not been modified.
+```
+
+------------------------------------------------------------------------
+
+## Python ecosystem {.smaller}
+
+```{.yaml code-line-numbers="|15-17|18-22"}
+on: push
+name: Repo Checks
+jobs:
+  check_allowed_files:
+    ...
+  check_renders:
+    needs: check_allowed_files
+    runs-on: self-hosted
+    container:
+      image: ghcr.io/sta663-sp22/sta663-base:main
+    timeout-minutes: 10
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Check Renders
+      run: |
+        quarto render hw2.ipynb --execute --to html
+    - name: Archive html
+      uses: actions/upload-artifact@v2
+      with:
+        name: html
+        path: hw2.html
+```
+
+------------------------------------------------------------------------
+
+## Questions?
+
+<table class="details">
+  <tr>
+    <td><i class="fas fa-home"></i></td>
+    <td><a href="https://rundel.github.io">rundel.github.io</a></td>
+  </tr>
+  <tr>
+    <td><i class="fab fa-github"></i></td>
+    <td><a href="https://github.com/rundel/">rundel</a></td>
+  </tr>
+  <tr>
+    <td><i class="fab fa-twitter"></i></td>
+    <td><a href="https://twitter.com/rundel">rundel</a></td>
+  </tr>
+  <tr>
+    <td><i class="fas fa-envelope"></i></td>
+    <td>
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a><br/>
+    <a href="mailto:colin.rundel@duke.edu">colin.rundel@duke.edu</a>
+    </td>
+  </tr>
+</table>
+
+<br/>
+
+::: small
+<a href="https://www.tandfonline.com/doi/full/10.1080/10691898.2020.1848485"><i class="fas fa-file"></i></a> &nbsp;
+Beckman, M. D., Çetinkaya-Rundel, M., Horton, N. J., Rundel, C. W., Sullivan, A. J., & Tackett, M. (2021). Implementing version control with Git and GitHub as a learning objective in statistics and data science courses. Journal of Statistics and Data Science Education, 29(sup1), S132-S144. 
+
+<a href="http://amstat.tandfonline.com/doi/full/10.1080/00031305.2017.1397549"><i class="fas fa-file"></i></a> &nbsp;
+Çetinkaya-Rundel, M., & Rundel, C. (2018). Infrastructure and tools for teaching computing throughout the statistical curriculum. The American Statistician, 72(1), 58-65. <i class="far fa-file"></i>
+:::
