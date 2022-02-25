@@ -404,7 +404,10 @@ parsermd::parse_rmd("hw1.Rmd")
 ## parsermd {visibility="uncounted"}
 
 ```{.r code-line-numbers="|4,5|7-12"}
-parsermd::rmd_check_template(system.file("hw01-student.Rmd", package = "parsermd"), template)
+parsermd::rmd_check_template(
+  "hw01-student.Rmd",
+  template
+)
 
 #> ✖ The following required elements were missing in the document:
 #>   • Section "Exercise 3" > "Solution" is missing required "markdown text".

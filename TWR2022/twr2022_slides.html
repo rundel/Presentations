@@ -707,18 +707,21 @@
 </section>
 <section id="parsermd-1" class="slide level2" data-visibility="uncounted">
 <h2>parsermd</h2>
-<div class="sourceCode" id="cb9" data-code-line-numbers="|4,5|7-12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>parsermd<span class="sc">::</span><span class="fu">rmd_check_template</span>(<span class="fu">system.file</span>(<span class="st">"hw01-student.Rmd"</span>, <span class="at">package =</span> <span class="st">"parsermd"</span>), template)</span>
-<span id="cb9-2"><a href="#cb9-2"></a></span>
-<span id="cb9-3"><a href="#cb9-3"></a><span class="co">#&gt; ✖ The following required elements were missing in the document:</span></span>
-<span id="cb9-4"><a href="#cb9-4"></a><span class="co">#&gt;   • Section "Exercise 3" &gt; "Solution" is missing required "markdown text".</span></span>
-<span id="cb9-5"><a href="#cb9-5"></a><span class="co">#&gt;   • Section "Exercise 3" &gt; "Solution" is missing required "markdown text".</span></span>
-<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; ✖ The following document elements were unmodified from the template:</span></span>
-<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt;   • Section "Exercise 2" &gt; "Solution" has a "code chunk" named "plot-dino"</span></span>
-<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt;     which has not been modified.</span></span>
-<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt;   • Section "Exercise 2" &gt; "Solution" has "markdown text" which has not been</span></span>
-<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt;     modified.</span></span>
-<span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt;   • Section "Exercise 2" &gt; "Solution" has a "code chunk" named "cor-dino"</span></span>
-<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt;     which has not been modified.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb9" data-code-line-numbers="|4,5|7-12"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>parsermd<span class="sc">::</span><span class="fu">rmd_check_template</span>(</span>
+<span id="cb9-2"><a href="#cb9-2"></a>  <span class="st">"hw01-student.Rmd"</span>,</span>
+<span id="cb9-3"><a href="#cb9-3"></a>  template</span>
+<span id="cb9-4"><a href="#cb9-4"></a>)</span>
+<span id="cb9-5"><a href="#cb9-5"></a></span>
+<span id="cb9-6"><a href="#cb9-6"></a><span class="co">#&gt; ✖ The following required elements were missing in the document:</span></span>
+<span id="cb9-7"><a href="#cb9-7"></a><span class="co">#&gt;   • Section "Exercise 3" &gt; "Solution" is missing required "markdown text".</span></span>
+<span id="cb9-8"><a href="#cb9-8"></a><span class="co">#&gt;   • Section "Exercise 3" &gt; "Solution" is missing required "markdown text".</span></span>
+<span id="cb9-9"><a href="#cb9-9"></a><span class="co">#&gt; ✖ The following document elements were unmodified from the template:</span></span>
+<span id="cb9-10"><a href="#cb9-10"></a><span class="co">#&gt;   • Section "Exercise 2" &gt; "Solution" has a "code chunk" named "plot-dino"</span></span>
+<span id="cb9-11"><a href="#cb9-11"></a><span class="co">#&gt;     which has not been modified.</span></span>
+<span id="cb9-12"><a href="#cb9-12"></a><span class="co">#&gt;   • Section "Exercise 2" &gt; "Solution" has "markdown text" which has not been</span></span>
+<span id="cb9-13"><a href="#cb9-13"></a><span class="co">#&gt;     modified.</span></span>
+<span id="cb9-14"><a href="#cb9-14"></a><span class="co">#&gt;   • Section "Exercise 2" &gt; "Solution" has a "code chunk" named "cor-dino"</span></span>
+<span id="cb9-15"><a href="#cb9-15"></a><span class="co">#&gt;     which has not been modified.</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
 <section id="python-ecosystem" class="slide level2 smaller">
 <h2>Python ecosystem</h2>
