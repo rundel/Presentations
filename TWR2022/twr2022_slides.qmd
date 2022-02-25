@@ -478,5 +478,5 @@ jobs:
 Beckman, M. D., Çetinkaya-Rundel, M., Horton, N. J., Rundel, C. W., Sullivan, A. J., & Tackett, M. (2021). Implementing version control with Git and GitHub as a learning objective in statistics and data science courses. Journal of Statistics and Data Science Education, 29(sup1), S132-S144. 
 
 <a href="http://amstat.tandfonline.com/doi/full/10.1080/00031305.2017.1397549"><i class="fas fa-file"></i></a> &nbsp;
-Çetinkaya-Rundel, M., & Rundel, C. (2018). Infrastructure and tools for teaching computing throughout the statistical curriculum. The American Statistician, 72(1), 58-65. <i class="far fa-file"></i>
+Çetinkaya-Rundel, M., & Rundel, C. (2018). Infrastructure and tools for teaching computing throughout the statistical curriculum. The American Statistician, 72(1), 58-65.
 :::
