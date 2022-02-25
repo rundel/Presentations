@@ -23,6 +23,8 @@ What I teach:
 -   Sta 523 - Programming for Statistical Science
 
 -   STA 663 - Statistical Computing and Computation
+
+-   STA 344/444/644 - Spatio-temporal modeling
 :::
 
 ::: {.column width="40%"}
