@@ -431,7 +431,11 @@ with pm.Model() as gp:
 
   Sigma = I * nugget + sigma2 * np.exp(-0.5 * D**2 * ls**2)
   
-  y = pm.MvNormal("y", mu=np.zeros(d.shape[0]), cov=Sigma, observed=d.y)
+  y = pm.MvNormal(
+    "y", 
+    mu=np.zeros(d.shape[0]), 
+    cov=Sigma, observed=d.y
+  )
 ```
 ]
 
