@@ -108,8 +108,6 @@ What I teach:
 
 - STA 344/444/644 - Spatio-temporal modeling (`R`)
 
-<br/>
-
 Tools I use:
 
 - The majority of my time is spent with R, with a bit of C++
@@ -138,9 +136,9 @@ For example,
 
 ---
 
-## Some considerations
+## Some teaching considerations
 
-- Ease of use (installation, syntax, debuging, etc.)
+- Ease of use (installation, syntax, debugging, etc.)
 
 - Blackboxiness / High vs low level 
 
@@ -157,10 +155,11 @@ For example,
 - All of the frameworks have external / system dependencies 
   - e.g. libjags, Eigen, theano, etc.
 
-- Generally easy to install binary packages are available, source installs can be challenging
+- Generally easy to install binary packages are available
+  - source installs can be challenging
 
 - If things break it tends to be spectacular and difficult to troubleshoot
-  - OS can make a difference
+  - OS makes a difference
   - 🔥Burn it down🔥 as a path forward
 
 ---
@@ -177,7 +176,7 @@ plot(d)
 .pull-right[
 $$
 \begin{aligned}
-y_i &\sim N(m\cdot x_i + b, \sigma) \\
+y_i|m,b,\sigma &\sim N(m\cdot x_i + b, \sigma) \\
 \\
 m &\sim N(0, 10) \\
 n &\sim N(0, 10)\\
@@ -313,11 +312,13 @@ with lm:
 
 - Stan models return a `stanfit` S4 object
   - less directly accessible but provides important basic summaries (e.g. `n_eff`, `Rhat`, etc.)
-  - easily convertable to coda (`As.mcmc.list()`)
+  - easily convertible to coda (`As.mcmc.list()`)
 
 - pymc3 models return* ArviZ `InferenceData` objects (xarray/NetCDF based)
   - complex schema (everything and the kitchen sink approach)
   - less tabular friendly
+
+<br/>
 
 - All frameworks support quick basic visualizations of results (trace, density, caterpillar, etc.) 
 
@@ -394,12 +395,14 @@ generated quantities {
 
 - pymc allows for the PPD to be sampled from an existing model result,
 
-```{python}
+```{python eval=FALSE}
 with lm:
     y_tilde = pm.sample_posterior_predictive(
         post_pymc, var_names=["y"], random_seed=1234
     )
 ```
+
+- Similarly, the prior predictive samples can be generated without rewriting the model
 
 ---
 
@@ -504,6 +507,15 @@ az.summary(post_mh)
 
 ## Concluding thoughts
 
+- All of these frameworks are a reasonable choice 
+  - Many different axes to optimize over 
+
+- Feeling the grass is greener is real
+
+- Personal choice for Fall 2022 ([Sta 344](https://sta344-fa22.github.io/))?
+
+  - Probably BRMS -> Stan
+
 
 
 ---
@@ -514,7 +526,7 @@ az.summary(post_mh)
 Questions or Comments?
 ] ]
 
-<br/><br/><br/>
+<br/><br/>
 
 <table class="details">
   <tr>

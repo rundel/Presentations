@@ -203,7 +203,7 @@ blockquote {
 }
 
 li {
-  margin: 20px 0;
+  margin: 16px 0;
 }
 
 .larger { font-size: 150% }
@@ -249,7 +249,7 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
 }
 
 .remark-slide-content{
-  font-size: 32px;
+  font-size: 28px;
   padding-left: 2em;
   padding-right: 2em;
   padding-top: 0.5em;
@@ -285,68 +285,3 @@ thead, tfoot, tr:nth-child(even) { background: #eee }
 
 
 
-
-.console, .shell, .docker, .ubuntu, .fedora, .rhel, .sbatch {
-  padding: 1%;
-  border-width: 1px;
-  border-style: solid;
-}
-
-.ubuntu, .fedora, .rhel, .sbatch {
-  margin-top: 1.5em;
-}
-
-.console, .shell, .docker, .sbatch {
-  border-color: #000000;
-  background: #00000033;
-}
-
-.ubuntu {
-  border-color: #E95420;
-  background: #F8DFD6;
-}
-
-.fedora {
-  border-color: #2B426F;
-  background: #D5D9E2;
-}
-
-.rhel {
-  border-color: #004153;
-  background: #D1D9DC;
-}
-
-.ubuntu::before, .fedora::before, .rhel::before, .sbatch::before {
-  border: inherit;
-  background: inherit;
-  position: relative;
-  padding: 0 25px;
-  top: -22px;
-  font-size: 16px;
-}
-
-.ubuntu>*:first-child, .fedora>*:first-child, .rhel>*:first-child, .sbatch>*:first-child {
-  margin-top: -2em;
-  padding-top: 1.4em;
-  overflow: hidden;
-}
-
-.ubuntu>*:last-child, .fedora>*:last-child, .rhel>*:last-child, .sbatch>*:last-child {
-  margin-bottom: 0;
-}
-
-.ubuntu::before {
-  content: "Ubuntu";
-}
-
-.fedora::before {
-  content: "Fedora";
-}
-
-.rhel::before {
-  content: "RHEL";
-}
-
-.sbatch::before {
-  content: "sbatch";
-}

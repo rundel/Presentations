@@ -110,8 +110,6 @@ What I teach:
 
 - STA 344/444/644 - Spatio-temporal modeling (`R`)
 
-&lt;br/&gt;
-
 Tools I use:
 
 - The majority of my time is spent with R, with a bit of C++
@@ -140,9 +138,9 @@ For example,
 
 ---
 
-## Some considerations
+## Some teaching considerations
 
-- Ease of use (installation, syntax, debuging, etc.)
+- Ease of use (installation, syntax, debugging, etc.)
 
 - Blackboxiness / High vs low level 
 
@@ -159,10 +157,11 @@ For example,
 - All of the frameworks have external / system dependencies 
   - e.g. libjags, Eigen, theano, etc.
 
-- Generally easy to install binary packages are available, source installs can be challenging
+- Generally easy to install binary packages are available
+  - source installs can be challenging
 
 - If things break it tends to be spectacular and difficult to troubleshoot
-  - OS can make a difference
+  - OS makes a difference
   - 🔥Burn it down🔥 as a path forward
 
 ---
@@ -182,7 +181,7 @@ plot(d)
 .pull-right[
 $$
 `\begin{aligned}
-y_i &amp;\sim N(m\cdot x_i + b, \sigma) \\
+y_i|m,b,\sigma &amp;\sim N(m\cdot x_i + b, \sigma) \\
 \\
 m &amp;\sim N(0, 10) \\
 n &amp;\sim N(0, 10)\\
@@ -290,48 +289,11 @@ post_stan = rstan::stan(
 ```
 
 ```
-## Trying to compile a simple C file
-```
-
-```
-## Running /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/bin/R \
-##   CMD SHLIB foo.c
-## clang -arch arm64 -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/include" -DNDEBUG   -I"/
-   Users/rundel/Library/R/arm64/4.2/library/Rcpp/include/"  -I"/Users/rundel/Library/R/arm64/4.2/library/RcppEigen/
-   include/"  -I"/Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/unsupported"  -I"/Users/rundel/
-   Library/R/arm64/4.2/library/BH/include" -I"/Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/
-   src/"  -I"/Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/"  -I"/Users/rundel/Library/R/arm64/4.2/
-   library/RcppParallel/include/"  -I"/Users/rundel/Library/R/arm64/4.2/library/rstan/include" -DEIGEN_NO_DEBUG 
-   -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS 
-   -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -DBOOST_NO_AUTO_PTR  -include '/Users/rundel/Library/R/arm64/4.2/library/
-   StanHeaders/include/stan/math/prim/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   "-isystem /Library/
-   Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
-## In file included from &lt;built-in&gt;:1:
-## In file included from /Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22:
-## In file included from /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Dense:1:
-## In file included from /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Core:88:
-## /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type
-   name 'namespace'
-## namespace Eigen {
-## ^
-## /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';'
-   after top level declarator
-## namespace Eigen {
-##                ^
-##                ;
-## In file included from &lt;built-in&gt;:1:
-## In file included from /Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22:
-## In file included from /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Dense:1:
-## /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
-## #include &lt;complex&gt;
-##          ^~~~~~~~~
-## 3 errors generated.
-## make: *** [foo.o] Error 1
 ##
 ## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
 ## Chain 1:
-## Chain 1: Gradient evaluation took 1.6e-05 seconds
-## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+## Chain 1: Gradient evaluation took 1.7e-05 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.17 seconds.
 ## Chain 1: Adjust your expectations accordingly!
 ## Chain 1:
 ## Chain 1:
@@ -340,9 +302,9 @@ post_stan = rstan::stan(
 ## Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 1:
-## Chain 1:  Elapsed Time: 0.012 seconds (Warm-up)
-## Chain 1:                0.013 seconds (Sampling)
-## Chain 1:                0.025 seconds (Total)
+## Chain 1:  Elapsed Time: 0.011 seconds (Warm-up)
+## Chain 1:                0.01 seconds (Sampling)
+## Chain 1:                0.021 seconds (Total)
 ## Chain 1:
 ##
 ## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 2).
@@ -357,9 +319,9 @@ post_stan = rstan::stan(
 ## Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 2:
-## Chain 2:  Elapsed Time: 0.011 seconds (Warm-up)
+## Chain 2:  Elapsed Time: 0.012 seconds (Warm-up)
 ## Chain 2:                0.012 seconds (Sampling)
-## Chain 2:                0.023 seconds (Total)
+## Chain 2:                0.024 seconds (Total)
 ## Chain 2:
 ##
 ## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 3).
@@ -375,8 +337,8 @@ post_stan = rstan::stan(
 ## Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 3:
 ## Chain 3:  Elapsed Time: 0.012 seconds (Warm-up)
-## Chain 3:                0.012 seconds (Sampling)
-## Chain 3:                0.024 seconds (Total)
+## Chain 3:                0.011 seconds (Sampling)
+## Chain 3:                0.023 seconds (Total)
 ## Chain 3:
 ##
 ## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 4).
@@ -391,9 +353,9 @@ post_stan = rstan::stan(
 ## Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
 ## Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
 ## Chain 4:
-## Chain 4:  Elapsed Time: 0.012 seconds (Warm-up)
-## Chain 4:                0.011 seconds (Sampling)
-## Chain 4:                0.023 seconds (Total)
+## Chain 4:  Elapsed Time: 0.014 seconds (Warm-up)
+## Chain 4:                0.012 seconds (Sampling)
+## Chain 4:                0.026 seconds (Total)
 ## Chain 4:
 ```
 ]
@@ -437,7 +399,7 @@ with lm:
 ## Initializing NUTS using jitter+adapt_diag...
 ## Multiprocess sampling (4 chains in 4 jobs)
 ## NUTS: [sigma, b, m]
-## Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 6 seconds.
+## Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 7 seconds.
 ## There were 6 divergences after tuning. Increase `target_accept` or reparameterize.
 ```
 
@@ -452,11 +414,13 @@ with lm:
 
 - Stan models return a `stanfit` S4 object
   - less directly accessible but provides important basic summaries (e.g. `n_eff`, `Rhat`, etc.)
-  - easily convertable to coda (`As.mcmc.list()`)
+  - easily convertible to coda (`As.mcmc.list()`)
 
 - pymc3 models return* ArviZ `InferenceData` objects (xarray/NetCDF based)
   - complex schema (everything and the kitchen sink approach)
   - less tabular friendly
+
+&lt;br/&gt;
 
 - All frameworks support quick basic visualizations of results (trace, density, caterpillar, etc.) 
 
@@ -549,9 +513,7 @@ with lm:
     )
 ```
 
-```
-## █
-```
+- Similarly, the prior predictive samples can be generated without rewriting the model
 
 ---
 
@@ -648,7 +610,7 @@ with gp:
 ## &gt;Slice: [ls]
 ## &gt;Slice: [sigma2]
 ## &gt;Slice: [nugget]
-## Sampling 2 chains for 1_000 tune and 1_000 draw iterations (2_000 + 2_000 draws total) took 22 seconds.
+## Sampling 2 chains for 1_000 tune and 1_000 draw iterations (2_000 + 2_000 draws total) took 23 seconds.
 ```
 
 
@@ -658,9 +620,9 @@ az.summary(post_slice)
 
 ```
 ##           mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
-## nugget   0.548  0.089   0.386    0.705  ...    0.001    1855.0    1526.0    1.0
-## sigma2   4.279  2.788   1.165    9.047  ...    0.063    1093.0    1187.0    1.0
-## ls      10.587  2.369   6.329   14.892  ...    0.049    1157.0    1227.0    1.0
+## nugget   0.542  0.085   0.399    0.705  ...    0.002    1573.0    1510.0    1.0
+## sigma2   4.557  3.551   1.082   10.070  ...    0.087     915.0     842.0    1.0
+## ls      10.526  2.466   5.815   14.552  ...    0.055     989.0     967.0    1.0
 ##
 ## [3 rows x 9 columns]
 ```
@@ -698,9 +660,9 @@ az.summary(post_mh)
 
 ```
 ##           mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
-## nugget   0.539  0.083   0.398    0.689  ...    0.003     359.0     347.0   1.01
-## sigma2   4.408  2.764   1.380    9.102  ...    0.130     254.0     257.0   1.02
-## ls      10.587  2.362   5.957   14.468  ...    0.123     178.0     278.0   1.01
+## nugget   0.546  0.096   0.373    0.722  ...    0.004     321.0     351.0   1.01
+## sigma2   4.535  3.522   1.081    9.282  ...    0.155     231.0     273.0   1.03
+## ls      10.518  2.314   6.730   14.987  ...    0.118     188.0     220.0   1.03
 ##
 ## [3 rows x 9 columns]
 ```
@@ -708,6 +670,15 @@ az.summary(post_mh)
 ---
 
 ## Concluding thoughts
+
+- All of these frameworks are a reasonable choice 
+  - Many different axes to optimize over 
+
+- Feeling the grass is greener is real
+
+- Personal choice for Fall 2022 ([Sta 344](https://sta344-fa22.github.io/))?
+
+  - Probably BRMS -&gt; Stan
 
 
 
@@ -719,7 +690,7 @@ az.summary(post_mh)
 Questions or Comments?
 ] ]
 
-&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+&lt;br/&gt;&lt;br/&gt;
 
 &lt;table class="details"&gt;
   &lt;tr&gt;
