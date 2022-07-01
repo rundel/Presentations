@@ -3,6 +3,7 @@ title: "An overview of Bayesian computational frameworks for teaching<br/>"
 author: "Colin Rundel"
 output:
   xaringan::moon_reader:
+    self_contained: true
     css: ["slides.css", "title.css"]
     lib_dir: libs
     seal: FALSE
@@ -512,15 +513,14 @@ az.summary(post_mh)
 ## Concluding thoughts
 
 - All of these frameworks are a reasonable choice 
-  - Many different axes to optimize over 
+  - Many different axes to optimize over
+  - More excellent choices than ever before
 
 - Feeling the grass is greener is real
 
 - Personal choice for Fall 2022 ([Sta 344](https://sta344-fa22.github.io/))?
 
   - Probably BRMS -> Stan
-
-
 
 ---
 
