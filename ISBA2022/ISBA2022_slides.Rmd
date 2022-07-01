@@ -1,0 +1,548 @@
+---
+title: "An overview of Bayesian computational frameworks for teaching<br/>"
+author: "Colin Rundel"
+output:
+  xaringan::moon_reader:
+    css: ["slides.css", "title.css"]
+    lib_dir: libs
+    seal: FALSE
+    nature:
+      highlightLines: true
+      highlightStyle: solarized-light
+      countIncrementalSlides: false
+      ratio: "16:9"
+---
+exclude: true
+
+```{r setup}
+library(fontawesome)
+#reticulate::use_condaenv("base")
+```
+
+```{python pysetup}
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import arviz as az
+```
+
+
+```{r hooks}
+local({
+  hook_err_old <- knitr::knit_hooks$get("error")  # save the old hook
+  knitr::knit_hooks$set(error = function(x, options) {
+    # now do whatever you want to do with x, and pass
+    # the new x to the old hook
+    x = sub("## \n## Detailed traceback:\n.*$", "", x)
+    x = sub("Error in py_call_impl\\(.*?\\)\\: ", "", x)
+    #x = stringr::str_wrap(x, width = 100)
+    hook_err_old(x, options)
+  })
+  
+  hook_warn_old <- knitr::knit_hooks$get("warning")  # save the old hook
+  knitr::knit_hooks$set(warning = function(x, options) {
+    x = sub("<string>:1: ", "", x)
+    #x = stringr::str_wrap(x, width = 100)
+    hook_warn_old(x, options)
+  })
+  
+  hook_msg_old <- knitr::knit_hooks$get("output")  # save the old hook
+  knitr::knit_hooks$set(output = function(x, options) {
+    if (is.null(options$wrap))
+      options$wrap = TRUE
+    
+    x = stringr::str_replace(x, "(## ).* ([A-Za-z]+Warning:)", "\\1\\2")
+    x = stringr::str_split(x, "\n")[[1]]
+    #x = stringr::str_wrap(x, width = 120, exdent = 3)
+    x = stringr::str_remove_all(x, "\r")
+    if (options$wrap)
+        x = stringi::stri_wrap(x, width=120, exdent = 3, normalize=FALSE)
+    x = paste(x, collapse="\n")
+    
+    #x = stringr::str_wrap(x, width = 100)
+    hook_msg_old(x, options)
+  })
+})
+```
+
+---
+class: title_bg
+count: false
+
+.title[
+An overview of (*some*)<br/>
+Bayesian computational frameworks<br/>
+for teaching
+]
+
+.conference[
+  .name[ 
+    ISBA 2022, Montreal
+  ]
+  .bitly[ 
+    [bit.ly/rundel_isba2022](https://bit.ly/rundel_isba2022)
+  ] 
+]
+
+.author[
+.name[
+Colin Rundel
+]
+.school[
+Duke University
+]
+]
+
+---
+
+
+## Personal Context
+
+What I teach:
+
+- Sta 323 - Statistical Computing (`R`)
+
+- Sta 523 - Programming for Statistical Science (`R`)
+
+- STA 663 - Statistical Computing and Computation (`Python`)
+
+- STA 344/444/644 - Spatio-temporal modeling (`R`)
+
+<br/>
+
+Tools I use:
+
+- The majority of my time is spent with R, with a bit of C++
+
+- I use JAGS and Stan for applied modeling
+
+- Recently, more teaching focused on the Python ecosystem
+
+---
+
+## Bayesian computational frameworks?
+
+A collection of tools that implement a domain specific language for expressing and implementing Bayesian statistical models.
+
+<br/>
+
+For example,
+- JAGS
+
+- STAN
+
+- pymc
+
+-  &plus; many others
+
+
+---
+
+## Some considerations
+
+- Ease of use (installation, syntax, debuging, etc.)
+
+- Blackboxiness / High vs low level 
+
+- Generalizability
+
+- Performance / Limitations
+
+- Wider curriculum
+
+---
+
+## Installation + basic usage
+
+- All of the frameworks have external / system dependencies 
+  - e.g. libjags, Eigen, theano, etc.
+
+- Generally easy to install binary packages are available, source installs can be challenging
+
+- If things break it tends to be spectacular and difficult to troubleshoot
+  - OS can make a difference
+  - 🔥Burn it down🔥 as a path forward
+
+---
+
+## Example - Bayesian SLR
+
+.pull-left[
+```{r}
+d = read.csv("data/lm.csv")
+plot(d)
+```
+]
+
+.pull-right[
+$$
+\begin{aligned}
+y_i &\sim N(m\cdot x_i + b, \sigma) \\
+\\
+m &\sim N(0, 10) \\
+n &\sim N(0, 10)\\
+\sigma &\sim N(0, 5) \\
+\end{aligned}
+$$
+]
+
+---
+
+## SLR - JAGS
+
+```{r include=FALSE}
+d = read.csv("data/lm.csv")
+```
+
+.pull-left[
+```{r}
+model = "
+model{
+  m ~ dnorm(0, 1/100)
+  b ~ dnorm(0, 1/100)
+  
+  sigma ~ dnorm(0, 1/25) T(0,)
+  
+  for(i in 1:length(y)) {
+    mu[i] = m*x[i] + b
+    y[i] ~ dnorm(mu[i], 1/(sigma^2))
+  }
+}
+"
+```
+]
+
+.pull-right[
+```{r}
+jags_model = rjags::jags.model(
+  textConnection(model), data = d, n.chains=4
+)
+
+update(jags_model, n.iter=1000, progress.bar="none")
+
+post_jags = rjags::coda.samples(
+  jags_model, variable.names=c("m","b"),
+  n.iter=1000, progress.bar="none"
+)
+```
+]
+
+---
+
+## SLR - Stan
+
+.pull-left[
+```{r}
+stan = "
+data {
+  int<lower=0> N;
+  vector[N] x;
+  vector[N] y;
+}
+parameters {
+  real m;
+  real b;
+  real<lower=0> sigma;
+}
+transformed parameters {
+  vector[N] mu = m*x + b;
+}
+model {
+  m ~ normal(0, 10);
+  b ~ normal(0, 10);
+  sigma ~ normal(0, 5);
+  y ~ normal(mu, sigma);
+}
+"
+```
+]
+
+.pull-right[
+```{r}
+post_stan = rstan::stan(
+  model_code = stan, 
+  data = list(x=d$x, y=d$y, N=nrow(d)),
+  pars = c("m", "b", "sigma"),
+  chains = 4, warmup = 1000, iter = 2000,
+  refresh = 1000, verbose = FALSE, 
+)
+```
+]
+
+---
+
+## SLR - pymc3
+
+```{python include=FALSE}
+import pandas as pd
+d = pd.read_csv("data/lm.csv")
+```
+
+.pull-left[
+```{python}
+import pymc3 as pm
+import arviz as az
+```
+
+```{python}
+with pm.Model() as lm:
+  m = pm.Normal('m', mu=0, sd=10)
+  b = pm.Normal('b', mu=0, sd=10)
+  
+  mu = m * d.x + b
+  sigma = pm.HalfNormal('sigma', sd=5)
+  
+  y = pm.Normal('y', mu=mu, sd=sigma, observed=d.y)
+```
+]
+
+.pull-right[
+```{python}
+with lm:
+  post_pymc = pm.sample(return_inferencedata=True, random_seed=1234)
+```
+
+]
+
+---
+
+## Modelling results
+
+- JAGS models return a coda `mcmc.list` 
+  - basic tabular structure that is easy to work with
+
+- Stan models return a `stanfit` S4 object
+  - less directly accessible but provides important basic summaries (e.g. `n_eff`, `Rhat`, etc.)
+  - easily convertable to coda (`As.mcmc.list()`)
+
+- pymc3 models return* ArviZ `InferenceData` objects (xarray/NetCDF based)
+  - complex schema (everything and the kitchen sink approach)
+  - less tabular friendly
+
+- All frameworks support quick basic visualizations of results (trace, density, caterpillar, etc.) 
+
+---
+
+## Error reporting
+
+- As pymc models are Python code, any syntax errors are reported as Python syntax errors
+
+- JAGS and Stan implement their own parsers which have generally helpful error messages with the former tending to be terser / less detailed,
+
+.pull-left[
+```{r error=TRUE}
+rjags::jags.model(
+  textConnection("
+  model{
+    m ~ dnorm(0, 1/100
+  }
+  ")
+)
+```
+]
+
+.pull-right[
+```{r error=TRUE, eval=FALSE}
+rstan::stan(
+  model_code = "
+  model {
+    m ~ normal(0, 10;
+  }
+  "
+)
+```
+
+```
+## Error in stanc(file = file, model_code = model_code, model_name = model_name, : 
+## 0
+##
+## Syntax error in 'string', line 2, column 20 to column 21, 
+##   parsing error:
+##
+## Ill-formed phrase. Found an expression. This can be followed 
+##   by a ",", a "}", a ")", a "[", a "]" or an infix or postfix 
+##   operator.
+```
+]
+
+
+- Runtime errors are a mixed bag
+
+---
+
+## Posterior predictive checks
+
+- Possible with all three frameworks, JAGS and Stan require that extra parameters be included in the model:
+
+.pull-left[
+JAGS:
+```jags
+for(i in 1:length(y)) {
+  y_tilde[i] ~ dnorm(mu[i], 1/(sigma^2))
+}
+```
+]
+
+.pull-right[
+Stan:
+```stan
+generated quantities {
+  real y_tilde[N] = normal_rng(mu, sigma);
+}
+```
+]
+
+- pymc allows for the PPD to be sampled from an existing model result,
+
+```{python}
+with lm:
+    y_tilde = pm.sample_posterior_predictive(
+        post_pymc, var_names=["y"], random_seed=1234
+    )
+```
+
+---
+
+## Limitations - GP Reg
+
+.pull-left[
+```{python}
+d = pd.read_csv("data/gp.csv")
+d.shape
+
+D = np.array([ np.abs(xi - d.x) for xi in d.x])
+I = (D == 0).astype("double")
+
+fig = plt.figure(figsize=(12, 5))
+plt.plot(d.x, d.y, "ok", ".")
+plt.show()
+```
+]
+
+.pull-right[
+```{python}
+with pm.Model() as gp:
+  nugget = pm.HalfCauchy("nugget", beta=5)
+  sigma2 = pm.HalfCauchy("sigma2", beta=5)
+  ls     = pm.HalfCauchy("ls",     beta=5)
+
+  Sigma = I * nugget + sigma2 * np.exp(-0.5 * D**2 * ls**2)
+  
+  y = pm.MvNormal("y", mu=np.zeros(d.shape[0]), cov=Sigma, observed=d.y)
+```
+]
+
+---
+
+## NUTS
+
+```python
+with gp:
+    post_nuts = pm.sample(
+        return_inferencedata = True,
+        chains = 2
+    )
+```
+
+```
+## █
+## Multiprocess sampling (2 chains in 4 jobs)
+## NUTS: [ls, sigma2, nugget]
+## Sampling 2 chains for 1_000 tune and 1_000 draw iterations (2_000 + 2_000 draws total) took 240 seconds.
+```
+
+```python
+az.summary(post)
+```
+
+```
+##           mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+## nugget   0.541  0.087   0.397    0.715  ...    0.002    1754.0    1292.0    1.0
+## sigma2   4.096  2.557   1.262    8.273  ...    0.060    1067.0    1004.0    1.0
+## ls      10.756  2.383   6.593   15.267  ...    0.049    1068.0    1109.0    1.0
+##
+## [3 rows x 9 columns]
+```
+
+---
+
+## Slice steps
+
+```{python}
+with gp:
+    step = pm.Slice([nugget, sigma2, ls])
+    post_slice = pm.sample(
+        return_inferencedata = True,
+        chains = 2,
+        step = step
+    )
+```
+
+```{python}
+az.summary(post_slice)
+```
+
+---
+
+## Metropolis-Hastings steps
+
+```{python}
+with gp:
+    step = pm.Metropolis([nugget, sigma2, ls])
+    post_mh = pm.sample(
+        return_inferencedata = True,
+        chains = 2,
+        step = step
+    )
+```
+
+```{python}
+az.summary(post_mh)
+```
+
+---
+
+## Concluding thoughts
+
+
+
+---
+
+## Thank you!
+
+.center[ .large[
+Questions or Comments?
+] ]
+
+<br/><br/><br/>
+
+<table class="details">
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("home")`</td>
+    <td><a href="https://rundel.github.io">rundel.github.io</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("github")`</td>
+    <td><a href="https://github.com/rundel/">rundel</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("twitter")`</td>
+    <td><a href="https://twitter.com/rundel">rundel</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("envelope")`</td>
+    <td>
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a><br/>
+    <a href="mailto:colin.rundel@duke.edu">colin.rundel@duke.edu</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("link")`</td>
+    <td>
+    <a href="https://bit.ly/rundel_isba2022">bit.ly/rundel_isba2022</a>
+    </td>
+  </tr>
+</table>
+
+<br/>
+

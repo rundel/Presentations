@@ -1,0 +1,352 @@
+@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700);
+@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700);
+@import url('https://fonts.googleapis.com/css?family=Inconsolata');
+
+body { 
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #333333;
+}
+
+
+
+p {
+  padding: 0;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+
+pre+p {
+  margin-top: 0.75em;
+}
+
+h2 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: bold;
+  color: #405C6D;
+  font-size: 12px;
+  margin: 0 0 0.5em 0;
+}
+h1, h3 {
+  font-family: 'Source Sans Pro', sans-serif;
+  font-weight: bold;
+  color: #405C6D;
+}
+a, a > code {
+  font-family: 'Source Sans Pro', sans-serif;
+  color: #405C6D;
+  text-decoration: none;
+}
+
+.footnote {
+  position: absolute;
+  font-size: 90%;
+  padding-left: 0px;
+  padding-right: 15%;
+  bottom: 0;
+  padding-bottom: 0.5em;
+}
+
+.remark-code, .remark-inline-code { 
+  font-family: 'Inconsolata', 'Lucida Console', Monaco, monospace;
+  font-size: 17px;
+}
+.remark-code-line-highlighted     { background-color: #ffff88; }
+
+.inverse {
+  background-color: #405C6D;
+  color: #ffffff;
+  /* text-shadow: 0 0 20px #333; */
+}
+.inverse h1, .inverse h2, .inverse h3 {
+  color: #f3f3f3;
+}
+
+/* Two-column layout */
+.left-column {
+  color: #777;
+  width: 20%;
+  height: 92%;
+  float: left;
+}
+
+.left-column h2:last-of-type, .left-column h3:last-child {
+  color: #000;
+}
+
+.right-column {
+  width: 75%;
+  float: right;
+  padding-top: 1em;
+}
+.center {
+  text-align:center;
+}
+.pull-left {
+  float: left;
+  width: 49%;
+  
+  text-overflow: clip;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.pull-right {
+  float: right;
+  width: 49%;
+  
+  text-overflow: clip;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.pull-right ~ * {
+  clear: both;
+}
+
+/*Alternative two-column layouts*/
+
+  /*Left 70% - Right 30% */
+.pull-left-wide {
+  width: 70%;
+  float: left;
+}
+.pull-right-narrow {
+  width: 29%;
+  float: right;
+}
+.pull-right-narrow ~ * {
+  clear: both;
+}
+
+  /*Left 30% - Right 70% */
+.pull-left-narrow {
+  width: 30%;
+  float: left;
+}
+.pull-right-wide {
+  width: 67%;
+  float: right;
+}
+.pull-right-wide ~ * {
+  clear: both;
+}
+
+
+
+.pad-top {
+  padding-top: 2em;
+}
+
+.col1 {
+  float: left;
+  width: 32%;
+}
+
+.col2 {
+  float: left;
+  width: 32%;
+  padding-left: 2%;
+}
+
+.col3 {
+  float: right;
+  width: 32%;
+}
+
+.col3 ~ * {
+  clear: both;
+}
+
+
+.col3_left {
+  float: left;
+  width: 32%;
+}
+
+.col3_mid {
+  float: left;
+  width: 32%;
+  padding-left: 2%;
+}
+
+.col3_right {
+  float: right;
+  width: 32%;
+}
+
+.col3_right ~ * {
+  clear: both;
+}
+
+
+
+.question {
+  background-color: #E1ECF8;
+  padding: 0.25px;
+}
+.instructions {
+  border-left: solid 5px #FFD748;
+  background-color: #FFD74850;
+  font-size: 90%;
+  padding: 1px 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+.instructions li::before {
+  content: ">"; 
+  color: #FFD748;
+  display: inline-block; 
+  margin-left: -1.5em
+}
+
+blockquote {
+  border-left: solid 5px lightgray;
+  padding-left: 1em;
+}
+
+li {
+  margin: 20px 0;
+}
+
+.larger { font-size: 150% }
+.large { font-size: 130% }
+.midi { font-size: 80% }
+.small { font-size: 70% }
+.tiny { font-size: 60% }
+
+.small .remark-code, .remark-inline-code { font-size: 85%; }
+.tiny .remark-code, .remark-inline-code { font-size: 75%; }
+
+
+.small li {
+  margin: 5px 0;
+}
+
+img, video, iframe {
+  max-width: 100%;
+}
+table {
+  margin: auto;
+  border-top: 1px solid #666;
+  border-bottom: 1px solid #666;
+}
+table thead th { border-bottom: 1px solid #ddd; }
+th, td { 
+  padding: 5px; 
+  padding-right: 30px;
+  padding-left: 10px;
+}
+thead, tfoot, tr:nth-child(even) { background: #eee }
+
+
+@page { margin: 0; }
+@media print {
+  .remark-slide-scaler {
+    width: 100% !important;
+    height: 100% !important;
+    transform: scale(1) !important;
+    top: 0 !important;
+    left: 0 !important;
+  }
+}
+
+.remark-slide-content{
+  font-size: 32px;
+  padding-left: 2em;
+  padding-right: 2em;
+  padding-top: 0.5em;
+}
+
+.remark-slide-content pre {
+  margin-top: 0.5em; 
+  margin-bottom: 0.5em;
+}
+
+.remark-slide-content:after {
+    content: "";
+    position: absolute;
+    bottom: 5px;
+    right: 810px;
+    height: 70px;
+    width: 81px;
+    background-repeat: no-repeat;
+    background-size: contain;
+}
+
+.element .style {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 685px;
+    width: 700px;
+}
+
+/*.remark-slide-number {
+  visibility: hidden;
+}*/
+
+
+
+
+.console, .shell, .docker, .ubuntu, .fedora, .rhel, .sbatch {
+  padding: 1%;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.ubuntu, .fedora, .rhel, .sbatch {
+  margin-top: 1.5em;
+}
+
+.console, .shell, .docker, .sbatch {
+  border-color: #000000;
+  background: #00000033;
+}
+
+.ubuntu {
+  border-color: #E95420;
+  background: #F8DFD6;
+}
+
+.fedora {
+  border-color: #2B426F;
+  background: #D5D9E2;
+}
+
+.rhel {
+  border-color: #004153;
+  background: #D1D9DC;
+}
+
+.ubuntu::before, .fedora::before, .rhel::before, .sbatch::before {
+  border: inherit;
+  background: inherit;
+  position: relative;
+  padding: 0 25px;
+  top: -22px;
+  font-size: 16px;
+}
+
+.ubuntu>*:first-child, .fedora>*:first-child, .rhel>*:first-child, .sbatch>*:first-child {
+  margin-top: -2em;
+  padding-top: 1.4em;
+  overflow: hidden;
+}
+
+.ubuntu>*:last-child, .fedora>*:last-child, .rhel>*:last-child, .sbatch>*:last-child {
+  margin-bottom: 0;
+}
+
+.ubuntu::before {
+  content: "Ubuntu";
+}
+
+.fedora::before {
+  content: "Fedora";
+}
+
+.rhel::before {
+  content: "RHEL";
+}
+
+.sbatch::before {
+  content: "sbatch";
+}

@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>An overview of Bayesian computational frameworks for teaching </title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Colin Rundel" />
+    <script src="libs/header-attrs-2.14/header-attrs.js"></script>
+    <link rel="stylesheet" href="slides.css" type="text/css" />
+    <link rel="stylesheet" href="title.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+
+exclude: true
+
+
+```r
+library(fontawesome)
+#reticulate::use_condaenv("base")
+```
+
+
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import arviz as az
+```
+
+
+
+```r
+local({
+  hook_err_old &lt;- knitr::knit_hooks$get("error")  # save the old hook
+  knitr::knit_hooks$set(error = function(x, options) {
+    # now do whatever you want to do with x, and pass
+    # the new x to the old hook
+    x = sub("## \n## Detailed traceback:\n.*$", "", x)
+    x = sub("Error in py_call_impl\\(.*?\\)\\: ", "", x)
+    #x = stringr::str_wrap(x, width = 100)
+    hook_err_old(x, options)
+  })
+  
+  hook_warn_old &lt;- knitr::knit_hooks$get("warning")  # save the old hook
+  knitr::knit_hooks$set(warning = function(x, options) {
+    x = sub("&lt;string&gt;:1: ", "", x)
+    #x = stringr::str_wrap(x, width = 100)
+    hook_warn_old(x, options)
+  })
+  
+  hook_msg_old &lt;- knitr::knit_hooks$get("output")  # save the old hook
+  knitr::knit_hooks$set(output = function(x, options) {
+    if (is.null(options$wrap))
+      options$wrap = TRUE
+    
+    x = stringr::str_replace(x, "(## ).* ([A-Za-z]+Warning:)", "\\1\\2")
+    x = stringr::str_split(x, "\n")[[1]]
+    #x = stringr::str_wrap(x, width = 120, exdent = 3)
+    x = stringr::str_remove_all(x, "\r")
+    if (options$wrap)
+        x = stringi::stri_wrap(x, width=120, exdent = 3, normalize=FALSE)
+    x = paste(x, collapse="\n")
+    
+    #x = stringr::str_wrap(x, width = 100)
+    hook_msg_old(x, options)
+  })
+})
+```
+
+---
+class: title_bg
+count: false
+
+.title[
+An overview of (*some*)&lt;br/&gt;
+Bayesian computational frameworks&lt;br/&gt;
+for teaching
+]
+
+.conference[
+  .name[ 
+    ISBA 2022, Montreal
+  ]
+  .bitly[ 
+    [bit.ly/rundel_isba2022](https://bit.ly/rundel_isba2022)
+  ] 
+]
+
+.author[
+.name[
+Colin Rundel
+]
+.school[
+Duke University
+]
+]
+
+---
+
+
+## Personal Context
+
+What I teach:
+
+- Sta 323 - Statistical Computing (`R`)
+
+- Sta 523 - Programming for Statistical Science (`R`)
+
+- STA 663 - Statistical Computing and Computation (`Python`)
+
+- STA 344/444/644 - Spatio-temporal modeling (`R`)
+
+&lt;br/&gt;
+
+Tools I use:
+
+- The majority of my time is spent with R, with a bit of C++
+
+- I use JAGS and Stan for applied modeling
+
+- Recently, more teaching focused on the Python ecosystem
+
+---
+
+## Bayesian computational frameworks?
+
+A collection of tools that implement a domain specific language for expressing and implementing Bayesian statistical models.
+
+&lt;br/&gt;
+
+For example,
+- JAGS
+
+- STAN
+
+- pymc
+
+-  &amp;plus; many others
+
+
+---
+
+## Some considerations
+
+- Ease of use (installation, syntax, debuging, etc.)
+
+- Blackboxiness / High vs low level 
+
+- Generalizability
+
+- Performance / Limitations
+
+- Wider curriculum
+
+---
+
+## Installation + basic usage
+
+- All of the frameworks have external / system dependencies 
+  - e.g. libjags, Eigen, theano, etc.
+
+- Generally easy to install binary packages are available, source installs can be challenging
+
+- If things break it tends to be spectacular and difficult to troubleshoot
+  - OS can make a difference
+  - 🔥Burn it down🔥 as a path forward
+
+---
+
+## Example - Bayesian SLR
+
+.pull-left[
+
+```r
+d = read.csv("data/lm.csv")
+plot(d)
+```
+
+![](ISBA2022_slides_files/figure-html/unnamed-chunk-1-1.png)&lt;!-- --&gt;
+]
+
+.pull-right[
+$$
+`\begin{aligned}
+y_i &amp;\sim N(m\cdot x_i + b, \sigma) \\
+\\
+m &amp;\sim N(0, 10) \\
+n &amp;\sim N(0, 10)\\
+\sigma &amp;\sim N(0, 5) \\
+\end{aligned}`
+$$
+]
+
+---
+
+## SLR - JAGS
+
+
+
+.pull-left[
+
+```r
+model = "
+model{
+  m ~ dnorm(0, 1/100)
+  b ~ dnorm(0, 1/100)
+  
+  sigma ~ dnorm(0, 1/25) T(0,)
+  
+  for(i in 1:length(y)) {
+    mu[i] = m*x[i] + b
+    y[i] ~ dnorm(mu[i], 1/(sigma^2))
+  }
+}
+"
+```
+]
+
+.pull-right[
+
+```r
+jags_model = rjags::jags.model(
+  textConnection(model), data = d, n.chains=4
+)
+```
+
+```
+## Compiling model graph
+##    Resolving undeclared variables
+##    Allocating nodes
+## Graph information:
+##    Observed stochastic nodes: 11
+##    Unobserved stochastic nodes: 3
+##    Total graph size: 56
+##
+## Initializing model
+```
+
+```r
+update(jags_model, n.iter=1000, progress.bar="none")
+
+post_jags = rjags::coda.samples(
+  jags_model, variable.names=c("m","b"),
+  n.iter=1000, progress.bar="none"
+)
+```
+]
+
+---
+
+## SLR - Stan
+
+.pull-left[
+
+```r
+stan = "
+data {
+  int&lt;lower=0&gt; N;
+  vector[N] x;
+  vector[N] y;
+}
+parameters {
+  real m;
+  real b;
+  real&lt;lower=0&gt; sigma;
+}
+transformed parameters {
+  vector[N] mu = m*x + b;
+}
+model {
+  m ~ normal(0, 10);
+  b ~ normal(0, 10);
+  sigma ~ normal(0, 5);
+  y ~ normal(mu, sigma);
+}
+"
+```
+]
+
+.pull-right[
+
+```r
+post_stan = rstan::stan(
+  model_code = stan, 
+  data = list(x=d$x, y=d$y, N=nrow(d)),
+  pars = c("m", "b", "sigma"),
+  chains = 4, warmup = 1000, iter = 2000,
+  refresh = 1000, verbose = FALSE, 
+)
+```
+
+```
+## Trying to compile a simple C file
+```
+
+```
+## Running /Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/bin/R \
+##   CMD SHLIB foo.c
+## clang -arch arm64 -I"/Library/Frameworks/R.framework/Versions/4.2-arm64/Resources/include" -DNDEBUG   -I"/
+   Users/rundel/Library/R/arm64/4.2/library/Rcpp/include/"  -I"/Users/rundel/Library/R/arm64/4.2/library/RcppEigen/
+   include/"  -I"/Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/unsupported"  -I"/Users/rundel/
+   Library/R/arm64/4.2/library/BH/include" -I"/Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/
+   src/"  -I"/Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/"  -I"/Users/rundel/Library/R/arm64/4.2/
+   library/RcppParallel/include/"  -I"/Users/rundel/Library/R/arm64/4.2/library/rstan/include" -DEIGEN_NO_DEBUG 
+   -DBOOST_DISABLE_ASSERTS  -DBOOST_PENDING_INTEGER_LOG2_HPP  -DSTAN_THREADS  -DUSE_STANC3 -DSTRICT_R_HEADERS 
+   -DBOOST_PHOENIX_NO_VARIADIC_EXPRESSION  -DBOOST_NO_AUTO_PTR  -include '/Users/rundel/Library/R/arm64/4.2/library/
+   StanHeaders/include/stan/math/prim/fun/Eigen.hpp'  -D_REENTRANT -DRCPP_PARALLEL_USE_TBB=1   "-isystem /Library/
+   Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include"   -fPIC  -falign-functions=64 -Wall -g -O2  -c foo.c -o foo.o
+## In file included from &lt;built-in&gt;:1:
+## In file included from /Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22:
+## In file included from /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Dense:1:
+## In file included from /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Core:88:
+## /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:1: error: unknown type
+   name 'namespace'
+## namespace Eigen {
+## ^
+## /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/src/Core/util/Macros.h:628:16: error: expected ';'
+   after top level declarator
+## namespace Eigen {
+##                ^
+##                ;
+## In file included from &lt;built-in&gt;:1:
+## In file included from /Users/rundel/Library/R/arm64/4.2/library/StanHeaders/include/stan/math/prim/fun/Eigen.hpp:22:
+## In file included from /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Dense:1:
+## /Users/rundel/Library/R/arm64/4.2/library/RcppEigen/include/Eigen/Core:96:10: fatal error: 'complex' file not found
+## #include &lt;complex&gt;
+##          ^~~~~~~~~
+## 3 errors generated.
+## make: *** [foo.o] Error 1
+##
+## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 1).
+## Chain 1:
+## Chain 1: Gradient evaluation took 1.6e-05 seconds
+## Chain 1: 1000 transitions using 10 leapfrog steps per transition would take 0.16 seconds.
+## Chain 1: Adjust your expectations accordingly!
+## Chain 1:
+## Chain 1:
+## Chain 1: Iteration:    1 / 2000 [  0%]  (Warmup)
+## Chain 1: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Chain 1: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Chain 1: Iteration: 2000 / 2000 [100%]  (Sampling)
+## Chain 1:
+## Chain 1:  Elapsed Time: 0.012 seconds (Warm-up)
+## Chain 1:                0.013 seconds (Sampling)
+## Chain 1:                0.025 seconds (Total)
+## Chain 1:
+##
+## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 2).
+## Chain 2:
+## Chain 2: Gradient evaluation took 1e-06 seconds
+## Chain 2: 1000 transitions using 10 leapfrog steps per transition would take 0.01 seconds.
+## Chain 2: Adjust your expectations accordingly!
+## Chain 2:
+## Chain 2:
+## Chain 2: Iteration:    1 / 2000 [  0%]  (Warmup)
+## Chain 2: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Chain 2: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Chain 2: Iteration: 2000 / 2000 [100%]  (Sampling)
+## Chain 2:
+## Chain 2:  Elapsed Time: 0.011 seconds (Warm-up)
+## Chain 2:                0.012 seconds (Sampling)
+## Chain 2:                0.023 seconds (Total)
+## Chain 2:
+##
+## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 3).
+## Chain 3:
+## Chain 3: Gradient evaluation took 1e-06 seconds
+## Chain 3: 1000 transitions using 10 leapfrog steps per transition would take 0.01 seconds.
+## Chain 3: Adjust your expectations accordingly!
+## Chain 3:
+## Chain 3:
+## Chain 3: Iteration:    1 / 2000 [  0%]  (Warmup)
+## Chain 3: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Chain 3: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Chain 3: Iteration: 2000 / 2000 [100%]  (Sampling)
+## Chain 3:
+## Chain 3:  Elapsed Time: 0.012 seconds (Warm-up)
+## Chain 3:                0.012 seconds (Sampling)
+## Chain 3:                0.024 seconds (Total)
+## Chain 3:
+##
+## SAMPLING FOR MODEL 'anon_model' NOW (CHAIN 4).
+## Chain 4:
+## Chain 4: Gradient evaluation took 1e-06 seconds
+## Chain 4: 1000 transitions using 10 leapfrog steps per transition would take 0.01 seconds.
+## Chain 4: Adjust your expectations accordingly!
+## Chain 4:
+## Chain 4:
+## Chain 4: Iteration:    1 / 2000 [  0%]  (Warmup)
+## Chain 4: Iteration: 1000 / 2000 [ 50%]  (Warmup)
+## Chain 4: Iteration: 1001 / 2000 [ 50%]  (Sampling)
+## Chain 4: Iteration: 2000 / 2000 [100%]  (Sampling)
+## Chain 4:
+## Chain 4:  Elapsed Time: 0.012 seconds (Warm-up)
+## Chain 4:                0.011 seconds (Sampling)
+## Chain 4:                0.023 seconds (Total)
+## Chain 4:
+```
+]
+
+---
+
+## SLR - pymc3
+
+
+
+.pull-left[
+
+```python
+import pymc3 as pm
+import arviz as az
+```
+
+
+```python
+with pm.Model() as lm:
+  m = pm.Normal('m', mu=0, sd=10)
+  b = pm.Normal('b', mu=0, sd=10)
+  
+  mu = m * d.x + b
+  sigma = pm.HalfNormal('sigma', sd=5)
+  
+  y = pm.Normal('y', mu=mu, sd=sigma, observed=d.y)
+```
+]
+
+.pull-right[
+
+```python
+with lm:
+  post_pymc = pm.sample(return_inferencedata=True, random_seed=1234)
+```
+
+```
+## █
+## Auto-assigning NUTS sampler...
+## Initializing NUTS using jitter+adapt_diag...
+## Multiprocess sampling (4 chains in 4 jobs)
+## NUTS: [sigma, b, m]
+## Sampling 4 chains for 1_000 tune and 1_000 draw iterations (4_000 + 4_000 draws total) took 6 seconds.
+## There were 6 divergences after tuning. Increase `target_accept` or reparameterize.
+```
+
+]
+
+---
+
+## Modelling results
+
+- JAGS models return a coda `mcmc.list` 
+  - basic tabular structure that is easy to work with
+
+- Stan models return a `stanfit` S4 object
+  - less directly accessible but provides important basic summaries (e.g. `n_eff`, `Rhat`, etc.)
+  - easily convertable to coda (`As.mcmc.list()`)
+
+- pymc3 models return* ArviZ `InferenceData` objects (xarray/NetCDF based)
+  - complex schema (everything and the kitchen sink approach)
+  - less tabular friendly
+
+- All frameworks support quick basic visualizations of results (trace, density, caterpillar, etc.) 
+
+---
+
+## Error reporting
+
+- As pymc models are Python code, any syntax errors are reported as Python syntax errors
+
+- JAGS and Stan implement their own parsers which have generally helpful error messages with the former tending to be terser / less detailed,
+
+.pull-left[
+
+```r
+rjags::jags.model(
+  textConnection("
+  model{
+    m ~ dnorm(0, 1/100
+  }
+  ")
+)
+```
+
+```
+## Error in rjags::jags.model(textConnection("\n  model{\n    m ~ dnorm(0, 1/100\n  }\n  ")): 
+## Error parsing model file:
+## syntax error on line 4 near "}"
+```
+]
+
+.pull-right[
+
+```r
+rstan::stan(
+  model_code = "
+  model {
+    m ~ normal(0, 10;
+  }
+  "
+)
+```
+
+```
+## Error in stanc(file = file, model_code = model_code, model_name = model_name, : 
+## 0
+##
+## Syntax error in 'string', line 2, column 20 to column 21, 
+##   parsing error:
+##
+## Ill-formed phrase. Found an expression. This can be followed 
+##   by a ",", a "}", a ")", a "[", a "]" or an infix or postfix 
+##   operator.
+```
+]
+
+
+- Runtime errors are a mixed bag
+
+---
+
+## Posterior predictive checks
+
+- Possible with all three frameworks, JAGS and Stan require that extra parameters be included in the model:
+
+.pull-left[
+JAGS:
+```jags
+for(i in 1:length(y)) {
+  y_tilde[i] ~ dnorm(mu[i], 1/(sigma^2))
+}
+```
+]
+
+.pull-right[
+Stan:
+```stan
+generated quantities {
+  real y_tilde[N] = normal_rng(mu, sigma);
+}
+```
+]
+
+- pymc allows for the PPD to be sampled from an existing model result,
+
+
+```python
+with lm:
+    y_tilde = pm.sample_posterior_predictive(
+        post_pymc, var_names=["y"], random_seed=1234
+    )
+```
+
+```
+## █
+```
+
+---
+
+## Limitations - GP Reg
+
+.pull-left[
+
+```python
+d = pd.read_csv("data/gp.csv")
+d.shape
+```
+
+```
+## (100, 3)
+```
+
+```python
+D = np.array([ np.abs(xi - d.x) for xi in d.x])
+I = (D == 0).astype("double")
+
+fig = plt.figure(figsize=(12, 5))
+plt.plot(d.x, d.y, "ok", ".")
+plt.show()
+```
+
+&lt;img src="ISBA2022_slides_files/figure-html/unnamed-chunk-14-1.png" width="1152" /&gt;
+]
+
+.pull-right[
+
+```python
+with pm.Model() as gp:
+  nugget = pm.HalfCauchy("nugget", beta=5)
+  sigma2 = pm.HalfCauchy("sigma2", beta=5)
+  ls     = pm.HalfCauchy("ls",     beta=5)
+
+  Sigma = I * nugget + sigma2 * np.exp(-0.5 * D**2 * ls**2)
+  
+  y = pm.MvNormal("y", mu=np.zeros(d.shape[0]), cov=Sigma, observed=d.y)
+```
+]
+
+---
+
+## NUTS
+
+```python
+with gp:
+    post_nuts = pm.sample(
+        return_inferencedata = True,
+        chains = 2
+    )
+```
+
+```
+## █
+## Multiprocess sampling (2 chains in 4 jobs)
+## NUTS: [ls, sigma2, nugget]
+## Sampling 2 chains for 1_000 tune and 1_000 draw iterations (2_000 + 2_000 draws total) took 240 seconds.
+```
+
+```python
+az.summary(post)
+```
+
+```
+##           mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+## nugget   0.541  0.087   0.397    0.715  ...    0.002    1754.0    1292.0    1.0
+## sigma2   4.096  2.557   1.262    8.273  ...    0.060    1067.0    1004.0    1.0
+## ls      10.756  2.383   6.593   15.267  ...    0.049    1068.0    1109.0    1.0
+##
+## [3 rows x 9 columns]
+```
+
+---
+
+## Slice steps
+
+
+```python
+with gp:
+    step = pm.Slice([nugget, sigma2, ls])
+    post_slice = pm.sample(
+        return_inferencedata = True,
+        chains = 2,
+        step = step
+    )
+```
+
+```
+## █
+## Multiprocess sampling (2 chains in 4 jobs)
+## CompoundStep
+## &gt;Slice: [ls]
+## &gt;Slice: [sigma2]
+## &gt;Slice: [nugget]
+## Sampling 2 chains for 1_000 tune and 1_000 draw iterations (2_000 + 2_000 draws total) took 22 seconds.
+```
+
+
+```python
+az.summary(post_slice)
+```
+
+```
+##           mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+## nugget   0.548  0.089   0.386    0.705  ...    0.001    1855.0    1526.0    1.0
+## sigma2   4.279  2.788   1.165    9.047  ...    0.063    1093.0    1187.0    1.0
+## ls      10.587  2.369   6.329   14.892  ...    0.049    1157.0    1227.0    1.0
+##
+## [3 rows x 9 columns]
+```
+
+---
+
+## Metropolis-Hastings steps
+
+
+```python
+with gp:
+    step = pm.Metropolis([nugget, sigma2, ls])
+    post_mh = pm.sample(
+        return_inferencedata = True,
+        chains = 2,
+        step = step
+    )
+```
+
+```
+## █
+## Multiprocess sampling (2 chains in 4 jobs)
+## CompoundStep
+## &gt;Metropolis: [ls]
+## &gt;Metropolis: [sigma2]
+## &gt;Metropolis: [nugget]
+## Sampling 2 chains for 1_000 tune and 1_000 draw iterations (2_000 + 2_000 draws total) took 9 seconds.
+## The estimated number of effective samples is smaller than 200 for some parameters.
+```
+
+
+```python
+az.summary(post_mh)
+```
+
+```
+##           mean     sd  hdi_3%  hdi_97%  ...  mcse_sd  ess_bulk  ess_tail  r_hat
+## nugget   0.539  0.083   0.398    0.689  ...    0.003     359.0     347.0   1.01
+## sigma2   4.408  2.764   1.380    9.102  ...    0.130     254.0     257.0   1.02
+## ls      10.587  2.362   5.957   14.468  ...    0.123     178.0     278.0   1.01
+##
+## [3 rows x 9 columns]
+```
+
+---
+
+## Concluding thoughts
+
+
+
+---
+
+## Thank you!
+
+.center[ .large[
+Questions or Comments?
+] ]
+
+&lt;br/&gt;&lt;br/&gt;&lt;br/&gt;
+
+&lt;table class="details"&gt;
+  &lt;tr&gt;
+    &lt;td style="text-align:center"&gt;&amp;nbsp;<svg aria-hidden="true" role="img" viewBox="0 0 576 512" style="height:1em;width:1.12em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg>&lt;/td&gt;
+    &lt;td&gt;&lt;a href="https://rundel.github.io"&gt;rundel.github.io&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style="text-align:center"&gt;&amp;nbsp;<svg aria-hidden="true" role="img" viewBox="0 0 496 512" style="height:1em;width:0.97em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>&lt;/td&gt;
+    &lt;td&gt;&lt;a href="https://github.com/rundel/"&gt;rundel&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style="text-align:center"&gt;&amp;nbsp;<svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>&lt;/td&gt;
+    &lt;td&gt;&lt;a href="https://twitter.com/rundel"&gt;rundel&lt;/a&gt;&lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style="text-align:center"&gt;&amp;nbsp;<svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M502.3 190.8c3.9-3.1 9.7-.2 9.7 4.7V400c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V195.6c0-5 5.7-7.8 9.7-4.7 22.4 17.4 52.1 39.5 154.1 113.6 21.1 15.4 56.7 47.8 92.2 47.6 35.7.3 72-32.8 92.3-47.6 102-74.1 131.6-96.3 154-113.7zM256 320c23.2.4 56.6-29.2 73.4-41.4 132.7-96.3 142.8-104.7 173.4-128.7 5.8-4.5 9.2-11.5 9.2-18.9v-19c0-26.5-21.5-48-48-48H48C21.5 64 0 85.5 0 112v19c0 7.4 3.4 14.3 9.2 18.9 30.6 23.9 40.7 32.4 173.4 128.7 16.8 12.2 50.2 41.8 73.4 41.4z"/></svg>&lt;/td&gt;
+    &lt;td&gt;
+    &lt;a href="mailto:rundel@gmail.com"&gt;rundel@gmail.com&lt;/a&gt;&lt;br/&gt;
+    &lt;a href="mailto:colin.rundel@duke.edu"&gt;colin.rundel@duke.edu&lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+  &lt;tr&gt;
+    &lt;td style="text-align:center"&gt;&amp;nbsp;<svg aria-hidden="true" role="img" viewBox="0 0 512 512" style="height:1em;width:1em;vertical-align:-0.125em;margin-left:auto;margin-right:auto;font-size:inherit;fill:currentColor;overflow:visible;position:relative;"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg>&lt;/td&gt;
+    &lt;td&gt;
+    &lt;a href="https://bit.ly/rundel_isba2022"&gt;bit.ly/rundel_isba2022&lt;/a&gt;
+    &lt;/td&gt;
+  &lt;/tr&gt;
+&lt;/table&gt;
+
+&lt;br/&gt;
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"highlightLines": true,
+"highlightStyle": "solarized-light",
+"countIncrementalSlides": false,
+"ratio": "16:9"
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+// add `data-at-shortcutkeys` attribute to <body> to resolve conflicts with JAWS
+// screen reader (see PR #262)
+(function(d) {
+  let res = {};
+  d.querySelectorAll('.remark-help-content table tr').forEach(tr => {
+    const t = tr.querySelector('td:nth-child(2)').innerText;
+    tr.querySelectorAll('td:first-child .key').forEach(key => {
+      const k = key.innerText;
+      if (/^[a-z]$/.test(k)) res[k] = t;  // must be a single letter (key)
+    });
+  });
+  d.body.setAttribute('data-at-shortcutkeys', JSON.stringify(res));
+})(document);
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>

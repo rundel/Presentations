@@ -1,0 +1,71 @@
+.title_bg {
+  background-color: #041E42;
+  color: #FFFFFF  ;
+}
+
+.title_bg a {
+  color: #FFFFFF;
+  font-weight: normal;
+}
+
+.title {
+  text-align: center;
+  font-size: 48px;
+  padding-top: 3.5em;
+}
+
+.title p {
+  margin-bottom: 20px;
+}
+
+.subtitle {
+  text-align: center;
+  font-style: italic;
+  font-size: 32px;
+}
+
+.conference {
+  font-size: 32px;
+  text-align: left;
+  padding-left: 1em;
+  position: absolute; 
+  bottom: 0;
+  left: 0;
+}
+
+.conference .name p {
+  margin-bottom: 0;
+}
+
+.conference .bitly {
+  font-size: 20px;
+}
+
+.conference .bitly p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+
+
+.author {
+  font-size: 32px;
+  text-align: right;
+  padding-right: 1em;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+}
+
+.author .name p {
+  margin-bottom: 0;
+}
+
+.author .school {
+  font-size: 20px;
+}
+
+.author .school p {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
