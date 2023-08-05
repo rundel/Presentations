@@ -37,7 +37,7 @@ options(
 
 ## Possible home department
 
-* The larger the institution, the more likely a position is within a Statistics / Data Science department
+* The larger the institution, the more likely a position is within a Statistics / Data Science / Biostat department
 
 * Alternatives include:
   * Mathematics
