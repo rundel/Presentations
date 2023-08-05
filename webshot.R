@@ -3,7 +3,7 @@ library(magrittr)
 args = commandArgs(trailingOnly = TRUE)
 
 input = args[[1]]
-input = stringr::str_replace(input, "Rmd$", "html")
+input = stringr::str_replace(input, "[RrQq]md$", "html")
 
 if (length(args) == 1) {
   output = stringr::str_replace(input, "html$", "pdf")

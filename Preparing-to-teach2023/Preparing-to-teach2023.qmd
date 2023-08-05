@@ -1,0 +1,212 @@
+---
+title: "Teaching-focused careers"
+subtitle: "Preparing to Teach 2023"
+author: "Colin Rundel"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+title-slide-attributes:
+  data-background-image: background.png
+  data-background-size: cover
+---
+
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+options(
+  htmltools.dir.version = FALSE, # for blogdown
+  width=80
+)
+
+```
+
+# Looking for a job
+
+## Possible institution types
+
+* Community Colleges
+
+* Small Liberal Arts Colleges
+
+* Teaching (Comprehensive) Universities
+
+* Research Institutions
+
+
+## Possible home department
+
+* The larger the institution, the more likely a position is within a Statistics / Data Science department
+
+* Alternatives include:
+  * Mathematics
+  * Computer Science, 
+  * Business School, 
+  * rarely School of Engineering 
+
+
+## Possible titles
+
+* Professor
+
+* Professor of the practice / of teaching
+
+* Lecturer with Security of Employment
+
+* Lecturer
+
+* Adjuct / Visiting / Teaching Postdoc
+
+
+## Where to Look for Jobs?
+
+* ASA Section on Statistics and Data Science Education (SSDSE) mailing list
+
+* <https://jobs.amstat.org/jobs>
+
+* <https://forms.stat.ufl.edu/statistics-jobs/>
+
+* <https://www.mathjobs.org/jobs>
+
+* Departmental websites
+ 
+
+# Applying for a job
+
+## Application Materials
+
+* Cover Letter
+* CV
+* Teaching Statement (Teaching Philosophy)
+* DEI Statement
+* 3+ Letters of recommendation
+* Teaching Demonstration
+* Research Seminar
+
+## Teaching Philosophy
+
+> Strictly speaking, your teaching philosophy is a written description of your values, goals, and beliefs regarding both teaching and learning. By contrast, your teaching statement develops from your teaching philosophy and uses evidence from your teaching to make the case that you have excelled as a teacher.”
+> <br/>
+> <br/>
+> Source:
+<https://ctl.iupui.edu/Resources/Documenting-Your-Teaching/Tips-for-Writing-a-Statement-of-Teaching-Philosophy>
+
+
+## Some advice 
+
+* Teaching statement should be more than a rehash of your CV
+
+* Try to customize to the department
+  * which courses would you be good at teaching
+  * what new course(s) would you like to develop
+
+* Ask for specific expectations for teaching demo / research talk
+
+# Evaluating a position
+
+## Basics
+
+::: {.center .large}
+<br/>
+Teaching
+<br/><br/>
+Research
+<br/><br/>
+Service
+:::
+
+
+## Teaching
+
+* What is the teaching load (2/2, 3/3, etc.)?
+
+* What courses will you be expected to teach?
+
+  * What size? What support? What regularity? Repeats vs new preps?
+
+* How is teaching evaluated?
+
+## Research
+
+* What counts as research? 
+
+* How is research quality evaluated?
+
+* What are expectations around publishing?
+
+* What are expectations around presenting at conferences?
+
+* Access to graduate students?
+
+
+## Service
+
+* What counts for service? (departmental, institutional, and professional)
+
+* What and how much service is expected? (e.g. thesis supervision, advising, etc.)
+
+
+## Reappointment and promotion
+
+* How long is your contract, and how is reappointment decided?
+
+  * Is there a process to provide regular feedback / mentoring
+  
+* What is the promotion process?
+
+  * Time frame, requirements, etc.
+
+
+## Internally vs. externally facing work
+
+* Teaching positions have an emphasis on teaching and service which tends to be largely 
+internally facing
+
+* It is important for your career to balance this with externally visible work, e.g.
+
+  * Papers, talks, etc.
+  
+  * Publicly available course materials
+  
+  * Software packages, data sets, etc.
+
+
+::: {.footnote}
+This is particularly critical if your promotion depends on external letters
+:::
+
+
+## Career success factors
+
+* Professional development (e.g., USCOTS, eCOTS, JSM)
+
+* Pedagogical research (e.g., TISE, JSDSE, SERJ, Teaching Statistics) 
+
+* Mentoring
+
+  * Within your department / institution
+  
+  * Professional (ASA SSDSE Mentoring program)
+  
+* Community 
+  
+  * Isostat, Regional ASA chapters
+  
+  * Preparing to teach cohort
+
+
+
+## Negotiation items
+
+If you have a job offer, be prepared to negotiate beyond just the basics (e.g. salary, start date, etc.).
+
+<br/>
+
+A few things to consider:
+
+* Start up / discretionary funds
+
+* IT and physical infrastructure
+
+* 1st year course release
