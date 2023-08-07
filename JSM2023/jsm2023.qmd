@@ -47,7 +47,7 @@ library(fontawesome)
 ## `.github/workflows/check_assignment.yml`
 
 ```{yaml}
-#| code-line-numbers: "|1|2|3|4-18|20-39|27-30|31-34" 
+#| code-line-numbers: "|1|2|3|4-18|20-39|25-25|27-30|31-34" 
 #| echo: true
 on: push
 name: Check Assignment
@@ -92,7 +92,7 @@ jobs:
 
 
 
-## Feedback
+##
 
 ::: {.r-stack}
 ![](imgs/Sta523-2.png){fig-align="center" width="100%"}
