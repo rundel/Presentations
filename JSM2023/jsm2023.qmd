@@ -1,0 +1,325 @@
+---
+title: "Quarto and automation"
+subtitle: "JSM 2023 - Toronto"
+author: "Colin Rundel"
+institute: "Duke University"
+footer: "[bit.ly/teach-quarto](https://bit.ly/teach-quarto)"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+title-slide-attributes:
+  data-background-image: background.png
+  data-background-size: cover
+---
+
+
+```{r setup, message=FALSE, warning=FALSE, include=FALSE}
+options(width=80)
+library(fontawesome)
+```
+
+
+## Context
+
+* Sta 323 / Sta 523 - R based statistical computing (UG / MS)
+
+* Sta 663 - Python based statistical computing (MS)
+
+* All courses run using GitHub
+
+  * 1 organization / course
+  
+  * Students added as org members
+  
+  * 1 repo / assignment (team or individual)
+  
+  * Management via [`ghclass`](https://rundel.github.io/ghclass/)
+  
+
+## Sta 523 - HW 1
+
+![](imgs/Sta523-1.png){fig-align="center" width="100%"}
+
+
+## `.github/workflows/check_assignment.yml`
+
+```{yaml}
+#| code-line-numbers: "|1|2|3|4-18|20-39|27-30|31-34" 
+#| echo: true
+on: push
+name: Check Assignment
+jobs:
+  check-allowed-files:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/sta523-fa22/sta523-base:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Check Files
+      run: |
+        checklist::quit_on_failure({
+          checklist::check_allowed_files(
+            c("hw1.qmd", "hw1.Rproj", "README.md", "fizzbuzz.png")
+          )
+        })
+      shell: Rscript {0}
+  
+  check-renders:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/sta523-fa22/sta523-base:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Install Missing Packages
+      run: |
+        missing = checklist::install_missing_pkgs(dir = "./", glob = "hw1.qmd")
+      shell: Rscript {0}
+    - name: Check Renders
+      run: |
+        checklist::check_qmd_renders("hw1.qmd")
+      shell: Rscript {0}
+    - name: Create artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: hw1-html
+        path: hw1.html
+```
+
+
+
+## Feedback
+
+::: {.r-stack}
+![](imgs/Sta523-2.png){fig-align="center" width="100%"}
+
+![](imgs/Sta523-3.png){.fragment fig-align="center" width="100%"}
+
+![](imgs/Sta523-4.png){.fragment fig-align="center" width="100%"}
+
+![](imgs/Sta523-5.png){.fragment fig-align="center" width="100%"}
+
+![](imgs/Sta523-6.png){.fragment fig-align="center" width="100%"}
+:::
+
+
+## `.github/workflows/check_assignment.yml`
+
+```{yaml}
+#| code-line-numbers: "35-39" 
+#| echo: true
+on: push
+name: Check Assignment
+jobs:
+  check-allowed-files:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/sta523-fa22/sta523-base:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Check Files
+      run: |
+        checklist::quit_on_failure({
+          checklist::check_allowed_files(
+            c("hw1.qmd", "hw1.Rproj", "README.md", "fizzbuzz.png")
+          )
+        })
+      shell: Rscript {0}
+  
+  check-renders:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/sta523-fa22/sta523-base:latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Install Missing Packages
+      run: |
+        missing = checklist::install_missing_pkgs(dir = "./", glob = "hw1.qmd")
+      shell: Rscript {0}
+    - name: Check Renders
+      run: |
+        checklist::check_qmd_renders("hw1.qmd")
+      shell: Rscript {0}
+    - name: Create artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: hw1-html
+        path: hw1.html
+```
+
+##
+
+::: {.r-stack}
+![](imgs/Sta523-7.png){fig-align="center" width="100%"}
+
+![](imgs/Sta523-8.png){.fragment fig-align="center" width="100%"}
+:::
+
+## ghclass + artifacts
+
+```{r}
+if (file.exists("html/")) {
+  unlink("html/", recursive = TRUE)
+}
+dir.create("html/", showWarnings = FALSE)
+```
+
+```{r}
+#| cache: true
+#| echo: true
+#| message: true
+repos = ghclass::org_repos("sta523-fa22", "hw01_")
+ghclass::action_artifact_download(repos, "html/")
+```
+
+::: aside
+This and related functions are part of `ghclass` v0.3 which will be on CRAN shortly (currenly available via `devtools::install_github('rundel/ghclass')`).
+:::
+
+## Sta 663 - HW 1 (Python)
+
+![](imgs/Sta663-1.png){fig-align="center" width="100%"}
+
+
+## `.github/workflows/repo_checks.yml`
+
+```{yaml}
+#| echo: true
+#| code-line-numbers: "|4,10-19|20,26-36|29-31|32-36"
+on: push
+name: Repo Checks
+jobs:
+  check_allowed_files:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/sta663-sp23/sta663-base:latest
+    timeout-minutes: 3
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Check Files
+      run: |
+        checklist::quit_on_failure({
+          checklist::check_allowed_files(
+            c("hw1.ipynb", "advent.py", "wordle.py", "README.*", "data/*")
+          )
+        })
+      shell: Rscript {0}
+  check_renders:
+    needs: check_allowed_files
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/sta663-sp23/sta663-base:latest
+    timeout-minutes: 5
+    steps:
+    - name: Checkout
+      uses: actions/checkout@master
+    - name: Check Renders
+      run: |
+        quarto render hw1.ipynb --execute --to html --embed-resources
+    - name: Archive html
+      uses: actions/upload-artifact@master
+      with:
+        name: html
+        path: hw1.html
+```
+
+
+## Advice
+
+* Each organization gets 2000 minutes of action runner time per month for free (3000 with Team upgrade)
+
+  * Easy to exhaust for even a medium sized course
+  
+  * Additional minutes can be paid for (~$0.008 / min)
+  
+  * or you can use a self hosted runner(s) ([our setup guide + helper scripts](https://github.com/rundel/runner_util))
+  
+. . .
+  
+* Artifacts similarly count towards organization storage limits (500 MB Free or 2 GB Team). Old artifacts can be removed using,
+
+:::: {.columns}
+::: {.column width='3%'}
+:::
+
+::: {.column width='95%' .large}
+```yaml
+  remove_old_artifacts:
+    runs-on: self-hosted
+    timeout-minutes: 3
+    steps:
+    - name: Remove old artifacts
+      uses: c-hive/gha-remove-artifacts@v1
+      with:
+        age: '0 seconds'
+        skip-tags: false
+        skip-recent: 0
+```
+:::
+::::
+
+## Advice
+
+* If you are not interested in creating your own Docker images the [rocker](https://rocker-project.org/) is an excellent option.
+
+  * Specifically, `rocker/verse` has `quarto` bundled along with most everything else you would need
+  
+:::: {.columns}
+::: {.column width='5%'}
+:::
+
+::: {.column width='95%' .large}
+```yaml
+    container:
+      image: rocker/verse:latest
+```
+:::
+::::
+
+  
+
+
+* If you are more adventerous you can find example `Dockerfiles` and build workflows for both courses,
+  
+  * [sta523-fa22/docker-base](https://github.com/sta523-fa22/docker-base) and
+  
+  * [sta663-sp23/docker-base](https://github.com/sta663-sp23/docker-base)
+
+
+## Questions?
+
+<br/><br/>
+
+::: {.large}
+<table class="details">
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("home")`</td>
+    <td><a href="https://rundel.github.io">rundel.github.io</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("github")`</td>
+    <td><a href="https://github.com/rundel/">rundel</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("envelope")`</td>
+    <td>
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a><br/>
+    <a href="mailto:colin.rundel@duke.edu">colin.rundel@duke.edu</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("box-archive")`</td>
+    <td>
+    <a href="https://rundel.github.io/ghclass">rundel/ghclass</a><br/>
+    <a href="https://rundel.github.io/checklist">rundel/checklist</a>
+    </td>
+  </tr>
+</table>
+:::

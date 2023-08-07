@@ -1,0 +1,90 @@
+/*-- scss:defaults --*/
+
+// fonts
+@import 'https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible&display=swap';
+
+$font-family-sans-serif: "Atkinson Hyperlegible", sans-serif;
+$presentation-heading-color: #325b74; /* Pantone Midnight - Fall 2022 */
+$link-color: #325b74;
+
+
+/*-- scss:rules --*/
+
+:root {
+  --r-main-font-size: 30px;
+}
+
+details>summary {
+  font-size: 0.75em;
+}
+
+#title-slide .title {
+  font-size: 2em;
+}
+
+.center {
+  text-align: center;
+}
+
+
+.giant {
+  font-size: 2em;
+}
+
+.xlarge {
+  font-size: 1.5em;
+}
+
+.large {
+  font-size: 1.2em;
+}
+
+.medium {
+  font-size: 0.9em;
+}
+
+.small {
+  font-size: 0.75em;
+}
+
+.reveal code {
+  font-size: 0.9em;
+}
+
+.reveal .cell {
+  margin-bottom: 15px;
+}
+
+.reveal .cell-output pre>code {
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
+
+.reveal table td {
+  border-bottom: 0;
+  padding-top: 2px;
+  padding-bottom: 2px
+}
+
+blockquote > p {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+blockquote {
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.reveal pre.sourceCode code {
+  max-height: 550px;
+}
+
+.reveal div.sourceCode {
+  margin-bottom: 0.33em !important;
+}
+
+h2>code {
+  font-size: 0.66em !important;
+  color: var(--r-heading-color) !important;
+}
