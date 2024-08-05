@@ -1,0 +1,144 @@
+---
+title: "Programmatic Manipulation of\nQuarto Documents for Teaching"
+subtitle: "JSM 2024 - Portland"
+author: "Colin Rundel"
+institute: "Duke University"
+footer: ""
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+title-slide-attributes:
+  data-background-image: background.png
+  data-background-size: cover
+execute:
+  echo: true
+---
+
+
+```{r setup}
+#| include: false
+options(width=80)
+library(fontawesome)
+library(parsermd)
+```
+
+
+## Quarto elements
+
+::: {.code-file .sourceCode .cell-code}
+`r fontawesome::fa("file")` `hello.qmd`
+:::
+
+````{.markdown code-line-numbers="|1-4|14,19,47,49,56|6-12|6|7,8|10,11|51-54|60-73|79"}
+{{< include _hello.qmd >}}
+````
+
+## `parsermd`
+
+implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown documents in R.
+
+* additional functionality for manipulating of these ASTs (filtering, editing, etc.)
+
+* v0.1.3 on CRAN, v0.2.0 with Quarto support on GitHub (CRAN imminently)
+
+
+## Quarto structure
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+parse_qmd("hello.qmd") |> print(flat = TRUE)
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+parse_qmd("hello.qmd") |> print()
+```
+:::
+::::
+
+
+
+## Why hierarchy?
+
+Use a CSS selector like approach to target specific nodes based on headings,
+
+```{r}
+qmd = parse_qmd("hello.qmd")
+```
+
+. . .
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+qmd |> rmd_select(by_section("Meet Quarto"))
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+qmd |> rmd_select(by_section("Fenced divs"))
+```
+:::
+::::
+
+. . .
+
+```{r}
+qmd |> rmd_select(by_section(c("Other Quarto features", "*code*")))
+```
+
+. . .
+
+```{r}
+qmd |> rmd_select(by_section(c("Other Quarto features", "*code*"), keep_parents = FALSE))
+```
+
+
+## Additional selectors
+
+Additional helpers based on `tidyselect`,
+
+```{r}
+qmd |> rmd_select(has_type("rmd_code_block"))
+```
+
+. . .
+
+```{r}
+qmd |> rmd_select(has_type(c("rmd_yaml_list", "rmd_chunk")))
+```
+
+. . .
+
+```{r}
+qmd |> rmd_select(!has_type("rmd_markdown"))
+```
+
+## AST as tbl
+
+```{r}
+qmd |> as_tibble()
+```
+
+
+## In the classroom
+
+```{r}
+fs::dir_tree("repos/")
+```
+::: {.aside}
+These folders are the, lightly modified, result of cloning student repos using [`ghclass`](https://rundel.github.io/ghclass/).
+:::
+
+
+## Document collections
+
+```{r}
+(qmds = parse_qmd_collection("repos/"))
+```
