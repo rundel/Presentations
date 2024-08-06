@@ -1,5 +1,5 @@
 ---
-title: "Programmatic Manipulation of\nQuarto Documents for Teaching"
+title: "Programmatic Manipulation of<br/>Quarto Documents for Teaching"
 subtitle: "JSM 2024 - Portland"
 author: "Colin Rundel"
 institute: "Duke University"
@@ -29,7 +29,7 @@ library(parsermd)
 ## Quarto elements
 
 ::: {.code-file .sourceCode .cell-code}
-`r fontawesome::fa("file")` `hello.qmd`
+&nbsp;`r fontawesome::fa("file")` `hello.qmd`
 :::
 
 ````{.markdown code-line-numbers="|1-4|14,19,47,49,56|6-12|6|7,8|10,11|51-54|60-73|79"}
@@ -61,6 +61,11 @@ parse_qmd("hello.qmd") |> print()
 :::
 ::::
 
+## ast as tbl
+
+```{r}
+parse_qmd("hello.qmd") |> as_tibble()
+```
 
 
 ## Why hierarchy?
@@ -93,16 +98,46 @@ qmd |> rmd_select(by_section("Fenced divs"))
 qmd |> rmd_select(by_section(c("Other Quarto features", "*code*")))
 ```
 
-. . .
-
 ```{r}
 qmd |> rmd_select(by_section(c("Other Quarto features", "*code*"), keep_parents = FALSE))
 ```
 
 
+## ast to quarto
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+qmd |> 
+  rmd_select(by_section("Meet Quarto")) |>
+  as_document() |>
+  cat(sep = "\n")
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+qmd |> 
+  rmd_select(by_section("Fenced divs")) |>
+  as_document() |>
+  cat(sep = "\n")
+```
+:::
+::::
+
+. . .
+
+```{r}
+qmd |> 
+  rmd_select(by_section(c("Other Quarto features", "*code blocks*"), keep_parents = FALSE)) |>
+  as_document() |>
+  cat(sep = "\n")
+```
+
+
 ## Additional selectors
 
-Additional helpers based on `tidyselect`,
+Additional helpers are available based on `tidyselect`,
 
 ```{r}
 qmd |> rmd_select(has_type("rmd_code_block"))
@@ -111,7 +146,7 @@ qmd |> rmd_select(has_type("rmd_code_block"))
 . . .
 
 ```{r}
-qmd |> rmd_select(has_type(c("rmd_yaml_list", "rmd_chunk")))
+qmd |> rmd_select(has_type(c("rmd_yaml", "rmd_chunk")))
 ```
 
 . . .
@@ -120,11 +155,7 @@ qmd |> rmd_select(has_type(c("rmd_yaml_list", "rmd_chunk")))
 qmd |> rmd_select(!has_type("rmd_markdown"))
 ```
 
-## AST as tbl
 
-```{r}
-qmd |> as_tibble()
-```
 
 
 ## In the classroom
@@ -137,8 +168,93 @@ These folders are the, lightly modified, result of cloning student repos using [
 :::
 
 
+## Homework structure
+
+::: {.panel-tabset}
+
+### Output
+
+<iframe src="hw1.html" width="1000px" height="500px" style="padding: 5px;">
+
+</iframe>
+
+### Structure
+
+```{r}
+parse_qmd("repos/hw01_team01/hw1.qmd")
+```
+
+:::
+
+
+
 ## Document collections
 
 ```{r}
-(qmds = parse_qmd_collection("repos/"))
+(hw1 = parse_qmd_collection("repos/"))
 ```
+
+. . .
+
+```{r}
+hw1 |> as_ast()
+```
+
+## Filtering
+
+```{r}
+(task1 = hw1 |> rmd_select(by_section(c("Task 1 - Implement fizzbuzz", "Write up"))))
+```
+
+. . .
+
+```{r}
+task1 |> as_ast()
+```
+
+## Rendering
+
+::: {.panel-tabset}
+### Code
+
+```{r}
+task1 |> render(name = "hw1_task1")
+```
+
+### Output
+
+<iframe src="hw1_task1.html" width="1000px" height="500px" style="padding: 5px;">
+</iframe>
+:::
+
+## Code chunks + rendering
+
+::: {.panel-tabset}
+### Code
+
+```{r}
+(fb = hw1 |> 
+  rmd_select("fizzbuzz") |> 
+  rmd_ast_append(
+    rmd_chunk(name = "tests", code = c(
+      "fizzbuzz(1:5)",
+      "fizzbuzz(5:1)",
+      "fizzbuzz(-1)"
+    ), options = list(error = TRUE))
+  ) |>
+  as_ast() |>
+  rmd_ast_prepend(
+    rmd_chunk(code = "library(tidyverse)", options = list(include=FALSE))
+  )
+)
+```
+
+### Output
+
+```{r}
+#| result: "hide"
+fb |> render("hw1_task1_code")
+```
+
+<iframe src="hw1_task1_code.html" width="1000px" height="500px" style="padding: 5px;">
+</iframe>
