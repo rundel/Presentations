@@ -29,11 +29,11 @@ library(parsermd)
 
 implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown documents in R.
 
-* supports manipulating of the ASTs (filtering, editing, etc.)
+* supports manipulating ASTs (filtering, editing, etc.)
 
-* ability to directly source and render the ASTs
+* ability to directly source and render ASTs
 
-* Started life during covid to aide in the grading of student assignments in a large machine learning course 
+* project started during covid to aide in the grading of student assignments in a large machine learning course 
 
 * v0.1.3 is on CRAN, v0.2.0 with full Quarto support on GitHub (CRAN imminently)
 
@@ -104,7 +104,7 @@ qmd |> rmd_select(by_section(c("Other Quarto features", "*code*"), keep_parents 
 ```
 
 
-## ast to quarto
+## ast to text
 
 These ASTs can be converted back to Quarto documents at any point,
 
@@ -178,7 +178,7 @@ qmd |> render("hello_quarto")
 ```
 
 
-<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 
 
@@ -206,7 +206,7 @@ These folders are the, lightly modified, result of cloning student repos using [
 
 ### html
 
-<iframe src="hw1.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 
 :::
@@ -264,7 +264,7 @@ hw1 |>
 
 ### html
 
-<iframe src="hw1_task1.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 
 :::
@@ -272,7 +272,7 @@ hw1 |>
 
 ## Interactive tests
 
-If you prefer to be able to interactively run the tests, you can use the `rmd_source()` to execute code from the ast,
+If you prefer to be able to interactively run the tests, you can use `rmd_source()` to execute code from the ast in your environment,
 
 ```{r}
 hw1 |>
@@ -325,7 +325,7 @@ task1 |> as_ast()
 task1 |> render(name = "hw1_task1_coll", quarto_args = c("--embed-resources"))
 ```
 
-<iframe src="hw1_task1_coll.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1_coll.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 
 
@@ -369,7 +369,7 @@ task1
 
 ### html
 
-<iframe src="hw1_task1_coll2.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1_coll2.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 :::
 

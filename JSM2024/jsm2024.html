@@ -410,9 +410,9 @@ Colin Rundel
 <h2><code>parsermd</code></h2>
 <p>implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown documents in R.</p>
 <ul>
-<li><p>supports manipulating of the ASTs (filtering, editing, etc.)</p></li>
-<li><p>ability to directly source and render the ASTs</p></li>
-<li><p>Started life during covid to aide in the grading of student assignments in a large machine learning course</p></li>
+<li><p>supports manipulating ASTs (filtering, editing, etc.)</p></li>
+<li><p>ability to directly source and render ASTs</p></li>
+<li><p>project started during covid to aide in the grading of student assignments in a large machine learning course</p></li>
 <li><p>v0.1.3 is on CRAN, v0.2.0 with full Quarto support on GitHub (CRAN imminently)</p></li>
 </ul>
 </section>
@@ -632,8 +632,8 @@ Colin Rundel
 </div>
 </div>
 </section>
-<section id="ast-to-quarto" class="slide level2">
-<h2>ast to quarto</h2>
+<section id="ast-to-text" class="slide level2">
+<h2>ast to text</h2>
 <p>These ASTs can be converted back to Quarto documents at any point,</p>
 <div class="columns">
 <div class="column" style="width:50%;">
@@ -751,7 +751,7 @@ plt.show()
 <div class="cell">
 <div class="sourceCode cell-code" id="cb31"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href=""></a>qmd <span class="sc">|&gt;</span> <span class="fu">render</span>(<span class="st">"hello_quarto"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 </section>
 <section>
@@ -844,7 +844,7 @@ plt.show()
 </div>
 </div>
 <div id="tabset-1-2">
-<iframe src="hw1.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 </div>
 </div>
@@ -971,7 +971,7 @@ Output created: hw1_task1.html</code></pre>
 </div>
 </div>
 <div id="tabset-2-2">
-<iframe src="hw1_task1.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 </div>
 </div>
@@ -1275,7 +1275,7 @@ Output created: hw1_task1.html</code></pre>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb59"><pre class="sourceCode numberSource r number-lines code-with-copy"><code class="sourceCode r"><span id="cb59-1"><a href=""></a>task1 <span class="sc">|&gt;</span> <span class="fu">render</span>(<span class="at">name =</span> <span class="st">"hw1_task1_coll"</span>, <span class="at">quarto_args =</span> <span class="fu">c</span>(<span class="st">"--embed-resources"</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<iframe src="hw1_task1_coll.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1_coll.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 </section>
 <section id="with-modifications" class="slide level2">
@@ -1351,7 +1351,7 @@ Output created: hw1_task1.html</code></pre>
 </div></div>
 </div>
 <div id="tabset-3-2">
-<iframe src="hw1_task1_coll2.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1_coll2.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
 </iframe>
 </div>
 </div>
