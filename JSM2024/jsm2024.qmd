@@ -219,14 +219,14 @@ These folders are the, lightly modified, result of cloning student repos using [
 
 ```{r}
 hw1 |>
-  rmd_select(by_section(c("Task 1 - Implement fizzbuzz")))
+  rmd_select(has_type("rmd_yaml"), by_section(c("Task 1*")))
 ```
 
 . . .
 
 ```{r}
 hw1 |>
-  rmd_select(by_section(c("Task 1 - Implement fizzbuzz"))) |>
+  rmd_select(has_type("rmd_yaml"), by_section(c("Task 1*"))) |>
   rmd_select(!by_section("Testing"))
 ```
 
@@ -235,10 +235,10 @@ hw1 |>
 
 ```{r}
 hw1 |>
-  rmd_select(by_section(c("Task 1 - Implement fizzbuzz"))) |>
+  rmd_select(has_type("rmd_yaml"), by_section(c("Task 1*"))) |>
   rmd_select(!by_section("Testing")) |>
   rmd_ast_append(
-    rmd_chunk(name = "tests", code = c(
+    rmd_chunk("tests", code = c(
       "fizzbuzz(1:5)",
       "fizzbuzz(5:1)",
       "fizzbuzz(-1)"
@@ -249,19 +249,14 @@ hw1 |>
 ## Rendering the result
 
 ::: {.panel-tabset}
-### Code
-
-```{r}
-#| echo: false
-setwd("single/")
-```
+### code
 
 ```{r}
 hw1 |>
-  rmd_select(by_section(c("Task 1 - Implement fizzbuzz"))) |>
+  rmd_select(has_type("rmd_yaml"), by_section(c("Task 1*"))) |>
   rmd_select(!by_section("Testing")) |>
   rmd_ast_append(
-    rmd_chunk(name = "tests", code = c(
+    rmd_chunk("tests", code = c(
       "fizzbuzz(1:5)",
       "fizzbuzz(5:1)",
       "fizzbuzz(-1)"
@@ -270,23 +265,36 @@ hw1 |>
   render("hw1_task1")
 ```
 
-```{r}
-#| echo: false
-setwd("../")
-```
-
 ### html
 
-<iframe src="single/hw1_task1.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1.html" width="1000px" height="500px" style="padding: 5px;">
 </iframe>
 
 :::
 
 
+## Interactive tests
+
+If you prefer to be able to interactively run the tests, you can use the `rmd_source()` to execute code from the ast,
+
+```{r}
+hw1 |>
+  rmd_select("fizzbuzz") |>
+  rmd_source()
+```
+
+```{r}
+#| error: true
+fizzbuzz(1:5)
+fizzbuzz(5:1)
+fizzbuzz(-1)
+```
+
+# "Of course someone has to write for loops. It doesn’t have to be you." <br/>- Jenny Bryan
 
 ## Document collections
 
-> "Of course someone has to write for loops. It doesn’t have to be you." - Jenny Bryan
+This is a *newish* feature and still a bit experimental,
 
 ```{r}
 (hw1 = parse_qmd_collection("repos/"))
@@ -301,7 +309,10 @@ hw1 |> as_ast()
 ## Filtering
 
 ```{r}
-(task1 = hw1 |> rmd_select(by_section(c("Task 1 - Implement fizzbuzz", "Write up"))))
+(task1 = hw1 |> 
+   rmd_select(by_section(c("Task 1*"))) |>
+   rmd_select(!by_section("Testing"))
+)
 ```
 
 . . .
@@ -310,31 +321,29 @@ hw1 |> as_ast()
 task1 |> as_ast()
 ```
 
-## Rendering
-
-::: {.panel-tabset}
-### Code
+## Rendered
 
 ```{r}
-task1 |> render(name = "hw1_task1")
+#| results: hide
+task1 |> render(name = "hw1_task1_coll")
 ```
 
-### Output
-
-<iframe src="hw1_task1.html" width="1000px" height="500px" style="padding: 5px;">
+<iframe src="hw1_task1_coll.html" width="1000px" height="500px" style="padding: 5px;">
 </iframe>
-:::
 
-## Code chunks + rendering
+
+## With modifications
 
 ::: {.panel-tabset}
-### Code
+### code
 
+:::: {.columns}
+::: {.column width='40%'}
 ```{r}
-(fb = hw1 |> 
-  rmd_select("fizzbuzz") |> 
+#| results: hide
+(task1 = task1 |> 
   rmd_ast_append(
-    rmd_chunk(name = "tests", code = c(
+    rmd_chunk("tests", code = c(
       "fizzbuzz(1:5)",
       "fizzbuzz(5:1)",
       "fizzbuzz(-1)"
@@ -342,17 +351,70 @@ task1 |> render(name = "hw1_task1")
   ) |>
   as_ast() |>
   rmd_ast_prepend(
-    rmd_chunk(code = "library(tidyverse)", options = list(include=FALSE))
+    rmd_chunk(
+      "load-libraries", 
+      code = "library(tidyverse)", 
+      options = list(include=FALSE)
+    )
   )
 )
+task1 |> render("hw1_task1_coll2")
 ```
+:::
 
-### Output
-
+::: {.column width='60%'}
 ```{r}
-#| result: "hide"
-fb |> render("hw1_task1_code")
+#| echo: false
+task1
 ```
+:::
+::::
 
-<iframe src="hw1_task1_code.html" width="1000px" height="500px" style="padding: 5px;">
+### html
+
+<iframe src="hw1_task1_coll2.html" width="1000px" height="500px" style="padding: 5px;">
 </iframe>
+:::
+
+
+## What's next?
+
+- The current version will be going up on CRAN imminently
+
+- More work on helper functions for `rmd_select()`
+
+- Implementing pipeable modifier functions 
+
+- Thinking about more high-level user facing functions like `rmd_template()` and `rmd_check_template()` - see the [vignette](https://rundel.github.io/parsermd/articles/templates.html) for more details
+
+- Any and all interesting use cases
+
+## Questions?
+
+<br/><br/>
+
+::: {.large}
+<table class="details">
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("home")`</td>
+    <td><a href="https://rundel.github.io">rundel.github.io</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("github")`</td>
+    <td><a href="https://github.com/rundel/">rundel</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("envelope")`</td>
+    <td>
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a><br/>
+    <a href="mailto:colin.rundel@duke.edu">colin.rundel@duke.edu</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("box-archive")`</td>
+    <td>
+    <a href="https://rundel.github.io/parsermd">rundel/parsermd</a>
+    </td>
+  </tr>
+</table>
+:::
