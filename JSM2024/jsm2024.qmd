@@ -25,6 +25,19 @@ library(fontawesome)
 library(parsermd)
 ```
 
+## `parsermd`
+
+implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown documents in R.
+
+* supports manipulating of the ASTs (filtering, editing, etc.)
+
+* ability to directly source and render the ASTs
+
+* Started life during covid to aide in the grading of student assignments in a large machine learning course 
+
+* v0.1.3 is on CRAN, v0.2.0 with full Quarto support on GitHub (CRAN imminently)
+
+
 
 ## Quarto elements
 
@@ -36,32 +49,28 @@ library(parsermd)
 {{< include _hello.qmd >}}
 ````
 
-## `parsermd`
 
-implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown documents in R.
+## Elements as AST
 
-* additional functionality for manipulating of these ASTs (filtering, editing, etc.)
-
-* v0.1.3 on CRAN, v0.2.0 with Quarto support on GitHub (CRAN imminently)
-
-
-## Quarto structure
+```{r}
+qmd = parse_qmd("hello.qmd")
+```
 
 :::: {.columns}
 ::: {.column width='50%'}
 ```{r}
-parse_qmd("hello.qmd") |> print(flat = TRUE)
+qmd |> print(flat = TRUE)
 ```
 :::
 
 ::: {.column width='50%' .fragment}
 ```{r}
-parse_qmd("hello.qmd") |> print()
+qmd |> print()
 ```
 :::
 ::::
 
-## ast as tbl
+## As a tibble
 
 ```{r}
 parse_qmd("hello.qmd") |> as_tibble()
@@ -70,13 +79,8 @@ parse_qmd("hello.qmd") |> as_tibble()
 
 ## Why hierarchy?
 
-Use a CSS selector like approach to target specific nodes based on headings,
+Use a CSS selector like approach to target specific nodes based on *headings*,
 
-```{r}
-qmd = parse_qmd("hello.qmd")
-```
-
-. . .
 
 :::: {.columns}
 ::: {.column width='50%'}
@@ -104,6 +108,8 @@ qmd |> rmd_select(by_section(c("Other Quarto features", "*code*"), keep_parents 
 
 
 ## ast to quarto
+
+These ASTs can be converted back to Quarto documents at any point,
 
 :::: {.columns}
 ::: {.column width='50%'}
@@ -137,11 +143,21 @@ qmd |>
 
 ## Additional selectors
 
-Additional helpers are available based on `tidyselect`,
+While a work in progress, we are adding additional helpers based on `tidyselect`,
 
+:::: {.columns}
+::: {.column width='50%'}
 ```{r}
-qmd |> rmd_select(has_type("rmd_code_block"))
+qmd |> rmd_select("plot-penguins")
 ```
+:::
+
+::: {.column width='50%'}
+```{r}
+qmd |> rmd_select(has_label("*p*"))
+```
+:::
+::::
 
 . . .
 
@@ -155,10 +171,23 @@ qmd |> rmd_select(has_type(c("rmd_yaml", "rmd_chunk")))
 qmd |> rmd_select(!has_type("rmd_markdown"))
 ```
 
+## Rendering
+
+ASTs can also be directly rendered 
+
+```{r}
+#| results: hide
+qmd |> render("hello_quarto")
+```
 
 
+<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px;border: 1px solid darkgrey;">
+</iframe>
 
-## In the classroom
+
+# In Practice
+
+## Spring 2024 - hw1
 
 ```{r}
 fs::dir_tree("repos/")
@@ -172,23 +201,92 @@ These folders are the, lightly modified, result of cloning student repos using [
 
 ::: {.panel-tabset}
 
-### Output
-
-<iframe src="hw1.html" width="1000px" height="500px" style="padding: 5px;">
-
-</iframe>
-
-### Structure
+### ast
 
 ```{r}
-parse_qmd("repos/hw01_team01/hw1.qmd")
+(hw1 = parse_qmd("repos/hw01_team01/hw1.qmd"))
 ```
+
+### html
+
+<iframe src="hw1.html" width="1000px" height="500px" style="padding: 5px;">
+</iframe>
+
+:::
+
+
+## Simplifying the document
+
+```{r}
+hw1 |>
+  rmd_select(by_section(c("Task 1 - Implement fizzbuzz")))
+```
+
+. . .
+
+```{r}
+hw1 |>
+  rmd_select(by_section(c("Task 1 - Implement fizzbuzz"))) |>
+  rmd_select(!by_section("Testing"))
+```
+
+
+## Adding something more
+
+```{r}
+hw1 |>
+  rmd_select(by_section(c("Task 1 - Implement fizzbuzz"))) |>
+  rmd_select(!by_section("Testing")) |>
+  rmd_ast_append(
+    rmd_chunk(name = "tests", code = c(
+      "fizzbuzz(1:5)",
+      "fizzbuzz(5:1)",
+      "fizzbuzz(-1)"
+    ), options = list(error = TRUE))
+  )
+```
+
+## Rendering the result
+
+::: {.panel-tabset}
+### Code
+
+```{r}
+#| echo: false
+setwd("single/")
+```
+
+```{r}
+hw1 |>
+  rmd_select(by_section(c("Task 1 - Implement fizzbuzz"))) |>
+  rmd_select(!by_section("Testing")) |>
+  rmd_ast_append(
+    rmd_chunk(name = "tests", code = c(
+      "fizzbuzz(1:5)",
+      "fizzbuzz(5:1)",
+      "fizzbuzz(-1)"
+    ), options = list(error = TRUE))
+  ) |>
+  render("hw1_task1")
+```
+
+```{r}
+#| echo: false
+setwd("../")
+```
+
+### html
+
+<iframe src="single/hw1_task1.html" width="1000px" height="500px" style="padding: 5px;">
+</iframe>
 
 :::
 
 
 
 ## Document collections
+
+> "Of course someone has to write for loops. It doesn’t have to be you." - Jenny Bryan
 
 ```{r}
 (hw1 = parse_qmd_collection("repos/"))
