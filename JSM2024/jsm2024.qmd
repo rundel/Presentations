@@ -37,7 +37,7 @@ implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown
 
 * v0.1.3 is on CRAN, v0.2.0 with full Quarto support on GitHub (CRAN imminently)
 
-
+* Examples today will be with Quarto but all of this works the same with RMarkdown
 
 ## Quarto elements - &nbsp;`r fontawesome::fa("file")` `hello.qmd`
 
