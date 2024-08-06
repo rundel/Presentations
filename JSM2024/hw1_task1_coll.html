@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.5.55">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>hw1_task1_coll</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="hw1_task1_coll_files/libs/clipboard/clipboard.min.js"></script>
+<script src="hw1_task1_coll_files/libs/quarto-html/quarto.js"></script>
+<script src="hw1_task1_coll_files/libs/quarto-html/popper.min.js"></script>
+<script src="hw1_task1_coll_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="hw1_task1_coll_files/libs/quarto-html/anchor.min.js"></script>
+<link href="hw1_task1_coll_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="hw1_task1_coll_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="hw1_task1_coll_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="hw1_task1_coll_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="hw1_task1_coll_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+
+
+
+<section id="hw01_team01hw1.qmd" class="level1">
+<h1>hw01_team01/hw1.qmd</h1>
+<section id="task-1---implement-fizzbuzz" class="level2">
+<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz">Task 1 - Implement fizzbuzz</h2>
+<section id="write-up" class="level3">
+<h3 class="anchored" data-anchor-id="write-up">Write up</h3>
+<!-- 
+In this section include your write up for this task - do not include it within these html comment tags. 
+
+The write up must appear in the rendered document.
+-->
+<p>In order to write our fizzbuzz function, we took a series of steps. We began by thinking broadly about the errors we needed to throw before the actual function could run. We determined that the following would be necessary: checking for non-numeric types of inputs, negative values, inputs that are not coercible to integers without rounding or truncating, infinite values, and NAs and NaNs.</p>
+<p>Once we came up with the criteria, we wrote the necessary code to check for this using stopifnot() statements and decided on helpful error messages to include. We then worked on setting up the format for the function. We used a for-loop to check each element of the vector and determine what it needs to be replaced with. We had to consider the order of the if else statements to ensure that each number was being labelled correctly.</p>
+<p>Throughout this entire process, we were checking individual parts of our code using test cases in the console. Then we ran the good and bad test cases and discovered that we had too many double negatives in our stopifnot() statements, which we resolved. After debugging our code, we ran all of the test cases, and added our own, to ensure that our function was running properly.</p>
+</section>
+<section id="function" class="level3">
+<h3 class="anchored" data-anchor-id="function">Function</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(input)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  return_vector <span class="ot">=</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">"character"</span>, <span class="at">length =</span> n)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#stop cases for the entire vector</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Input vector has non-numeric types"</span> <span class="ot">=</span> <span class="fu">is.numeric</span>(input))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Input vector has values less than 0"</span> <span class="ot">=</span> (input <span class="sc">&gt;=</span> <span class="dv">0</span>))</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Input vector has values not coercible to integer type"</span> <span class="ot">=</span> (input <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">==</span> <span class="dv">0</span>))</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Input vector has infinite values"</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.infinite</span>(input))</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Input vector has NA values"</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.na</span>(input))</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">"Input vector has NaN values"</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.nan</span>(input))</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (integer <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    value <span class="ot">=</span> input[integer]</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">&amp;</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>)) {</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">"FizzBuzz"</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">"Fizz"</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">"Buzz"</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">#integer not divisible by either 3 or 5</span></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="fu">as.character</span>(value)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (return_vector)</span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="hw01_team02hw1.qmd" class="level1">
+<h1>hw01_team02/hw1.qmd</h1>
+<section id="task-1---implement-fizzbuzz-1" class="level2">
+<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-1">Task 1 - Implement fizzbuzz</h2>
+<section id="write-up-1" class="level3">
+<h3 class="anchored" data-anchor-id="write-up-1">Write up</h3>
+<p>The idea behind this function is to check each value within the input to ensure that they each fit the parameters given and if they do not to throw an error explaining exactly why they do not. In order for this function to work, however, the mode of the entire input must be numeric, and so we used an if logic statement to throw an error at the beginning rather than include it within the for loop for efficiency’s sake. Within the for loop, we are checking each value within the input vector individually. We first check to ensure that the vlaue is greater than 0. Then, we check to ensure the value is finite. If the value contains a decimal i.e.&nbsp;is a double, we multiply that value by 10 and then ensure that the remainder of that when divided by 10 is 0 to show that the value can be treated as an integer. All of these checks, if failed, have associated and descriptive error messages describing what the issue for the individual value was. As for performing the fizzbuzz creation, assuming that the value passed all of the checks, checks if the value is divisible cleanly by 3, 5, both, or neither and return Fizz, Buzz, FizzBuzz, or the value as a character as outlined by the requirements and then assigning that tothe output vector in the same location as the value within the input vector. We used else if statements, but given the structure of the code we could have used just if statements since each of the if statements would save over the previous entry within the output vector (i.e.&nbsp;if the value was 15, the corresponding entry in output would be Fizz, Buzz, and then FizzBuzz since 15 is divisible by 3, 5, and 3 and 5).</p>
+</section>
+<section id="function-1" class="level3">
+<h3 class="anchored" data-anchor-id="function-1">Function</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">=</span> <span class="fu">c</span>()</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">mode</span>(input) <span class="sc">!=</span> <span class="st">"numeric"</span>){</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Input must be a numeric vector (either double or integer type is allowed)"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (n <span class="cf">in</span> input) {</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n <span class="sc">&lt;</span> <span class="dv">0</span>){</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"All input values must be &gt;= 0"</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.infinite</span>(n) <span class="sc">||</span> <span class="fu">is.nan</span>(n) <span class="sc">||</span> <span class="fu">is.na</span>(n)){</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"All input values must be finite"</span>)</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">typeof</span>(n) <span class="sc">==</span> <span class="st">"double"</span>){</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> ((n <span class="sc">*</span> <span class="dv">10</span>) <span class="sc">%%</span> <span class="dv">10</span> <span class="sc">!=</span> <span class="dv">0</span>){</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">" all values must be coercible to integer without rounding or truncating"</span>)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="st">"Fizz"</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="st">"Buzz"</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> n <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="st">"FizzBuzz"</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">!=</span> <span class="dv">0</span> <span class="sc">&amp;</span> n <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">!=</span> <span class="dv">0</span>){</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="fu">as.character</span>(n)</span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="hw01_team03hw1.qmd" class="level1">
+<h1>hw01_team03/hw1.qmd</h1>
+<section id="task-1---implement-fizzbuzz-2" class="level2">
+<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-2">Task 1 - Implement fizzbuzz</h2>
+<section id="write-up-2" class="level3">
+<h3 class="anchored" data-anchor-id="write-up-2">Write up</h3>
+<p>The <code>fizzbuzz</code> function presented aims to tackle the FizzBuzz problem. This problem involves iterating over a sequence of numbers and applying specific rules: for multiples of 3, the number is replaced with “Fizz”; for multiples of 5, “Buzz”; and for multiples of both 3 and 5, “FizzBuzz”. The function is designed to accept a numeric vector and modify it according to these rules.</p>
+<p>Initially, the function enforces a strict input validation. It asserts that the input must be numeric, either of type <code>double</code> or <code>integer</code>, reflecting the numeric nature of the FizzBuzz problem. This is crucial as the operation of checking divisibility does not semantically apply to non-numeric types. Furthermore, the function scrutinizes each element within the input vector to confirm that it is an integer and non-negative, aligning with the traditional boundaries of the FizzBuzz problem. Should any element deviate from these constraints by being non-integer or negative, the function promptly halts execution and raises an error, thereby enforcing the integrity of the input data.</p>
+<p>Upon validating the input, the function proceeds to apply the FizzBuzz logic. It accurately identifies multiples of 3, 5, and 3 &amp; 5 using the modulo operator, replacing the appropriate numbers with “Fizz”, “Buzz”, or “FizzBuzz”. If indivisible by either number, it simply returns the number back.</p>
+<p>Notably, the function modifies the input vector in place but lacks an explicit return statement. In R, functions return the result of the last evaluated expression, which, in this case, would be the modified input vector. However, explicitly stating this return would enhance the clarity and readability of the function.</p>
+<p>In summary, the <code>fizzbuzz</code> function embodies a methodical approach to solving the FizzBuzz problem, with a strong emphasis on input validation to ensure the data’s compatibility with the problem’s numerical and logical constraints.</p>
+</section>
+<section id="function-2" class="level3">
+<h3 class="anchored" data-anchor-id="function-2">Function</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(input)) {</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Input must be a numeric vector"</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.nan</span>(input))) <span class="fu">stop</span>(<span class="st">"No input values can be NaN"</span>)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(input <span class="sc">&lt;</span> <span class="dv">0</span>)) <span class="fu">stop</span>(<span class="st">"All input values must be &gt;=0"</span>)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="sc">!</span><span class="fu">is.finite</span>(input))) <span class="fu">stop</span>(<span class="st">"All input values must be finite"</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(input<span class="sc">!=</span><span class="fu">as.integer</span>(input))) <span class="fu">stop</span>(<span class="st">"All input values must be coercible to integer without rounding or truncating"</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  ret <span class="ot">&lt;-</span> input</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(input)) {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input[i] <span class="sc">%%</span> <span class="dv">15</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="st">"FizzBuzz"</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (input[i] <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="st">"Fizz"</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (input[i] <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="st">"Buzz"</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="fu">as.character</span>(input[i])</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ret)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="hw01_team04hw1.qmd" class="level1">
+<h1>hw01_team04/hw1.qmd</h1>
+<section id="task-1---implement-fizzbuzz-3" class="level2">
+<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-3">Task 1 - Implement fizzbuzz</h2>
+<section id="write-up-3" class="level3">
+<h3 class="anchored" data-anchor-id="write-up-3">Write up</h3>
+<p>We began writing the FizzBuzz function by first accounting for the requirements for the function specified in the README document with instructions. We initially had decided to place the errors such as checking for all numeric inputs, NA inputs, and infinite inputs within the for loop as the loop iterates through all of the elements in the input. We realized that this wasn’t the most efficient way to write the code as it won’t throw the errors immediately as specified in the problem. To fix this, we decided to put the errors that could be evaluated using the any() wrapper function to check whether the vector is numeric, doesn’t contain any NA inputs, and only contains finite inputs before the for loop so that these errors would be caught immediately.</p>
+<p>Once we wrote the code to catch these errors, we next started the for loop which loops through every value in the input using seq_along() and then we indexed the input to get a single value x which was evaluated through the for loop. Within this for loop, we included code to catch errors for the individual input values such as values which are negative and those which are doubles but aren’t coercible to an integer without truncating. After we had checked for these errors, we wrote an if statement checking whether the numeric input x is divisible by 3 and 5. If this is the case, then the original input at the index i is replaced as “FizzBuzz.” If this statement is not true, we used an else if statement to evaluate whether the numeric input x is divisible by 3 and if so then the input at index i is replaced by “Fizz”. Lastly, we used an else if to check whether the numeric input x is divisible by 5 and if so the original input is replaced by “Buzz” at index i. Outside of the for loop, we have our original input returned with a character type as specified by the instructions.</p>
+<p>Once we finished writing the code described above, we then used the good input test cases to check whether our code ran correctly. The main modifications we made from the initial code to the final code was placing more of the code to catch the errors before the loop in order to increase efficiency. We also added a test case for when the input is 0 and realized that fizzbuzz(0) returned “FizzBuzz” when we expected it to return 0. We realized this is because 0 is considered a multiple of both 3 and 5 so 0 %% 3 == 0 and 0 %% 5 == 0 meaning 0 is assigned the string “FizzBuzz.” Our group discussed and decided that we wanted to hard code for the case when the input is 0 and just have “0” returned because we didn’t think it made sense in this case for 0 to be considered a multiple of 3 and 5 because we think that only conventional multiples of 3 and 5 should be changed to “FizzBuzz.”</p>
+<p>After modifying the function to include the case when the input is 0, we moved on to evaluating the bad inputs and tested the inputs on our code. We realized that the way our code was written wouldn’t throw an error if the input contained a sequence of negative to positive values such as fizzbuzz(-2:6) so we went through and modified our code to ensure that each input is being tested in the for loop to determine whether it is negative and throw an error for any input which is negative. We wrote similar test cases to ensure that a vector being passed in with some numeric and some character values will throw an error since the entire vector must be numeric.</p>
+<p>Lastly, after adding the additional test cases and discussing whether we had covered all possibilities, we made the code more efficient by moving some of the checks for errors outside of the for loop. For instance, initially we had the checks for numeric, na values, and infinite values all in the for loop which wasn’t efficient because if the NA was the last value, it would iterate through all of the other individual inputs before reaching the NA and triggering the error. Using the any() wrapper function, we were able to include these checks outside of the for loop so that they wouldn’t require iterating through the for loop to find individual input values which violated our set of possible inputs. Below is a description of our final code after we made modifications and adjustments to account for edge cases and improving efficiency.</p>
+</section>
+<section id="function-3" class="level3">
+<h3 class="anchored" data-anchor-id="function-3">Function</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">&lt;-</span> <span class="cf">function</span>(input) {</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(input)) {</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"Input vector must be numeric"</span>)</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(input))) {</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"All input values must be integers or doubles (no NAs allowed)"</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.infinite</span>(input))) {</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"All input values must be finite"</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(input)) {</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> input[i]</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"All input values must be greater than or equal to 0"</span>)</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((<span class="fu">is.double</span>(x) <span class="sc">==</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (x <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">!=</span> <span class="dv">0</span>) {</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">"All input values must be coercible to an integer without truncating"</span>)</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">"0"</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> ((<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">&amp;</span> (<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>)) {</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">"FizzBuzz"</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">"Fizz"</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">"Buzz"</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.character</span>(input)</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+<section id="hw01_team05hw1.qmd" class="level1">
+<h1>hw01_team05/hw1.qmd</h1>
+<section id="task-1---implement-fizzbuzz-4" class="level2">
+<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-4">Task 1 - Implement fizzbuzz</h2>
+<section id="write-up-4" class="level3">
+<h3 class="anchored" data-anchor-id="write-up-4">Write up</h3>
+<p>The fizzbuzz function takes the value “input” as its only argument. The first half of the function checks whether the input is “good” or “bad” and reacts accordingly. First, the function stores the length of the input vector in variable “len”, and checks whether or not the length of the input vector is 0. If the input vector is length zero, the execution of the function is stopped and “input must be not empty!” is printed, indicating that the user inputted an empty vector. If the vector is not of length zero, the function checks if any of the values in vector input are equal to infinity or negative infinity - if they are, the function stops execution and prints “input value must be finite.” Otherwise, the function continues and checks if any of the values in the vector are NA. If at least one value is NA, the function stops execution and prints “input value must not be NA.” If no values are NA, the function then checks if the vector is numeric, indicating it contains numeric values. If not, it stops execution and prints “input value must be numeric.” Otherwise the function will check if the numeric input is of type double and if the input vector casted as integers is not equal to the original integer vector. If it is not equal to the original integer vector, execution is stopped and “input value must be coercible to integer without rounding” is printed. This condition is in place to make sure double values in the vectors only have 0’s after the decimal, and are not changed when made an integer. The last condition checked is whether any integer is less than 0 - if so, execution is stopped and “input value must be non-negative” is printed.</p>
+<p>The following section completes the necessary tasks of the FizzBuzz function. We start by initializing an empty vector fb. It first implements a for loop that iterates through the indices of the input vector. The first two lines of this for loop check if the vector value at the given index is divisible by five and divisible by three, and storing the boolean values in five_mult and three_mult respectively. If both are true, the fb vector adds “FizzBuzz” at that particular index. If only three_mult is true, indicating that the value is divisible by three, “Fizz” is added to the fb vector at that given index. If only five_mult is true, indicating that the value is only divisible by five, “Buzz” is added to the fb vector at the given index. Finally, if three_mult and five_mult are both false, indicating the value is not divisible by three and is not divisible by five, we place that value in the fb vector at the given index. Lastly, we replace the fb vector with the same vector but with character elements and return the fb vector.</p>
+<!-- 
+In this section include your write up for this task - do not include it within these html comment tags. 
+
+The write up must appear in the rendered document.
+-->
+</section>
+<section id="function-4" class="level3">
+<h3 class="anchored" data-anchor-id="function-4">Function</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  len <span class="ot">&lt;-</span> <span class="fu">length</span>(input)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (len <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"input must be not empty!"</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">any</span>(input <span class="sc">==</span> <span class="cn">Inf</span> <span class="sc">|</span> input <span class="sc">==</span> <span class="sc">-</span><span class="cn">Inf</span>)) {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">"input value must be finite"</span>)</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(input) <span class="sc">==</span> <span class="cn">TRUE</span>)) {</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">"input value must not be NA"</span>)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.numeric</span>(input) <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">typeof</span>(input) <span class="sc">==</span> <span class="st">"double"</span>) {</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">as.integer</span>(input) <span class="sc">!=</span> input)) {</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">stop</span>(<span class="st">"input value must be coercible to integer without rounding"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">any</span>(input <span class="sc">&lt;</span> <span class="dv">0</span>)) {</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>              <span class="fu">stop</span>(<span class="st">"input value must be non-negative"</span>)</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            }</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">"input value must be numeric"</span>)</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  fb <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(val <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>len) {</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    five_mult <span class="ot">&lt;-</span> input[val] <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    three_mult <span class="ot">&lt;-</span> input[val] <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(five_mult <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;&amp;</span> three_mult <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> <span class="st">"FizzBuzz"</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span>(three_mult <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> <span class="st">"Fizz"</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span>(five_mult <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> <span class="st">"Buzz"</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> input[val]</span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  fb <span class="ot">&lt;-</span> <span class="fu">as.character</span>(fb)</span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(fb)</span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    // For code content inside modals, clipBoardJS needs to be initialized with a container option
+    // TODO: Check when it could be a function (https://github.com/zenorocha/clipboard.js/issues/860)
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>

@@ -11,8 +11,9 @@ format:
     slide-number: true
     self-contained: true
 title-slide-attributes:
-  data-background-image: background.png
-  data-background-size: cover
+  data-background-image: parsermd.png
+  data-background-size: 135px
+  data-background-position: right bottom 
 execute:
   echo: true
 ---
