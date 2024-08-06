@@ -384,9 +384,9 @@ task1
 
 - Thinking about more high-level user facing functions like `rmd_template()` and `rmd_check_template()` - see the [vignette](https://rundel.github.io/parsermd/articles/templates.html) for more details
 
-- Any and all interesting use cases
+- Building out and documenting any and all interesting use cases
 
-## Questions?
+## Reach out
 
 <br/><br/>
 
