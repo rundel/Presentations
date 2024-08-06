@@ -1,6 +1,8 @@
 ---
 title: "Hello, Quarto"
-format: html
+format:
+  html:
+    self-contained: true
 ---
   
 ```{{r}}
