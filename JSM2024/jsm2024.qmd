@@ -3,16 +3,15 @@ title: "Programmatic Manipulation of<br/>Quarto Documents for Teaching"
 subtitle: "JSM 2024 - Portland"
 author: "Colin Rundel"
 institute: "Duke University"
-footer: ""
+footer: "<a href='https://bit.ly/rundel_jsm2024'>bit.ly/rundel_jsm2024</a>"
 format:
   revealjs:
     theme: slides.scss
     transition: fade
     slide-number: true
-    self-contained: true
 title-slide-attributes:
   data-background-image: parsermd.png
-  data-background-size: 135px
+  data-background-size: 250px
   data-background-position: right bottom 
 execute:
   echo: true
@@ -40,13 +39,10 @@ implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown
 
 
 
-## Quarto elements
+## Quarto elements - &nbsp;`r fontawesome::fa("file")` `hello.qmd`
 
-::: {.code-file .sourceCode .cell-code}
-&nbsp;`r fontawesome::fa("file")` `hello.qmd`
-:::
 
-````{.markdown code-line-numbers="|1-4|14,19,47,49,56|6-12|6|7,8|10,11|51-54|60-73|79"}
+````{.markdown code-line-numbers="|1-6|16,21,49,51,58|8-14|8|9,10|12,13|53-56|62-75|81"}
 {{< include _hello.qmd >}}
 ````
 
@@ -182,7 +178,7 @@ qmd |> render("hello_quarto")
 ```
 
 
-<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px;border: 1px solid darkgrey;">
+<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px;">
 </iframe>
 
 
@@ -326,7 +322,7 @@ task1 |> as_ast()
 
 ```{r}
 #| results: hide
-task1 |> render(name = "hw1_task1_coll")
+task1 |> render(name = "hw1_task1_coll", quarto_args = c("--embed-resources"))
 ```
 
 <iframe src="hw1_task1_coll.html" width="1000px" height="500px" style="padding: 5px;">
@@ -355,11 +351,11 @@ task1 |> render(name = "hw1_task1_coll")
     rmd_chunk(
       "load-libraries", 
       code = "library(tidyverse)", 
-      options = list(include=FALSE)
+      options = list(message=FALSE)
     )
   )
 )
-task1 |> render("hw1_task1_coll2")
+task1 |> render("hw1_task1_coll2", quarto_args = c("--embed-resources"))
 ```
 :::
 

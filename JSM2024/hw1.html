@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
-<title>hw1_task1_coll</title>
+<title>Homework 1</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -3082,11 +3082,40 @@ vertical-align: -.125em;
 
 <main class="content" id="quarto-document-content">
 
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Homework 1</h1>
+</div>
 
 
 
-<section id="hw01_team01hw1.qmd" class="level1">
-<h1>hw01_team01/hw1.qmd</h1>
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>── Attaching core tidyverse packages ──────────────────────── tidyverse 2.0.0 ──
+✔ dplyr     1.1.4     ✔ readr     2.1.5
+✔ forcats   1.0.0     ✔ stringr   1.5.1
+✔ ggplot2   3.5.1     ✔ tibble    3.2.1
+✔ lubridate 1.9.3     ✔ tidyr     1.3.1
+✔ purrr     1.0.2     
+── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+✖ dplyr::filter() masks stats::filter()
+✖ dplyr::lag()    masks stats::lag()
+ℹ Use the conflicted package (&lt;http://conflicted.r-lib.org/&gt;) to force all conflicts to become errors</code></pre>
+</div>
+</div>
 <section id="task-1---implement-fizzbuzz" class="level2">
 <h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz">Task 1 - Implement fizzbuzz</h2>
 <section id="write-up" class="level3">
@@ -3103,244 +3132,362 @@ The write up must appear in the rendered document.
 <section id="function" class="level3">
 <h3 class="anchored" data-anchor-id="function">Function</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(input)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  return_vector <span class="ot">=</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;character&quot;</span>, <span class="at">length =</span> n)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#stop cases for the entire vector</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has non-numeric types&quot;</span> <span class="ot">=</span> <span class="fu">is.numeric</span>(input))</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has values less than 0&quot;</span> <span class="ot">=</span> (input <span class="sc">&gt;=</span> <span class="dv">0</span>))</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has values not coercible to integer type&quot;</span> <span class="ot">=</span> (input <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">==</span> <span class="dv">0</span>))</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has infinite values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.infinite</span>(input))</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has NA values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.na</span>(input))</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has NaN values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.nan</span>(input))</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (integer <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    value <span class="ot">=</span> input[integer]</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">&amp;</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>)) {</span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;FizzBuzz&quot;</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;Fizz&quot;</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;Buzz&quot;</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">#integer not divisible by either 3 or 5</span></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="fu">as.character</span>(value)</span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (return_vector)</span>
-<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(input)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  return_vector <span class="ot">=</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;character&quot;</span>, <span class="at">length =</span> n)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">#stop cases for the entire vector</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has non-numeric types&quot;</span> <span class="ot">=</span> <span class="fu">is.numeric</span>(input))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has values less than 0&quot;</span> <span class="ot">=</span> (input <span class="sc">&gt;=</span> <span class="dv">0</span>))</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has values not coercible to integer type&quot;</span> <span class="ot">=</span> (input <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">==</span> <span class="dv">0</span>))</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has infinite values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.infinite</span>(input))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has NA values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.na</span>(input))</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has NaN values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.nan</span>(input))</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (integer <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    value <span class="ot">=</span> input[integer]</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">&amp;</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>)) {</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;FizzBuzz&quot;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;Fizz&quot;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;Buzz&quot;</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">#integer not divisible by either 3 or 5</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="fu">as.character</span>(value)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (return_vector)</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="testing" class="level3">
+<h3 class="anchored" data-anchor-id="testing">Testing</h3>
+<section id="valid-inputs" class="level4">
+<h4 class="anchored" data-anchor-id="valid-inputs">Valid Inputs</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz</span>(<span class="dv">1</span>)  <span class="sc">==</span> <span class="st">&quot;1&quot;</span>       )</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz</span>(<span class="dv">3</span>)  <span class="sc">==</span> <span class="st">&quot;Fizz&quot;</span>    )</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz</span>(<span class="dv">5</span>)  <span class="sc">==</span> <span class="st">&quot;Buzz&quot;</span>    )</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz</span>(<span class="dv">15</span>) <span class="sc">==</span> <span class="st">&quot;FizzBuzz&quot;</span>)</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>( <span class="fu">fizzbuzz</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;Buzz&quot;</span>) ))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>( <span class="fu">fizzbuzz</span>(<span class="dv">9</span><span class="sc">:</span><span class="dv">15</span>) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;Buzz&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;14&quot;</span>, <span class="st">&quot;FizzBuzz&quot;</span>) ))</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>( <span class="fu">fizzbuzz</span>(<span class="dv">15</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;FizzBuzz&quot;</span>, <span class="st">&quot;14&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;Buzz&quot;</span>, <span class="st">&quot;Fizz&quot;</span>) ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="bad-inputs" class="level4">
+<h4 class="anchored" data-anchor-id="bad-inputs">Bad Inputs</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Testing helper function, returns TRUE if expr throws an error FALSE otherwise.</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>throws_error <span class="ot">=</span> <span class="cf">function</span>(expr) {</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">inherits</span>(<span class="fu">try</span>(expr, <span class="at">silent =</span> <span class="cn">TRUE</span>), <span class="st">&quot;try-error&quot;</span>)</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="sc">-</span><span class="dv">1</span>) ))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="sc">-</span><span class="dv">3</span>) ))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="sc">-</span><span class="dv">5</span>) ))</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="cn">TRUE</span>) ))</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="cn">FALSE</span>) ))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="cn">Inf</span>) ))</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="sc">-</span><span class="cn">Inf</span>) ))</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="cn">NaN</span>) ))</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="st">&quot;A&quot;</span>) ))</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="fl">1.5</span>) ))</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="dv">1</span>i) ))</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="dv">4</span>i) ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#good input</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">4</span>L, <span class="fl">5.0</span>)) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;2&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;Buzz&quot;</span>))</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="co">#bad input</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="fu">c</span>(<span class="st">&quot;Hello&quot;</span>, <span class="dv">4</span>) )))</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz</span>(<span class="st">`</span><span class="at">+</span><span class="st">`</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 </section>
-<section id="hw01_team02hw1.qmd" class="level1">
-<h1>hw01_team02/hw1.qmd</h1>
-<section id="task-1---implement-fizzbuzz-1" class="level2">
-<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-1">Task 1 - Implement fizzbuzz</h2>
+<section id="task-2---re-implement-fizzbuzz" class="level2">
+<h2 class="anchored" data-anchor-id="task-2---re-implement-fizzbuzz">Task 2 - Re-Implement fizzbuzz</h2>
 <section id="write-up-1" class="level3">
 <h3 class="anchored" data-anchor-id="write-up-1">Write up</h3>
-<p>The idea behind this function is to check each value within the input to ensure that they each fit the parameters given and if they do not to throw an error explaining exactly why they do not. In order for this function to work, however, the mode of the entire input must be numeric, and so we used an if logic statement to throw an error at the beginning rather than include it within the for loop for efficiency’s sake. Within the for loop, we are checking each value within the input vector individually. We first check to ensure that the vlaue is greater than 0. Then, we check to ensure the value is finite. If the value contains a decimal i.e. is a double, we multiply that value by 10 and then ensure that the remainder of that when divided by 10 is 0 to show that the value can be treated as an integer. All of these checks, if failed, have associated and descriptive error messages describing what the issue for the individual value was. As for performing the fizzbuzz creation, assuming that the value passed all of the checks, checks if the value is divisible cleanly by 3, 5, both, or neither and return Fizz, Buzz, FizzBuzz, or the value as a character as outlined by the requirements and then assigning that tothe output vector in the same location as the value within the input vector. We used else if statements, but given the structure of the code we could have used just if statements since each of the if statements would save over the previous entry within the output vector (i.e. if the value was 15, the corresponding entry in output would be Fizz, Buzz, and then FizzBuzz since 15 is divisible by 3, 5, and 3 and 5).</p>
+<!-- 
+In this section include your write up for this task - do not include it within theses html comment tags.
+
+The write up must appear in the rendered document.
+-->
+<p>Similarly to the first fizzbuzz problem we thought through the errors to check through and how to order the function fizzbuzz_s3. To be most efficient we chose to make our default method an error statement that returns the class of the input that is not supported. Then we considered the two types that could be supported by our function, doubles and integers. Since some doubles, such as 3.1, are not valid for fizzbuzz we stopped the function if the input %% did not equal 0. If this case passed we coerced the doubles to integers and re-ran our function. By this point we have checked for all of the bad cases and coerced acceptable doubles to integers, so our final function fizzbuzz_s3.integer used much of the same code from question 1 to loop over the integers and replaced each component as indicated in the fizzbuzz directions. Lastly we added a couple of test cases to further check our code.</p>
 </section>
 <section id="function-1" class="level3">
 <h3 class="anchored" data-anchor-id="function-1">Function</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  output <span class="ot">=</span> <span class="fu">c</span>()</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span>(<span class="fu">mode</span>(input) <span class="sc">!=</span> <span class="st">&quot;numeric&quot;</span>){</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;Input must be a numeric vector (either double or integer type is allowed)&quot;</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (n <span class="cf">in</span> input) {</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n <span class="sc">&lt;</span> <span class="dv">0</span>){</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;All input values must be &gt;= 0&quot;</span>)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">is.infinite</span>(n) <span class="sc">||</span> <span class="fu">is.nan</span>(n) <span class="sc">||</span> <span class="fu">is.na</span>(n)){</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;All input values must be finite&quot;</span>)</span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (<span class="fu">typeof</span>(n) <span class="sc">==</span> <span class="st">&quot;double&quot;</span>){</span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> ((n <span class="sc">*</span> <span class="dv">10</span>) <span class="sc">%%</span> <span class="dv">10</span> <span class="sc">!=</span> <span class="dv">0</span>){</span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot; all values must be coercible to integer without rounding or truncating&quot;</span>)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="st">&quot;Fizz&quot;</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="st">&quot;Buzz&quot;</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span> <span class="sc">&amp;</span> n <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="st">&quot;FizzBuzz&quot;</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (n <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">!=</span> <span class="dv">0</span> <span class="sc">&amp;</span> n <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">!=</span> <span class="dv">0</span>){</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>      output[n] <span class="ot">=</span> <span class="fu">as.character</span>(n)</span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">#define s3 method fizzbuzz_s3</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>fizzbuzz_s3 <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">UseMethod</span>(<span class="st">&quot;fizzbuzz_s3&quot;</span>)</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co">#define default fizzbuzz_s3 implementation</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>fizzbuzz_s3.default <span class="ot">=</span> <span class="cf">function</span>(input){</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stop</span>(<span class="st">&quot;Class &quot;</span>, <span class="fu">class</span>(input), <span class="st">&quot; is not supported by fizzbuzz_s3.&quot;</span>, <span class="at">call. =</span><span class="cn">FALSE</span>)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="co">#define fizzbuzz_s3 for doubles</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>fizzbuzz_s3.double <span class="ot">=</span> <span class="cf">function</span>(input){</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has values not coercible to integer type&quot;</span> <span class="ot">=</span> (input <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">==</span> <span class="dv">0</span>))</span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">#coerce input to integer</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>  input <span class="ot">=</span> <span class="fu">as.integer</span>(input)</span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">#rerun fizzbuzz_s3 to go to integer case</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">fizzbuzz_s3</span>(input)</span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a><span class="co">#define fizzbuzz_s3 for integers</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>fizzbuzz_s3.integer <span class="ot">=</span> <span class="cf">function</span>(input){</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">=</span> <span class="fu">length</span>(input)</span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>  return_vector <span class="ot">=</span> <span class="fu">vector</span>(<span class="at">mode =</span> <span class="st">&quot;character&quot;</span>, <span class="at">length =</span> n)</span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has values less than 0&quot;</span> <span class="ot">=</span> (input <span class="sc">&gt;=</span> <span class="dv">0</span>))</span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has infinite values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.infinite</span>(input))</span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has NA values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.na</span>(input))</span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Input vector has NaN values&quot;</span> <span class="ot">=</span> <span class="sc">!</span><span class="fu">is.nan</span>(input))</span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (integer <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n) {</span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>    value <span class="ot">=</span> input[integer]</span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">&amp;</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>)) {</span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;FizzBuzz&quot;</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;Fizz&quot;</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (value <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="st">&quot;Buzz&quot;</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>    <span class="co">#integer not divisible by either 3 or 5</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>      return_vector[integer] <span class="ot">=</span> <span class="fu">as.character</span>(value)</span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> (return_vector)</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="testing-1" class="level3">
+<h3 class="anchored" data-anchor-id="testing-1">Testing</h3>
+<section id="valid-inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="valid-inputs-1">Valid Inputs</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">1</span>)  <span class="sc">==</span> <span class="st">&quot;1&quot;</span>       )</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">3</span>)  <span class="sc">==</span> <span class="st">&quot;Fizz&quot;</span>    )</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">5</span>)  <span class="sc">==</span> <span class="st">&quot;Buzz&quot;</span>    )</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">15</span>) <span class="sc">==</span> <span class="st">&quot;FizzBuzz&quot;</span>)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;1&quot;</span>, <span class="st">&quot;2&quot;</span>, <span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;4&quot;</span>, <span class="st">&quot;Buzz&quot;</span>) ))</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">9</span><span class="sc">:</span><span class="dv">15</span>) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;Buzz&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;14&quot;</span>, <span class="st">&quot;FizzBuzz&quot;</span>) ))</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">all</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">15</span><span class="sc">:</span><span class="dv">9</span>) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;FizzBuzz&quot;</span>, <span class="st">&quot;14&quot;</span>, <span class="st">&quot;13&quot;</span>, <span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;Buzz&quot;</span>, <span class="st">&quot;Fizz&quot;</span>) ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="bad-inputs-1" class="level4">
+<h4 class="anchored" data-anchor-id="bad-inputs-1">Bad Inputs</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="sc">-</span><span class="dv">1</span>) ))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="sc">-</span><span class="dv">3</span>) ))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="sc">-</span><span class="dv">5</span>) ))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="cn">TRUE</span>) ))</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="cn">FALSE</span>) ))</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="cn">Inf</span>) ))</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="sc">-</span><span class="cn">Inf</span>) ))</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="cn">NaN</span>) ))</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="st">&quot;A&quot;</span>) ))</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="fl">1.5</span>) ))</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">1</span>i) ))</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>( <span class="fu">fizzbuzz_s3</span>(<span class="dv">4</span>i) ))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">#good input</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">fizzbuzz_s3</span>(<span class="fu">c</span>(<span class="dv">6</span>L, <span class="fl">10.0</span>, <span class="dv">11</span>, <span class="dv">1</span>L, <span class="fl">15.0</span>)) <span class="sc">==</span> <span class="fu">c</span>(<span class="st">&quot;Fizz&quot;</span>, <span class="st">&quot;Buzz&quot;</span>, <span class="st">&quot;11&quot;</span>, <span class="st">&quot;1&quot;</span>, <span class="st">&quot;FizzBuzz&quot;</span>))</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="co">#bad input</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>(<span class="fu">fizzbuzz_s3</span>(<span class="fu">c</span>(<span class="fl">2.675</span>, <span class="fl">11.01</span>, <span class="st">&quot;abc&quot;</span>, <span class="dv">4</span>, <span class="st">&quot;FizzBuzz&quot;</span>))))</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>(<span class="fu">throws_error</span>(<span class="fu">fizzbuzz_s3</span>(<span class="st">`</span><span class="at">!</span><span class="st">`</span>, <span class="st">`</span><span class="at">123</span><span class="st">`</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
 </section>
-<section id="hw01_team03hw1.qmd" class="level1">
-<h1>hw01_team03/hw1.qmd</h1>
-<section id="task-1---implement-fizzbuzz-2" class="level2">
-<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-2">Task 1 - Implement fizzbuzz</h2>
+<section id="task-3---printing-secrets" class="level2">
+<h2 class="anchored" data-anchor-id="task-3---printing-secrets">Task 3 - Printing Secrets</h2>
 <section id="write-up-2" class="level3">
 <h3 class="anchored" data-anchor-id="write-up-2">Write up</h3>
-<p>The <code>fizzbuzz</code> function presented aims to tackle the FizzBuzz problem. This problem involves iterating over a sequence of numbers and applying specific rules: for multiples of 3, the number is replaced with “Fizz”; for multiples of 5, “Buzz”; and for multiples of both 3 and 5, “FizzBuzz”. The function is designed to accept a numeric vector and modify it according to these rules.</p>
-<p>Initially, the function enforces a strict input validation. It asserts that the input must be numeric, either of type <code>double</code> or <code>integer</code>, reflecting the numeric nature of the FizzBuzz problem. This is crucial as the operation of checking divisibility does not semantically apply to non-numeric types. Furthermore, the function scrutinizes each element within the input vector to confirm that it is an integer and non-negative, aligning with the traditional boundaries of the FizzBuzz problem. Should any element deviate from these constraints by being non-integer or negative, the function promptly halts execution and raises an error, thereby enforcing the integrity of the input data.</p>
-<p>Upon validating the input, the function proceeds to apply the FizzBuzz logic. It accurately identifies multiples of 3, 5, and 3 &amp; 5 using the modulo operator, replacing the appropriate numbers with “Fizz”, “Buzz”, or “FizzBuzz”. If indivisible by either number, it simply returns the number back.</p>
-<p>Notably, the function modifies the input vector in place but lacks an explicit return statement. In R, functions return the result of the last evaluated expression, which, in this case, would be the modified input vector. However, explicitly stating this return would enhance the clarity and readability of the function.</p>
-<p>In summary, the <code>fizzbuzz</code> function embodies a methodical approach to solving the FizzBuzz problem, with a strong emphasis on input validation to ensure the data’s compatibility with the problem’s numerical and logical constraints.</p>
+<!-- 
+In this section include your write up for this task - do not include it within theses html comment tags.
+
+The write up must appear in the rendered document.
+-->
+<p>When writing the print method for our new class secret we were faced with six mutually exclusive inputs. The input could be not an atomic vector, or one of the following atomic vectors, complex, raw, numeric, logical and character. Our first step was to stop the function and produce an error if the input was not atomic or was or type raw. Then we created a helper function for if the input was of type character or numeric. When constructing our numeric helper function we made sure to keep in mind the different output for a positive or negative number. Within the print.secret method we used a for loop for the logical atomic vectors to return the correct output and called our helper functions for atomic vectors of numeric (double and integer) and character type. Lastly, for atomic vectors of complex type, we split up the real and imaginary portions and leveraged our numeric helper function to construct the correct output. We also distinguished between negative and positive imaginary numbers to follow the rules as indicated in the examples. As a final step we used the noquote() function when necessary so that our output matched exactly with the examples. After we were finished we tested our code and added some additional cases.</p>
 </section>
 <section id="function-2" class="level3">
 <h3 class="anchored" data-anchor-id="function-2">Function</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(input)) {</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;Input must be a numeric vector&quot;</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.nan</span>(input))) <span class="fu">stop</span>(<span class="st">&quot;No input values can be NaN&quot;</span>)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(input <span class="sc">&lt;</span> <span class="dv">0</span>)) <span class="fu">stop</span>(<span class="st">&quot;All input values must be &gt;=0&quot;</span>)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="sc">!</span><span class="fu">is.finite</span>(input))) <span class="fu">stop</span>(<span class="st">&quot;All input values must be finite&quot;</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(input<span class="sc">!=</span><span class="fu">as.integer</span>(input))) <span class="fu">stop</span>(<span class="st">&quot;All input values must be coercible to integer without rounding or truncating&quot;</span>)</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  ret <span class="ot">&lt;-</span> input</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(input)) {</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (input[i] <span class="sc">%%</span> <span class="dv">15</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="st">&quot;FizzBuzz&quot;</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (input[i] <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="st">&quot;Fizz&quot;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> <span class="cf">if</span> (input[i] <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="st">&quot;Buzz&quot;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span> {</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      ret[i] <span class="ot">=</span> <span class="fu">as.character</span>(input[i])</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(ret)</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># use this function to create a secret object</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>secret <span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">structure</span>(</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    x, <span class="at">class=</span><span class="st">&quot;secret&quot;</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># helper function for numeric inputs</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>numeric_secret <span class="ot">=</span> <span class="cf">function</span>(value) {</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    is_negative <span class="ot">=</span> <span class="cn">FALSE</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (value <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>      is_negative <span class="ot">=</span> <span class="cn">TRUE</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    num_stars <span class="ot">=</span> <span class="fu">nchar</span>(<span class="fu">as.character</span>(value))</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># negative input, add &quot;-&quot;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (is_negative) {</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      value_secret <span class="ot">=</span> <span class="fu">paste0</span>(<span class="st">&quot;-&quot;</span>, <span class="fu">paste</span>(<span class="fu">rep</span>(<span class="st">&quot;*&quot;</span>, num_stars <span class="sc">-</span> <span class="dv">1</span>), <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>))</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span> (value_secret)</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">#non-negative input</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>{</span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>      value_secret <span class="ot">=</span> <span class="fu">paste</span>(<span class="fu">rep</span>(<span class="st">&quot;*&quot;</span>, num_stars), <span class="at">collapse =</span> <span class="st">&#39;&#39;</span>)</span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span> (value_secret)</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># helper function for character inputs</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>char_secret <span class="ot">=</span> <span class="cf">function</span>(value){</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">paste0</span>(<span class="st">&quot;</span><span class="sc">\&quot;</span><span class="st">&quot;</span>, <span class="fu">paste</span>(<span class="fu">rep</span>(<span class="st">&quot;*&quot;</span>, <span class="fu">nchar</span>(value)), <span class="at">collapse =</span> <span class="st">&quot;&quot;</span>), <span class="st">&quot;</span><span class="sc">\&quot;</span><span class="st">&quot;</span>))</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>print.secret <span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check input conditions are met</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">stopifnot</span>(<span class="st">&quot;Method only works for atomic vectors of type character, integer, double, logical, or complex&quot;</span> <span class="ot">=</span> <span class="fu">all</span>(<span class="fu">is.atomic</span>(x)) <span class="sc">&amp;</span> <span class="sc">!</span><span class="fu">all</span>(<span class="fu">is.raw</span>(x)))</span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="co"># create empty return vector</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  return_vector <span class="ot">=</span> <span class="fu">vector</span>(<span class="at">length =</span> <span class="fu">length</span>(x))</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check if logical, encode values</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.logical</span>(x)) {</span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)) {</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>      return_vector[i] <span class="ot">=</span> <span class="st">&quot;*****&quot;</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>    return_vector <span class="ot">=</span> <span class="fu">noquote</span>(return_vector)</span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check if numeric, pass to numeric_secret()</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.numeric</span>(x)) {</span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)) {</span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>      return_vector[i] <span class="ot">=</span> <span class="fu">noquote</span>(<span class="fu">numeric_secret</span>(x[i]))</span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check if complex, pass to numeric_secret()</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">is.complex</span>(x)) {</span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)) {</span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>      </span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>      <span class="co"># split into real and imaginary</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>      real <span class="ot">=</span> <span class="fu">numeric_secret</span>(<span class="fu">Re</span>(x[i]))</span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>      imaginary <span class="ot">=</span> <span class="fu">numeric_secret</span>(<span class="fu">Im</span>(x[i]))</span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (<span class="fu">Im</span>(x[i]) <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>        return_vector[i] <span class="ot">=</span> <span class="fu">noquote</span>(<span class="fu">paste0</span>(real, imaginary, <span class="st">&quot;i&quot;</span>))</span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>      <span class="cf">else</span> {</span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>        return_vector[i] <span class="ot">=</span> <span class="fu">noquote</span>(<span class="fu">paste0</span>(real, <span class="st">&quot;+&quot;</span>, imaginary, <span class="st">&quot;i&quot;</span>))</span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>      }</span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>  <span class="co"># check if character, pass to char_secret()</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>   <span class="cf">if</span> (<span class="fu">is.character</span>(x)) {</span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(x)) {</span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>      return_vector[i] <span class="ot">=</span> <span class="fu">char_secret</span>(x[i])</span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>   }</span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>  <span class="co"># print return_vector and return invisible x</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span>(<span class="fu">noquote</span>(return_vector))</span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(<span class="fu">invisible</span>(x))</span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-</section>
-<section id="hw01_team04hw1.qmd" class="level1">
-<h1>hw01_team04/hw1.qmd</h1>
-<section id="task-1---implement-fizzbuzz-3" class="level2">
-<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-3">Task 1 - Implement fizzbuzz</h2>
-<section id="write-up-3" class="level3">
-<h3 class="anchored" data-anchor-id="write-up-3">Write up</h3>
-<p>We began writing the FizzBuzz function by first accounting for the requirements for the function specified in the README document with instructions. We initially had decided to place the errors such as checking for all numeric inputs, NA inputs, and infinite inputs within the for loop as the loop iterates through all of the elements in the input. We realized that this wasn’t the most efficient way to write the code as it won’t throw the errors immediately as specified in the problem. To fix this, we decided to put the errors that could be evaluated using the any() wrapper function to check whether the vector is numeric, doesn’t contain any NA inputs, and only contains finite inputs before the for loop so that these errors would be caught immediately.</p>
-<p>Once we wrote the code to catch these errors, we next started the for loop which loops through every value in the input using seq_along() and then we indexed the input to get a single value x which was evaluated through the for loop. Within this for loop, we included code to catch errors for the individual input values such as values which are negative and those which are doubles but aren’t coercible to an integer without truncating. After we had checked for these errors, we wrote an if statement checking whether the numeric input x is divisible by 3 and 5. If this is the case, then the original input at the index i is replaced as “FizzBuzz.” If this statement is not true, we used an else if statement to evaluate whether the numeric input x is divisible by 3 and if so then the input at index i is replaced by “Fizz”. Lastly, we used an else if to check whether the numeric input x is divisible by 5 and if so the original input is replaced by “Buzz” at index i. Outside of the for loop, we have our original input returned with a character type as specified by the instructions.</p>
-<p>Once we finished writing the code described above, we then used the good input test cases to check whether our code ran correctly. The main modifications we made from the initial code to the final code was placing more of the code to catch the errors before the loop in order to increase efficiency. We also added a test case for when the input is 0 and realized that fizzbuzz(0) returned “FizzBuzz” when we expected it to return 0. We realized this is because 0 is considered a multiple of both 3 and 5 so 0 %% 3 == 0 and 0 %% 5 == 0 meaning 0 is assigned the string “FizzBuzz.” Our group discussed and decided that we wanted to hard code for the case when the input is 0 and just have “0” returned because we didn’t think it made sense in this case for 0 to be considered a multiple of 3 and 5 because we think that only conventional multiples of 3 and 5 should be changed to “FizzBuzz.”</p>
-<p>After modifying the function to include the case when the input is 0, we moved on to evaluating the bad inputs and tested the inputs on our code. We realized that the way our code was written wouldn’t throw an error if the input contained a sequence of negative to positive values such as fizzbuzz(-2:6) so we went through and modified our code to ensure that each input is being tested in the for loop to determine whether it is negative and throw an error for any input which is negative. We wrote similar test cases to ensure that a vector being passed in with some numeric and some character values will throw an error since the entire vector must be numeric.</p>
-<p>Lastly, after adding the additional test cases and discussing whether we had covered all possibilities, we made the code more efficient by moving some of the checks for errors outside of the for loop. For instance, initially we had the checks for numeric, na values, and infinite values all in the for loop which wasn’t efficient because if the NA was the last value, it would iterate through all of the other individual inputs before reaching the NA and triggering the error. Using the any() wrapper function, we were able to include these checks outside of the for loop so that they wouldn’t require iterating through the for loop to find individual input values which violated our set of possible inputs. Below is a description of our final code after we made modifications and adjustments to account for edge cases and improving efficiency.</p>
-</section>
-<section id="function-3" class="level3">
-<h3 class="anchored" data-anchor-id="function-3">Function</h3>
+<section id="testing-2" class="level3">
+<h3 class="anchored" data-anchor-id="testing-2">Testing</h3>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">&lt;-</span> <span class="cf">function</span>(input) {</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="sc">!</span><span class="fu">is.numeric</span>(input)) {</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;Input vector must be numeric&quot;</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(input))) {</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;All input values must be integers or doubles (no NAs allowed)&quot;</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.infinite</span>(input))) {</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;All input values must be finite&quot;</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> (i <span class="cf">in</span> <span class="fu">seq_along</span>(input)) {</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    x <span class="ot">&lt;-</span> input[i]</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x <span class="sc">&lt;</span> <span class="dv">0</span>) {</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;All input values must be greater than or equal to 0&quot;</span>)</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> ((<span class="fu">is.double</span>(x) <span class="sc">==</span> <span class="cn">TRUE</span>)) {</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>      <span class="cf">if</span> (x <span class="sc">%%</span> <span class="dv">1</span> <span class="sc">!=</span> <span class="dv">0</span>) {</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;All input values must be coercible to an integer without truncating&quot;</span>)</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>      }</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> (x <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">&quot;0&quot;</span></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> ((<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) <span class="sc">&amp;</span> (<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>)) {</span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">&quot;FizzBuzz&quot;</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">&quot;Fizz&quot;</span></span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">as.numeric</span>(x) <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>      input[i] <span class="ot">&lt;-</span> <span class="st">&quot;Buzz&quot;</span></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.character</span>(input)</span>
-<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># helper function for creating, printing, and capturing output of a secret</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># returns a character vector of the output</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>print_secret <span class="ot">=</span> <span class="cf">function</span>(x) {</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">trimws</span>( <span class="fu">gsub</span>(<span class="st">&#39;</span><span class="sc">\\</span><span class="st">s+&#39;</span>,<span class="st">&#39; &#39;</span>,    </span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">capture.output</span>(</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>      <span class="fu">print</span>(<span class="fu">secret</span>(x))</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>  ) )</span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="valid-inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="valid-inputs-2">Valid Inputs</h4>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span> )                      <span class="sc">==</span> <span class="st">&#39;[1] * * * * *&#39;</span>            )</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="sc">-</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>) )                   <span class="sc">==</span> <span class="st">&#39;[1] -* -* -* -* -*&#39;</span>       )</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="dv">123</span>, <span class="dv">456</span>, <span class="dv">789</span>) )         <span class="sc">==</span> <span class="st">&#39;[1] *** *** ***&#39;</span>          )</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="fl">123.456</span>, <span class="sc">-</span><span class="dv">789</span>) )         <span class="sc">==</span> <span class="st">&#39;[1] ******* -***&#39;</span>         )</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="sc">-</span><span class="fl">123.456</span>, <span class="dv">789</span>) )         <span class="sc">==</span> <span class="st">&#39;[1] -******* ***&#39;</span>         )</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="dv">123</span><span class="sc">+</span><span class="dv">1234</span>i, <span class="sc">-</span><span class="dv">123</span><span class="sc">+</span><span class="dv">1234</span>i) ) <span class="sc">==</span> <span class="st">&#39;[1] ***+****i -***+****i&#39;</span> )</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="dv">123-1234</span>i, <span class="sc">-</span><span class="dv">123-1234</span>i) ) <span class="sc">==</span> <span class="st">&#39;[1] ***-****i -***-****i&#39;</span>)</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">FALSE</span>) )           <span class="sc">==</span> <span class="st">&#39;[1] ***** *****&#39;</span>          )</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="cn">FALSE</span>, <span class="cn">TRUE</span>) )           <span class="sc">==</span> <span class="st">&#39;[1] ***** *****&#39;</span>          )</span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="st">&quot;abc&quot;</span>, <span class="st">&quot;def&quot;</span>) )          <span class="sc">==</span> <span class="st">&#39;[1] &quot;***&quot; &quot;***&quot;&#39;</span>          )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-</section>
-</section>
-<section id="hw01_team05hw1.qmd" class="level1">
-<h1>hw01_team05/hw1.qmd</h1>
-<section id="task-1---implement-fizzbuzz-4" class="level2">
-<h2 class="anchored" data-anchor-id="task-1---implement-fizzbuzz-4">Task 1 - Implement fizzbuzz</h2>
-<section id="write-up-4" class="level3">
-<h3 class="anchored" data-anchor-id="write-up-4">Write up</h3>
-<p>The fizzbuzz function takes the value “input” as its only argument. The first half of the function checks whether the input is “good” or “bad” and reacts accordingly. First, the function stores the length of the input vector in variable “len”, and checks whether or not the length of the input vector is 0. If the input vector is length zero, the execution of the function is stopped and “input must be not empty!” is printed, indicating that the user inputted an empty vector. If the vector is not of length zero, the function checks if any of the values in vector input are equal to infinity or negative infinity - if they are, the function stops execution and prints “input value must be finite.” Otherwise, the function continues and checks if any of the values in the vector are NA. If at least one value is NA, the function stops execution and prints “input value must not be NA.” If no values are NA, the function then checks if the vector is numeric, indicating it contains numeric values. If not, it stops execution and prints “input value must be numeric.” Otherwise the function will check if the numeric input is of type double and if the input vector casted as integers is not equal to the original integer vector. If it is not equal to the original integer vector, execution is stopped and “input value must be coercible to integer without rounding” is printed. This condition is in place to make sure double values in the vectors only have 0’s after the decimal, and are not changed when made an integer. The last condition checked is whether any integer is less than 0 - if so, execution is stopped and “input value must be non-negative” is printed.</p>
-<p>The following section completes the necessary tasks of the FizzBuzz function. We start by initializing an empty vector fb. It first implements a for loop that iterates through the indices of the input vector. The first two lines of this for loop check if the vector value at the given index is divisible by five and divisible by three, and storing the boolean values in five_mult and three_mult respectively. If both are true, the fb vector adds “FizzBuzz” at that particular index. If only three_mult is true, indicating that the value is divisible by three, “Fizz” is added to the fb vector at that given index. If only five_mult is true, indicating that the value is only divisible by five, “Buzz” is added to the fb vector at the given index. Finally, if three_mult and five_mult are both false, indicating the value is not divisible by three and is not divisible by five, we place that value in the fb vector at the given index. Lastly, we replace the fb vector with the same vector but with character elements and return the fb vector.</p>
-<!-- 
-In this section include your write up for this task - do not include it within these html comment tags. 
-
-The write up must appear in the rendered document.
--->
-</section>
-<section id="function-4" class="level3">
-<h3 class="anchored" data-anchor-id="function-4">Function</h3>
+<section id="bad-inputs-2" class="level4">
+<h4 class="anchored" data-anchor-id="bad-inputs-2">Bad Inputs</h4>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>fizzbuzz <span class="ot">=</span> <span class="cf">function</span>(input) {</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  len <span class="ot">&lt;-</span> <span class="fu">length</span>(input)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> (len <span class="sc">==</span> <span class="dv">0</span>) {</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;input must be not empty!&quot;</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">any</span>(input <span class="sc">==</span> <span class="cn">Inf</span> <span class="sc">|</span> input <span class="sc">==</span> <span class="sc">-</span><span class="cn">Inf</span>)) {</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stop</span>(<span class="st">&quot;input value must be finite&quot;</span>)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">is.na</span>(input) <span class="sc">==</span> <span class="cn">TRUE</span>)) {</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">stop</span>(<span class="st">&quot;input value must not be NA&quot;</span>)</span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">is.numeric</span>(input) <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (<span class="fu">typeof</span>(input) <span class="sc">==</span> <span class="st">&quot;double&quot;</span>) {</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>          <span class="cf">if</span> (<span class="fu">any</span>(<span class="fu">as.integer</span>(input) <span class="sc">!=</span> input)) {</span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">stop</span>(<span class="st">&quot;input value must be coercible to integer without rounding&quot;</span>)</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            } <span class="cf">else</span> <span class="cf">if</span> (<span class="fu">any</span>(input <span class="sc">&lt;</span> <span class="dv">0</span>)) {</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>              <span class="fu">stop</span>(<span class="st">&quot;input value must be non-negative&quot;</span>)</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            }</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>      } <span class="cf">else</span> {</span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="fu">stop</span>(<span class="st">&quot;input value must be numeric&quot;</span>)</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>  fb <span class="ot">&lt;-</span> <span class="fu">c</span>()</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span>(val <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>len) {</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>    five_mult <span class="ot">&lt;-</span> input[val] <span class="sc">%%</span> <span class="dv">5</span> <span class="sc">==</span> <span class="dv">0</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>    three_mult <span class="ot">&lt;-</span> input[val] <span class="sc">%%</span> <span class="dv">3</span> <span class="sc">==</span> <span class="dv">0</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span>(five_mult <span class="sc">==</span> <span class="cn">TRUE</span> <span class="sc">&amp;&amp;</span> three_mult <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> <span class="st">&quot;FizzBuzz&quot;</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span>(three_mult <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> <span class="st">&quot;Fizz&quot;</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> <span class="cf">if</span>(five_mult <span class="sc">==</span> <span class="cn">TRUE</span>) {</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> <span class="st">&quot;Buzz&quot;</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    } <span class="cf">else</span> {</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      fb[val] <span class="ot">&lt;-</span> input[val]</span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    }</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>  fb <span class="ot">&lt;-</span> <span class="fu">as.character</span>(fb)</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(fb)</span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">throws_error</span>( </span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_secret</span>( <span class="fu">list</span>() ) </span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>) )</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">throws_error</span>( </span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_secret</span>( <span class="fu">raw</span>() ) </span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>) )</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">throws_error</span>( </span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_secret</span>( <span class="cf">function</span>() {} ) </span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co">#good input</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="st">&quot;diff&quot;</span>, <span class="st">&quot;length&quot;</span>) )      <span class="sc">==</span> <span class="st">&#39;[1] &quot;****&quot; &quot;******&quot;&#39;</span>)</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">print_secret</span>( <span class="fu">c</span>(<span class="dv">0</span> <span class="sc">+</span> <span class="dv">1</span>i) ) <span class="sc">==</span> <span class="st">&#39;[1] *+*i&#39;</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="co">#bad input</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>bad_check <span class="ot">&lt;-</span> <span class="fu">list</span>(<span class="st">&quot;hello&quot;</span>, <span class="dv">123</span>, <span class="dv">123</span> <span class="sc">+</span> <span class="dv">456</span>i)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="fu">stopifnot</span>( <span class="fu">throws_error</span>( </span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print_secret</span>( bad_check )</span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>) )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 </section>
