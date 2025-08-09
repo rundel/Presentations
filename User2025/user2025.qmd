@@ -1,0 +1,412 @@
+---
+title: "Parsing Quarto and R Markdown documents in R"
+subtitle: "UseR 2025 - Durham"
+author: "Colin Rundel"
+institute: "Duke University"
+footer: "<a href='https://bit.ly/rundel_user2025'>bit.ly/rundel_user2025</a>"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+title-slide-attributes:
+  data-background-image: imgs/parsermd.png
+  data-background-size: 250px
+  data-background-position: right bottom 
+execute:
+  echo: true
+---
+
+
+```{r setup}
+#| include: false
+options(width=80)
+library(fontawesome)
+library(parsermd)
+```
+
+## `parsermd`
+
+implements a C++ parser and abstract syntax tree (AST) for Quarto and R Markdown documents in R.
+
+* supports manipulating ASTs (filtering, editing, etc.)
+
+* nodes classes use S7 for validation and dispatch
+
+* ability to directly source and render ASTs
+
+* off-and-on project since covid, original use case was to aide in the grading for a large machine learning course 
+
+* v0.1.3 is on CRAN, v0.2.0 with full Quarto support on GitHub (CRAN soon*)
+
+* Quarto examples today, but everything works with RMarkdown
+
+
+## `r fontawesome::fa("file")` `hello.qmd`
+
+````{.markdown code-line-numbers="|1-6|16,21,49,51,58|8-14|8,14|9,10|12,13|53-56|62-75|81"}
+{{< include _hello.qmd >}}
+````
+
+
+## Elements as AST
+
+```{r}
+qmd = parse_qmd("hello.qmd")
+```
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+qmd |> print(flat = TRUE)
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+qmd |> print()
+```
+:::
+::::
+
+## Why hierarchical? {.smaller}
+
+Assuming a hierarchy lets us use a CSS selector like approach to target specific nodes based on *headings* and their descendents,
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+qmd |> rmd_select(by_section("Meet Quarto"))
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+qmd |> rmd_select(by_section("Fenced divs"))
+```
+:::
+::::
+
+. . .
+
+::: {.columns}
+::: {.column}
+```{r}
+qmd |> 
+  rmd_select(by_section(c("Other Quarto features", "*code*")))
+```
+:::
+::: {.column .fragment}
+```{r}
+qmd |> 
+  rmd_select(
+    by_section(
+      c("Other Quarto features", "*code*"), 
+      keep_parents = FALSE
+    ), 
+    keep_yaml = FALSE
+  )
+```
+:::
+:::
+
+
+
+
+
+## `as_document()`
+
+ASTs and nodes can be converted back to Quarto documents,
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+qmd |> 
+  rmd_select(by_section("Meet Quarto")) |>
+  as_document() |>
+  cat(sep = "\n")
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+qmd |> 
+  rmd_select(by_section("Fenced divs")) |>
+  as_document() |>
+  cat(sep = "\n")
+```
+:::
+::::
+
+##
+
+```{r}
+qmd |> 
+  rmd_select(
+    by_section(c("Other Quarto features", "*code*"), 
+               keep_parents = FALSE),
+    keep_yaml = FALSE
+  ) |>
+  as_document() |>
+  cat(sep = "\n")
+```
+
+
+## Additional selectors {.smaller}
+
+Still a work in progress but all of the following selectors are currently supported:
+
+:::: {.columns}
+::: {.column width='33%'}
+* `by_section()`
+
+* `has_type()`
+:::
+::: {.column width='33%'}
+
+* `has_label()`
+
+* `has_heading()`
+:::
+
+::: {.column width='33%'}
+* `has_option()`
+
+* `has_shortcode()`
+
+* `by_fdiv()`
+:::
+::::
+
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+qmd |> rmd_select("plot-penguins")
+```
+:::
+
+::: {.column width='50%'}
+```{r}
+qmd |> rmd_select(has_label("*p*"))
+```
+:::
+::::
+
+. . .
+
+::: {.columns}
+::: {.column}
+```{r}
+qmd |> rmd_select(has_type(c("rmd_yaml", "rmd_chunk")))
+```
+:::
+::: {.column .fragment}
+```{r}
+qmd |> rmd_select(!has_type("rmd_markdown"))
+```
+:::
+:::
+
+::: {.aside}
+These selectors are built on [`tidyselect`](https://tidyselect.r-lib.org) with multiple selectors being `or`d / unioned together
+:::
+
+
+## Rendering {.smaller}
+
+ASTs can also be directly rendered 
+
+::: {.panel-tabset}
+
+### Full
+```{r}
+#| results: hide
+qmd |> render("hello_quarto")
+```
+
+<iframe src="hello_quarto.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
+</iframe>
+
+### Code
+```{r}
+#| results: hide
+qmd |> rmd_select(has_type("rmd_chunk")) |> render("hello_quarto_code")
+```
+
+<iframe src="hello_quarto_code.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
+</iframe>
+
+:::
+
+
+## Modifying ASTs {.smaller}
+
+`rmd_modify()` is a recent addition that allows for modifying ASTs in place, the arguments are a node modifying function and then one or more `rmd_select()` helper functions.
+
+:::: {.columns}
+::: {.column width='50%'}
+```{r}
+qmd |> 
+  rmd_select(has_type("rmd_chunk")) |>
+  as_document() |>
+  cat(sep="\n")
+```
+:::
+
+::: {.column width='50%' .fragment}
+```{r}
+qmd |>
+  rmd_select(has_type("rmd_chunk")) |>
+  rmd_modify(
+    function(x) {
+      rmd_node_options(x) = list(echo=TRUE, message=FALSE)
+      x
+    },
+    has_type("rmd_chunk")
+  ) |>
+  as_document() |>
+  cat(sep="\n")
+```
+:::
+::::
+
+# Example Workflow
+
+<br/>
+
+::: {.center .xlarge}
+One file to rule them all
+
+![](file_ring.png){width=75px style="vertical-align: middle"} 
+:::
+
+
+
+## Problem statement
+
+I distribute my assignments as GitHub repos that contain a `README.md` and `hw1.qmd` file + other file based infrastructure.
+
+I inevitably end up having to maintain both `hw1/` and `hw1-key/` versions of the assignment.
+
+* Different repos for different audiences: students vs TAs
+
+* Repos have a tendency to drift over time
+
+* Single repo with student scaffolding and solution code is ideal for maintenance but clunky for actual work
+
+## `hw1.qmd` {.smaller}
+
+::: {.panel-tabset}
+
+### `r fontawesome::fa("file")` `hw1.qmd`
+
+```{r eval=FALSE, file="hw1.qmd"}
+```
+
+### AST
+
+```{r}
+(hw1 = parse_qmd("hw1.qmd"))
+```
+
+:::
+
+## Versions
+
+::: {.columns .small}
+::: {.column}
+### Student
+```{r}
+hw1 |>
+  rmd_select(
+    !has_label("*-key")
+  ) |>
+  rmd_modify(
+    function(x) {
+      rmd_node_label(x) = stringr::str_remove(
+        rmd_node_label(x), "-student"
+      )
+      x
+    },
+    has_label("*-student")
+  )
+```
+:::
+::: {.column}
+### TA
+```{r}
+hw1 |>
+  rmd_select(
+    has_heading(c("Exercise *", "Bonus*")),
+    has_label(c("*-key", "setup"))
+  ) |>
+  rmd_modify(
+    function(x) {
+      rmd_node_options(x) = list(include = FALSE)
+      x
+    },
+    has_label("setup")
+  )
+```
+:::
+:::
+
+::: {.aside}
+Automation (Makefile, targets, etc.) to generate the subsidiary repos is left as an exercise to the audience
+:::
+
+
+## What's next?
+
+- The current version will be going up on CRAN soon (revdep checks still need work, other minor polishing)
+
+- Building out and documenting interesting use cases
+
+- Building out tools using this infrastructure
+
+- Improved erogonomics
+
+
+## Sneak peek - markermd
+
+::: {.r-stack .center}
+![](imgs/template_screenshot.png){.fragment width="95%"}
+
+![](imgs/mark_validation_screenshot.png){.fragment width="95%"}
+
+![](imgs/mark_rubric_screenshot.png){.fragment width="95%"}
+:::
+
+
+## Reach out
+
+<br/><br/>
+
+::: {.large}
+<table class="details">
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("home")`</td>
+    <td><a href="https://rundel.github.io">rundel.github.io</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("github")`</td>
+    <td><a href="https://github.com/rundel/">rundel</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("envelope")`</td>
+    <td>
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a><br/>
+    <a href="mailto:colin.rundel@duke.edu">colin.rundel@duke.edu</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("box-archive")`</td>
+    <td>
+    <a href="https://rundel.github.io/parsermd">rundel/parsermd</a> <br/>
+    <a href="https://rundel.github.io/markermd">rundel/markermd</a>
+    </td>
+  </tr>
+</table>
+:::

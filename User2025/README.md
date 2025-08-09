@@ -1,0 +1,5 @@
+Parsing Quarto and R Markdown documents in R
+
+In this talk, we will share recent work on [parsermd](https://github.com/rundel/parsermd) R package and its use for the programmatic manipulation of Quarto and R Markdown documents. The talk will include a brief overview of the underlying technical details of the parser and abstract syntax tree (AST) representation of these documents in R. Additionally, we will present work to support a number of use cases for these tools to solve practical problems. Examples include building documents that have multiple output variants (e.g. assignments with or without solutions included) and utilities built to support grading and feedback for assignments based on these document formats. Finally, we will discuss our future development plans for the package and related tools.
+
+ 
