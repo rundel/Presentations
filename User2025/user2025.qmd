@@ -72,7 +72,7 @@ qmd |> print()
 ::::
 
 ::: {.aside}
-For details on the AST nodes see then [Know your nodes](https://rundel.github.io/parsermd/articles/know-your-nodes.html) vignette
+For details on the AST nodes see the [Know your nodes](https://rundel.github.io/parsermd/articles/know-your-nodes.html) vignette
 :::
 
 ## Why hierarchical?
