@@ -71,6 +71,10 @@ qmd |> print()
 :::
 ::::
 
+::: {.aside}
+For details on the AST nodes see then [Know your nodes](https://rundel.github.io/parsermd/articles/know-your-nodes.html) vignette
+:::
+
 ## Why hierarchical?
 
 Assuming a hierarchy lets us use a CSS selector like approach to target specific nodes based on *headings* and their descendants,
