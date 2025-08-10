@@ -1,6 +1,6 @@
 ---
 title: "Parsing Quarto and R Markdown documents in R"
-subtitle: "UseR 2025 - Durham"
+subtitle: "UseR 2025 - Duke"
 author: "Colin Rundel"
 institute: "Duke University"
 footer: "<a href='https://bit.ly/rundel_user2025'>bit.ly/rundel_user2025</a>"
@@ -70,11 +70,11 @@ qmd |> print()
 :::
 ::::
 
-## Why hierarchical? {.smaller}
+## Why hierarchical?
 
-Assuming a hierarchy lets us use a CSS selector like approach to target specific nodes based on *headings* and their descendents,
+Assuming a hierarchy lets us use a CSS selector like approach to target specific nodes based on *headings* and their descendants,
 
-:::: {.columns}
+:::: {.columns .medium}
 ::: {.column width='50%'}
 ```{r}
 qmd |> rmd_select(by_section("Meet Quarto"))
@@ -90,11 +90,13 @@ qmd |> rmd_select(by_section("Fenced divs"))
 
 . . .
 
-::: {.columns}
+::: {.columns .medium}
 ::: {.column}
 ```{r}
 qmd |> 
-  rmd_select(by_section(c("Other Quarto features", "*code*")))
+  rmd_select(
+    by_section(c("Other Quarto features", "*code*"))
+  )
 ```
 :::
 ::: {.column .fragment}
@@ -139,23 +141,10 @@ qmd |>
 :::
 ::::
 
-##
-
-```{r}
-qmd |> 
-  rmd_select(
-    by_section(c("Other Quarto features", "*code*"), 
-               keep_parents = FALSE),
-    keep_yaml = FALSE
-  ) |>
-  as_document() |>
-  cat(sep = "\n")
-```
-
 
 ## Additional selectors {.smaller}
 
-Still a work in progress but all of the following selectors are currently supported:
+`rmd_select()` and helpers are built using [`tidyselect`](https://tidyselect.r-lib.org)  (multiple selectors are `or`'d / unioned together)
 
 :::: {.columns}
 ::: {.column width='33%'}
@@ -183,13 +172,15 @@ Still a work in progress but all of the following selectors are currently suppor
 :::: {.columns}
 ::: {.column width='50%'}
 ```{r}
-qmd |> rmd_select("plot-penguins")
+qmd |> rmd_select(has_label("*p*"))
 ```
 :::
 
-::: {.column width='50%'}
+::: {.column width='50%' .fragment}
 ```{r}
-qmd |> rmd_select(has_label("*p*"))
+qmd |> rmd_select(
+  has_heading("Meet Quarto"):has_heading("Meet the penguins")
+)
 ```
 :::
 ::::
@@ -210,7 +201,7 @@ qmd |> rmd_select(!has_type("rmd_markdown"))
 :::
 
 ::: {.aside}
-These selectors are built on [`tidyselect`](https://tidyselect.r-lib.org) with multiple selectors being `or`d / unioned together
+These 
 :::
 
 
@@ -272,6 +263,28 @@ qmd |>
 :::
 ::::
 
+##
+
+::: {.small}
+```{r}
+#| results: hide
+qmd |>
+  rmd_select(has_type("rmd_chunk")) |>
+  rmd_modify(
+    function(x) {
+      rmd_node_options(x) = list(echo=TRUE, message=FALSE)
+      x
+    },
+    has_type("rmd_chunk")
+  ) |>
+  as_document() |>
+  render("hello_quarto_code2")
+```
+:::
+
+<iframe src="hello_quarto_code2.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
+</iframe>
+
 # Example Workflow
 
 <br/>
@@ -286,15 +299,16 @@ One file to rule them all
 
 ## Problem statement
 
-I distribute my assignments as GitHub repos that contain a `README.md` and `hw1.qmd` file + other file based infrastructure.
+I distribute assignments as GitHub repos that typically contain a `README.md` and `hw1.qmd` file.
 
 I inevitably end up having to maintain both `hw1/` and `hw1-key/` versions of the assignment.
 
-* Different repos for different audiences: students vs TAs
+* Different repos for different audiences: students vs TAs respectively
 
 * Repos have a tendency to drift over time
 
 * Single repo with student scaffolding and solution code is ideal for maintenance but clunky for actual work
+
 
 ## `hw1.qmd` {.smaller}
 
@@ -325,9 +339,7 @@ hw1 |>
   ) |>
   rmd_modify(
     function(x) {
-      rmd_node_label(x) = stringr::str_remove(
-        rmd_node_label(x), "-student"
-      )
+      rmd_node_label(x) = stringr::str_remove(rmd_node_label(x), "-student")
       x
     },
     has_label("*-student")
@@ -354,7 +366,7 @@ hw1 |>
 :::
 
 ::: {.aside}
-Automation (Makefile, targets, etc.) to generate the subsidiary repos is left as an exercise to the audience
+Automation (Makefile, targets, etc.) to generate the downstream repos is left as an exercise to the audience
 :::
 
 
@@ -366,7 +378,7 @@ Automation (Makefile, targets, etc.) to generate the subsidiary repos is left as
 
 - Building out tools using this infrastructure
 
-- Improved erogonomics
+- Improved ergonomics
 
 
 ## Sneak peek - markermd
