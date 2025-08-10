@@ -1,6 +1,6 @@
 ---
-title: "Parsing Quarto and R Markdown documents in R"
-subtitle: "UseR 2025 - Duke"
+title: "Parsing Quarto and<br/>R Markdown documents in R"
+subtitle: "<br/>UseR 2025 - Duke"
 author: "Colin Rundel"
 institute: "Duke University"
 footer: "<a href='https://bit.ly/rundel_user2025'>bit.ly/rundel_user2025</a>"
@@ -12,8 +12,8 @@ format:
     self-contained: true
 title-slide-attributes:
   data-background-image: imgs/parsermd.png
-  data-background-size: 250px
-  data-background-position: right bottom 
+  data-background-size: 150px
+  data-background-position: right 50px bottom 50px 
 execute:
   echo: true
 ---
@@ -24,6 +24,7 @@ execute:
 options(width=80)
 library(fontawesome)
 library(parsermd)
+library(stringr)
 ```
 
 ## `parsermd`
@@ -142,37 +143,40 @@ qmd |>
 ::::
 
 
-## Additional selectors {.smaller}
+## Additional selectors
 
 `rmd_select()` and helpers are built using [`tidyselect`](https://tidyselect.r-lib.org)  (multiple selectors are `or`'d / unioned together)
 
-:::: {.columns}
-::: {.column width='33%'}
+:::: {.columns .medium}
+::: {.column width='25%'}
 * `by_section()`
 
 * `has_type()`
 :::
-::: {.column width='33%'}
+::: {.column width='25%'}
 
 * `has_label()`
 
 * `has_heading()`
 :::
 
-::: {.column width='33%'}
+::: {.column width='25%'}
 * `has_option()`
 
 * `has_shortcode()`
+:::
 
+::: {.column width='25%'}
 * `by_fdiv()`
 :::
 ::::
 
-
 :::: {.columns}
 ::: {.column width='50%'}
 ```{r}
-qmd |> rmd_select(has_label("*p*"))
+qmd |> rmd_select(
+  has_label("*p*")
+)
 ```
 :::
 
@@ -185,29 +189,34 @@ qmd |> rmd_select(
 :::
 ::::
 
-. . .
+##
 
 ::: {.columns}
 ::: {.column}
 ```{r}
-qmd |> rmd_select(has_type(c("rmd_yaml", "rmd_chunk")))
+qmd |> rmd_select(
+  has_type(c("rmd_yaml","rmd_chunk"))
+)
+```
+```{r}
+qmd |> rmd_select(
+  has_type("rmd_yaml"),
+  has_type("rmd_chunk")
+)
 ```
 :::
 ::: {.column .fragment}
 ```{r}
-qmd |> rmd_select(!has_type("rmd_markdown"))
+qmd |> rmd_select(
+  !has_type("rmd_markdown")
+)
 ```
 :::
 :::
 
-::: {.aside}
-These 
-:::
 
 
 ## Rendering {.smaller}
-
-ASTs can also be directly rendered 
 
 ::: {.panel-tabset}
 
@@ -240,7 +249,7 @@ qmd |> rmd_select(has_type("rmd_chunk")) |> render("hello_quarto_code")
 ::: {.column width='50%'}
 ```{r}
 qmd |> 
-  rmd_select(has_type("rmd_chunk")) |>
+  rmd_select(has_type("rmd_chunk"), keep_yaml = FALSE) |>
   as_document() |>
   cat(sep="\n")
 ```
@@ -249,12 +258,9 @@ qmd |>
 ::: {.column width='50%' .fragment}
 ```{r}
 qmd |>
-  rmd_select(has_type("rmd_chunk")) |>
+  rmd_select(has_type("rmd_chunk"), keep_yaml = FALSE) |>
   rmd_modify(
-    function(x) {
-      rmd_node_options(x) = list(echo=TRUE, message=FALSE)
-      x
-    },
+    \(x) rmd_node_set_options(x, list(echo=TRUE, message=FALSE)),
     has_type("rmd_chunk")
   ) |>
   as_document() |>
@@ -263,27 +269,6 @@ qmd |>
 :::
 ::::
 
-##
-
-::: {.small}
-```{r}
-#| results: hide
-qmd |>
-  rmd_select(has_type("rmd_chunk")) |>
-  rmd_modify(
-    function(x) {
-      rmd_node_options(x) = list(echo=TRUE, message=FALSE)
-      x
-    },
-    has_type("rmd_chunk")
-  ) |>
-  as_document() |>
-  render("hello_quarto_code2")
-```
-:::
-
-<iframe src="hello_quarto_code2.html" width="1000px" height="500px" style="padding: 5px; border: 1px solid darkgrey;">
-</iframe>
 
 # Example Workflow
 
@@ -338,10 +323,7 @@ hw1 |>
     !has_label("*-key")
   ) |>
   rmd_modify(
-    function(x) {
-      rmd_node_label(x) = stringr::str_remove(rmd_node_label(x), "-student")
-      x
-    },
+    \(x) rmd_node_set_label(x, str_remove(rmd_node_label(x), "-student")),
     has_label("*-student")
   )
 ```
@@ -355,10 +337,7 @@ hw1 |>
     has_label(c("*-key", "setup"))
   ) |>
   rmd_modify(
-    function(x) {
-      rmd_node_options(x) = list(include = FALSE)
-      x
-    },
+    \(x) rmd_node_set_options(x, list(include = FALSE)),
     has_label("setup")
   )
 ```
@@ -381,7 +360,7 @@ Automation (Makefile, targets, etc.) to generate the downstream repos is left as
 - Improved ergonomics
 
 
-## Sneak peek - markermd
+## Sneak peek - markermd {data-background-image="imgs/markermd.png" data-background-size="150px" data-background-position="right 50px bottom 50px"}
 
 ::: {.r-stack .center}
 ![](imgs/template_screenshot.png){.fragment width="95%"}

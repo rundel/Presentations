@@ -92,3 +92,17 @@ h2>code {
 .reveal .panel-tabset li {
   font-size: 0.75em;
 }
+
+/* Logo background adjustments */
+.reveal .backgrounds .slide-background[style*="parsermd.png"],
+.reveal .backgrounds .slide-background[style*="markermd.png"] {
+  background-size: 180px !important;
+  background-position: right 20px bottom 20px !important;
+}
+
+/* Alternative approach - target slides directly */
+#title-slide .slide-background,
+.reveal .slides section[data-background-image*="markermd.png"] .slide-background {
+  background-size: 180px !important;
+  background-position: right 20px bottom 20px !important;
+}
