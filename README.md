@@ -13,9 +13,6 @@ link to their abstract.
 
 * *ICOTS* - Teaching Statistical Computing in the Age of AI \[[abstract](ICOTS2026/README.md)]
 
-* *Paris* - Teaching Statistical Computing in the Age of AI \[[abstract](ParisCompute2026/README.md)]
-
-
 ### 2025
 
 * *DSC* - Reflections on a decade of teaching statistical computing \[[slides](DSC2025/Rundel_Colin_DSC2025.pdf)]
