@@ -1,10 +1,7 @@
 Presentations
 =============
 
-Slides and materials for talks, workshops, and invited presentations given by
-[Colin Rundel](https://github.com/rundel). Each entry links directly to the
-slides (PDFs render inline on GitHub; HTML decks open as source). Upcoming talks
-link to their abstract.
+Slides and materials for talks, workshops, and invited presentations.
 
 
 ### 2026 (upcoming)
