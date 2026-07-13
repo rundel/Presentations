@@ -1,0 +1,393 @@
+---
+title: "Teaching Statistical Computing<br/>in the Age of AI"
+subtitle: "<br/>ICOTS 12 - Brisbane"
+author: "Colin Rundel"
+institute: "Duke University"
+footer: "<a href='https://bit.ly/rundel_icots2026'>bit.ly/rundel_icots2026</a>"
+format:
+  revealjs:
+    theme: slides.scss
+    transition: fade
+    slide-number: true
+    self-contained: true
+#title-slide-attributes:
+#  data-background-image: imgs/parsermd.png
+#  data-background-size: 150px
+#  data-background-position: right 50px bottom 50px 
+execute:
+  echo: true
+---
+
+
+```{r setup}
+#| include: false
+options(width=80)
+library(fontawesome)
+library(stringr)
+```
+
+## Who am I
+
+Associate Professor of the Practice, Dept. of Statistical Science <br/>
+Duke University
+
+&nbsp;
+
+Teaching statistical computing:
+
+* [Sta 523](https://sta523-fa25.github.io/) - Programming for Statistical Science [`r fa("seedling")` Fall 2014]{.since}
+
+  R, 1st year MS required
+
+* [Sta 323](https://sta323-sp26.github.io/) - Statistical Computing [`r fa("seedling")` Spring 2016]{.since}
+
+  R, 2nd/3rd year UG elective / required since 2023
+
+* [Sta 663](https://sta663-sp26.github.io/) - Statistical Computing and Computation [`r fa("arrows-rotate")` Spring 2022]{.since}
+
+  Python, 1st year MS required
+
+
+## Curriculum
+
+Core content and learning objectives of the course(s):
+
+:::: {.columns}
+::: {.column width='50%'}
+* Programming in R / Python
+* Data munging
+* Visualization
+* Text data
+* Modeling frameworks
+:::
+
+::: {.column width='50%'}
+* Web scraping & APIs
+* Interactive web apps
+* Databases
+* Optimization
+:::
+::::
+
+## Timeline
+
+```{r model-timeline-data}
+#| include: false
+library(ggplot2)
+
+releases = tibble::tribble(
+  ~company,    ~date,        ~label,          ~level, ~hj,
+  "Anthropic", "2024-03-04", "Claude 3",           1, 0.5,
+  "Anthropic", "2024-06-20", "Sonnet 3.5",         1, 0.5,
+  "Anthropic", "2025-02-24", "Sonnet 3.7",         1, 0.5,
+  "Anthropic", "2025-05-22", "Claude 4",           2, 0.5,
+  "Anthropic", "2025-08-05", "Opus 4.1",           1, 0.5,
+  "Anthropic", "2025-09-29", "Sonnet 4.5",         3, 0.5,
+  "Anthropic", "2025-11-24", "Opus 4.5",           1, 0.5,
+  "Anthropic", "2026-02-05", "Opus 4.6",           2, 0.85,
+  "Anthropic", "2026-02-17", "Sonnet 4.6",         4, 0.5,
+  "Anthropic", "2026-04-16", "Opus 4.7",           1, 0.5,
+  "Anthropic", "2026-05-28", "Opus 4.8",           2, 0.85,
+  "Anthropic", "2026-06-09", "Fable 5",            3, 0.5,
+  "Anthropic", "2026-06-30", "Sonnet 5",           4, 0.5,
+  "OpenAI",    "2024-04-09", "GPT-4 Turbo",        2, 0.5,
+  "OpenAI",    "2024-05-13", "GPT-4o",             1, 0.5,
+  "OpenAI",    "2024-09-12", "o1-preview",         2, 0.5,
+  "OpenAI",    "2024-12-05", "o1",                 3, 0.5,
+  "OpenAI",    "2025-02-27", "GPT-4.5",            1, 0.5,
+  "OpenAI",    "2025-04-16", "GPT-4.1 / o3",       2, 0.5,
+  "OpenAI",    "2025-08-07", "GPT-5",              3, 0.5,
+  "OpenAI",    "2025-11-12", "GPT-5.1",            1, 0.5,
+  "OpenAI",    "2025-12-11", "GPT-5.2",            2, 0.5,
+  "OpenAI",    "2026-02-05", "GPT-5.3-Codex",      3, 0.5,
+  "OpenAI",    "2026-03-05", "GPT-5.4",            1, 0.5,
+  "OpenAI",    "2026-04-23", "GPT-5.5",            2, 0.5,
+  "OpenAI",    "2026-07-09", "GPT-5.6",            3, 0.5
+) |>
+  dplyr::mutate(
+    date = as.Date(date),
+    dir = dplyr::if_else(company == "Anthropic", 1, -1),
+    pos = dir * (0.9 + 0.85 * (level - 1))
+  )
+
+agents = tibble::tribble(
+  ~company,    ~date,        ~label,        ~top,  ~laby,
+  "Anthropic", "2025-02-24", "Claude Code",  3.9,   4.15,
+  "OpenAI",    "2025-04-16", "Codex CLI",   -3.35, -3.6
+) |>
+  dplyr::mutate(date = as.Date(date))
+
+pal = c(Anthropic = "#D97757", OpenAI = "#10A37F")
+years = tibble::tribble(
+  ~date,        ~label,
+  "2024-01-01", "2024",
+  "2025-01-01", "2025",
+  "2026-01-01", "2026"
+) |>
+  dplyr::mutate(date = as.Date(date))
+qtrs = seq(as.Date("2024-04-01"), as.Date("2026-07-01"), by = "3 months")
+
+timeline_base = ggplot(releases, aes(x = date, color = company)) +
+  annotate(
+    "rect", xmin = as.Date("2025-02-24"), xmax = as.Date("2026-09-15"),
+    ymin = 0, ymax = 4.4,
+    fill = pal[["Anthropic"]], alpha = 0.07, color = NA
+  ) +
+  annotate(
+    "rect", xmin = as.Date("2024-09-12"), xmax = as.Date("2026-09-15"),
+    ymin = -3.8, ymax = 0,
+    fill = pal[["OpenAI"]], alpha = 0.07, color = NA
+  ) +
+  annotate(
+    "text", x = as.Date("2026-09-05"), y = 4.25, label = "reasoning models",
+    color = pal[["Anthropic"]], fontface = "italic", size = 3.3, hjust = 1
+  ) +
+  annotate(
+    "text", x = as.Date("2026-09-05"), y = -3.65, label = "reasoning models",
+    color = pal[["OpenAI"]], fontface = "italic", size = 3.3, hjust = 1
+  ) +
+  geom_hline(yintercept = 0, color = "#c3c2b7", linewidth = 0.4) +
+  annotate(
+    "segment", x = qtrs, xend = qtrs, y = -0.08, yend = 0.08,
+    color = "#c3c2b7", linewidth = 0.4
+  ) +
+  geom_segment(
+    data = agents, aes(xend = date, y = 0, yend = top),
+    linetype = "22", linewidth = 0.6
+  ) +
+  geom_segment(aes(xend = date, y = 0, yend = pos), linewidth = 0.4, alpha = 0.55) +
+  geom_point(aes(y = pos), size = 3) +
+  geom_text(
+    aes(y = pos + 0.34 * dir, label = label, hjust = hj),
+    color = "grey15", size = 3.5
+  ) +
+  geom_text(
+    data = agents, aes(y = laby, label = label),
+    fontface = "bold", size = 4.4
+  ) +
+  geom_label(
+    data = years, aes(x = date, y = 0, label = label),
+    inherit.aes = FALSE, color = "#898781", fill = "white",
+    linewidth = 0, size = 3.5
+  ) +
+  annotate(
+    "text", x = as.Date("2023-12-05"), y = 3.7, label = "Anthropic",
+    color = pal[["Anthropic"]], fontface = "bold", size = 6, hjust = 0
+  ) +
+  annotate(
+    "text", x = as.Date("2023-12-05"), y = -3.1, label = "OpenAI",
+    color = pal[["OpenAI"]], fontface = "bold", size = 6, hjust = 0
+  ) +
+  scale_color_manual(values = pal, guide = "none") +
+  scale_x_date(limits = as.Date(c("2023-12-01", "2026-09-15")), expand = c(0, 0)) +
+  scale_y_continuous(limits = c(-3.8, 4.4)) +
+  theme_void()
+
+here_annotations = list(
+  annotate(
+    "curve", x = as.Date("2025-07-06"), y = -1.4,
+    xend = as.Date("2025-06-03"), yend = -0.15,
+    curvature = -0.3, linetype = "22", linewidth = 0.9, color = "grey25",
+    arrow = arrow(length = unit(13, "pt"), type = "open")
+  ),
+  annotate(
+    "text", x = as.Date("2025-07-06"), y = -1.8, label = "Me",
+    fontface = "bold.italic", size = 6.5, color = "grey10"
+  ),
+  annotate(
+    "curve", x = as.Date("2024-12-10"), y = 1.7,
+    xend = as.Date("2025-03-06"), yend = 0.18,
+    curvature = 0.35, linetype = "22", linewidth = 0.9, color = "grey25",
+    arrow = arrow(length = unit(13, "pt"), type = "open")
+  ),
+  annotate(
+    "text", x = as.Date("2024-12-10"), y = 2, label = "Students",
+    fontface = "bold.italic", size = 6.5, color = "grey10"
+  )
+)
+```
+
+::: {.r-stack}
+```{r model-timeline-clean}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 6.7
+#| fig-align: center
+timeline_base
+```
+
+::: {.fragment}
+```{r model-timeline-annotated}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 6.7
+#| fig-align: center
+timeline_base + here_annotations
+```
+:::
+:::
+
+## There will be signs ...
+
+Identifying AI usage on individual assignments is futile in the long run, but in aggregate there are trends.
+
+* Increasing code complexity without corresponding quality
+
+* Overly aggressive commenting
+
+* TODO
+
+Usage is widespread and approaching 100% - heterogenity is in which tools and how they are used.
+
+## Syllabus (Fall 2024 - now)
+
+<br/>
+
+::: {.small}
+> ## Sharing / reusing code policy
+> 
+> - We are aware that a huge volume of code is available on the web, and many tasks may have solutions posted.
+> 
+> - Unless explicitly stated otherwise, this course's policy is that you may make use of any online resources (e.g. Google, StackOverflow, etc.) but you must explicitly cite where you obtained any code you directly use or use as inspiration in your solution(s). 
+> 
+> - Any recycled code that is discovered and is not explicitly cited will be treated as plagiarism, regardless of source.
+> 
+> - The same applies to the use of LLM like ChatGPT, Claude, or GitHub Copilot - you are welcome to make use of these tools as the basis for your solutions but you must cite the tool when using it for significant amounts of code generation.
+:::
+
+## Why do I care?
+
+* Compression in the lower tail of the grade distribution
+
+* Feedback focusing more on minor details than the big picture
+
+* Declining lecture, lab, and OH attendance
+
+## Why don't I care?
+
+* Writing code was never the goal of the course - code is a means to an end
+
+  - Statistical and computational thinking for solving problems
+
+  - Opinionated survey of the tool ecosystem
+
+* Effort was always a convenient proxy - 
+
+
+## What are we doing
+
+Adjusting assessment - moving to in-class
+
+* Random in-class quizzes - 5 MC questions in 5 min
+
+  - Dramatically improves attendance
+
+  - Forces students to stay current with material
+
+* In-class exams
+
+  - No writing actual code
+
+  - Code reading and interpretation
+
+  - Pseudo-code solution sketches
+
+
+## A radical revision
+
+For the 2025/2026 editions of Sta 523 & 663 for our MSS students we will be trying something radical
+
+* Combining 80% of the existing materials of *both* courses into the Fall semester
+
+* R & Python concurrently focusing on conceptual level rather than syntactic level
+
+* Provide / expect use of agentic tools from day 1
+
+  * Who is paying is TBD
+
+## Why?
+
+* Students are already using AI, but they're doing it inconsistently / badly on average
+
+* Using these tools effectively feels like it should be a learning objective
+
+* Goal is to free up 3-5 weeks of the 2nd course for extended project based assignment
+
+  * Extended work on ambitious open-ended student driven projects
+
+  * Documentation and reporting on process and workflow, not just final results
+
+
+## Aside - Who is paying?
+
+This is a critical open question and the landscape is changing,
+
+* Personal fixed cost plans 
+  - $20/$100/$200 / month
+  - 5 hr & weekly usage limits 
+
+* Pay for usage / pay per token plans 
+  - $2-10 / 1M input tokens
+  - $15-50 / 1M output tokens
+
+. . .
+
+Enterprise licenses for these tools are trending very strongly towards the latter option exclusively.
+
+
+## What do the costs look like?
+
+My last 30 days of Claude Code usage (Jun 15 - Jul 13), priced at standard API rates:
+
+| Model     | Input | Output | Cache reads | Cache writes |   Cost |
+|-----------|------:|-------:|------------:|-------------:|-------:|
+| Fable 5   |  0.5M |   3.1M |        565M |        18.8M | $1,059 |
+| Opus 4.8  |  2.6M |   4.9M |        979M |        43.0M |   $944 |
+| Haiku 4.5 |    ~0 |     ~0 |        6.1M |         0.4M |     $1 |
+| Total     |       |        |             |              | $2,004 |
+
+::: {.aside}
+Take these numbers with a grain of salt, but they are hopefully representative of a moderate user on Claude's $100 / month plan.
+
+Also note Fable 5 has only been available (again) since July 1.
+:::
+
+## Reach out
+
+<br/><br/>
+
+::: {.large}
+<table class="details">
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("home")`</td>
+    <td><a href="https://rundel.github.io">rundel.github.io</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("github")`</td>
+    <td><a href="https://github.com/rundel/">rundel</a></td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("envelope")`</td>
+    <td>
+    <a href="mailto:rundel@gmail.com">rundel@gmail.com</a><br/>
+    <a href="mailto:colin.rundel@duke.edu">colin.rundel@duke.edu</a>
+    </td>
+  </tr>
+  <tr>
+    <td style="text-align:center">&nbsp;`r fa("box-archive")`</td>
+    <td>
+    [sta523-fa25.github.io](https://sta523-fa25.github.io/)
+
+    [sta323-sp26.github.io](https://sta323-sp26.github.io/)
+
+    [sta663-sp26.github.io](https://sta663-sp26.github.io/)
+    </td>
+  </tr>
+    <tr>
+    <td style="text-align:center">&nbsp;`r fa("circle-question", prefer_type="solid")`</td>
+    <td>
+    [sta523-fa26.github.io](https://sta523-fa26.github.io/)
+    </td>
+  </tr>
+</table>
+:::
