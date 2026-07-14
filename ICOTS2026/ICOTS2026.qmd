@@ -394,6 +394,12 @@ Duke has licensing agreements with OpenAI & Anthropic - both only offer pay per 
 * Alternative is to ask students to bring their own plan
 
 
+## AI on the instructors side
+
+* Tools are great at ingesting your lectures and generating lots of mediocre multiple choice questions
+
+* Interesting p
+
 
 
 ## Reach out
