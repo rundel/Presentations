@@ -61,6 +61,21 @@ details>summary {
   display: block;
 }
 
+.reveal .slide .course-list ul {
+  padding-top: 0.33em;
+}
+
+.reveal .slide .course-list ul > li {
+  margin-bottom: 1em;
+}
+
+/* asides are position:absolute with shrink-to-fit width, so text-align
+   has no visible effect until the aside spans the full slide */
+.reveal .slide aside:has(.center) {
+  left: 0;
+  right: 0;
+}
+
 .reveal code {
   font-size: 0.9em;
 }

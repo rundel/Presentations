@@ -10,10 +10,6 @@ format:
     transition: fade
     slide-number: true
     self-contained: true
-#title-slide-attributes:
-#  data-background-image: imgs/parsermd.png
-#  data-background-size: 150px
-#  data-background-position: right 50px bottom 50px 
 execute:
   echo: true
 ---
@@ -28,13 +24,11 @@ library(stringr)
 
 ## Who am I
 
-Associate Professor of the Practice, Dept. of Statistical Science <br/>
-Duke University
+Assoc. Professor of the Practice, Dept. of Statistical Science, Duke University
 
-&nbsp;
+A primary focus has been the development and delivery of statistical computing courses:
 
-Teaching statistical computing:
-
+::: {.course-list}
 * [Sta 523](https://sta523-fa25.github.io/) - Programming for Statistical Science [`r fa("seedling")` Fall 2014]{.since}
 
   R, 1st year MS required
@@ -46,30 +40,36 @@ Teaching statistical computing:
 * [Sta 663](https://sta663-sp26.github.io/) - Statistical Computing and Computation [`r fa("arrows-rotate")` Spring 2022]{.since}
 
   Python, 1st year MS required
+:::
 
 
-## Curriculum
+::: {.aside}
+::: {.center .medium}
+`r fa("seedling")` - developed &nbsp;&nbsp;&nbsp; `r fa("arrows-rotate")` - taken over
+:::
+:::
 
-Core content and learning objectives of the course(s):
+## Learning objectives
 
 :::: {.columns}
 ::: {.column width='50%'}
 * Programming in R / Python
-* Data munging
+* Data wrangling
 * Visualization
 * Text data
 * Modeling frameworks
 :::
 
 ::: {.column width='50%'}
+* Version control
 * Web scraping & APIs
-* Interactive web apps
+* Interactive tools
 * Databases
 * Optimization
 :::
 ::::
 
-## Timeline
+## An AI Timeline
 
 ```{r model-timeline-data}
 #| include: false
@@ -125,7 +125,7 @@ years = tibble::tribble(
   "2026-01-01", "2026"
 ) |>
   dplyr::mutate(date = as.Date(date))
-qtrs = seq(as.Date("2024-04-01"), as.Date("2026-07-01"), by = "3 months")
+sems = seq(as.Date("2024-05-01"), as.Date("2026-09-01"), by = "4 months")
 
 timeline_base = ggplot(releases, aes(x = date, color = company)) +
   annotate(
@@ -148,7 +148,7 @@ timeline_base = ggplot(releases, aes(x = date, color = company)) +
   ) +
   geom_hline(yintercept = 0, color = "#c3c2b7", linewidth = 0.4) +
   annotate(
-    "segment", x = qtrs, xend = qtrs, y = -0.08, yend = 0.08,
+    "segment", x = sems, xend = sems, y = -0.08, yend = 0.08,
     color = "#c3c2b7", linewidth = 0.4
   ) +
   geom_segment(
@@ -156,7 +156,7 @@ timeline_base = ggplot(releases, aes(x = date, color = company)) +
     linetype = "22", linewidth = 0.6
   ) +
   geom_segment(aes(xend = date, y = 0, yend = pos), linewidth = 0.4, alpha = 0.55) +
-  geom_point(aes(y = pos), size = 3) +
+  geom_point(aes(y = 0, shape = company, size = company)) +
   geom_text(
     aes(y = pos + 0.34 * dir, label = label, hjust = hj),
     color = "grey15", size = 3.5
@@ -179,6 +179,8 @@ timeline_base = ggplot(releases, aes(x = date, color = company)) +
     color = pal[["OpenAI"]], fontface = "bold", size = 6, hjust = 0
   ) +
   scale_color_manual(values = pal, guide = "none") +
+  scale_shape_manual(values = c(Anthropic = 18, OpenAI = 19), guide = "none") +
+  scale_size_manual(values = c(Anthropic = 4.5, OpenAI = 3), guide = "none") +
   scale_x_date(limits = as.Date(c("2023-12-01", "2026-09-15")), expand = c(0, 0)) +
   scale_y_continuous(limits = c(-3.8, 4.4)) +
   theme_void()
@@ -186,7 +188,7 @@ timeline_base = ggplot(releases, aes(x = date, color = company)) +
 here_annotations = list(
   annotate(
     "curve", x = as.Date("2025-07-06"), y = -1.4,
-    xend = as.Date("2025-06-03"), yend = -0.15,
+    xend = as.Date("2025-06-11"), yend = 0,
     curvature = -0.3, linetype = "22", linewidth = 0.9, color = "grey25",
     arrow = arrow(length = unit(13, "pt"), type = "open")
   ),
@@ -195,8 +197,8 @@ here_annotations = list(
     fontface = "bold.italic", size = 6.5, color = "grey10"
   ),
   annotate(
-    "curve", x = as.Date("2024-12-10"), y = 1.7,
-    xend = as.Date("2025-03-06"), yend = 0.18,
+    "curve", x = as.Date("2024-12-15"), y = 1.7,
+    xend = as.Date("2025-02-15"), yend = 0,
     curvature = 0.35, linetype = "22", linewidth = 0.9, color = "grey25",
     arrow = arrow(length = unit(13, "pt"), type = "open")
   ),
@@ -227,17 +229,20 @@ timeline_base + here_annotations
 :::
 :::
 
+<!--
 ## There will be signs ...
 
 Identifying AI usage on individual assignments is futile in the long run, but in aggregate there are trends.
 
 * Increasing code complexity without corresponding quality
 
-* Overly aggressive commenting
+* Overly aggressive commenting & verbose prose
 
 * TODO
 
-Usage is widespread and approaching 100% - heterogenity is in which tools and how they are used.
+Usage is widespread and approaching 100% but there is huge heterogeneity in which tools are used.
+
+-->
 
 ## Syllabus (Fall 2024 - now)
 
@@ -252,16 +257,20 @@ Usage is widespread and approaching 100% - heterogenity is in which tools and ho
 > 
 > - Any recycled code that is discovered and is not explicitly cited will be treated as plagiarism, regardless of source.
 > 
-> - The same applies to the use of LLM like ChatGPT, Claude, or GitHub Copilot - you are welcome to make use of these tools as the basis for your solutions but you must cite the tool when using it for significant amounts of code generation.
+> - *The same applies to the use of LLMs like ChatGPT, Claude, or GitHub Copilot - you are welcome to make use of these tools as the basis for your solutions but you must cite the tool when using it for significant amounts of code generation.*
 :::
 
 ## Why do I care?
 
 * Compression in the lower tail of the grade distribution
 
-* Feedback focusing more on minor details than the big picture
+  * AI one-shot solutions going from 20-40% → 60% → 80% grade
+
+  * Feedback focusing more on minor details than the big picture
 
 * Declining lecture, lab, and OH attendance
+
+* Arguing about "well that's what AI told me to do"
 
 ## Why don't I care?
 
@@ -269,12 +278,18 @@ Usage is widespread and approaching 100% - heterogenity is in which tools and ho
 
   - Statistical and computational thinking for solving problems
 
-  - Opinionated survey of the tool ecosystem
+  - Opinionated survey of the ecosystem
 
-* Effort was always a convenient proxy - 
+* Effort was only ever a convenient proxy 
+
+* Students were not writing most of their code anyway
+
+* Writing code vs reading code
+
+* Students will be using these tools in the future
 
 
-## What are we doing
+## Low-hanging fruit
 
 Adjusting assessment - moving to in-class
 
@@ -293,34 +308,49 @@ Adjusting assessment - moving to in-class
   - Pseudo-code solution sketches
 
 
-## A radical revision
+## A more radical revision
 
-For the 2025/2026 editions of Sta 523 & 663 for our MSS students we will be trying something radical
+For the 2026/2027 running of the MSS courses (Sta 523 & 663) we will be trying something:
 
-* Combining 80% of the existing materials of *both* courses into the Fall semester
+* Combining the majority of the existing materials of *both* courses into the Fall semester exclusively
 
-* R & Python concurrently focusing on conceptual level rather than syntactic level
+* Teaching R & Python concurrently,
+
+  * focusing on the top-down concepts rather than the bottom-up syntax
 
 * Provide / expect use of agentic tools from day 1
 
-  * Who is paying is TBD
+  * Who is going to pay is TBD (more on this in a bit)
 
 ## Why?
 
-* Students are already using AI, but they're doing it inconsistently / badly on average
+* MSS students are coming in with strong(er) computing backgrounds
 
-* Using these tools effectively feels like it should be a learning objective
+* Already using AI, but doing it badly / inconsistently in general
 
-* Goal is to free up 3-5 weeks of the 2nd course for extended project based assignment
+* Using these tools effectively probably should be a learning objective of a modern computing curriculum
 
-  * Extended work on ambitious open-ended student driven projects
+* Address a demand for Python in the 1st semester (summer internships)
+
+* Frees up 3-5 weeks of the 2nd course for an extended project-based assignment
+
+  * Work on ambitious open-ended student-driven projects
 
   * Documentation and reporting on process and workflow, not just final results
 
 
-## Aside - Who is paying?
+## Why not the UG course (Sta 323)?
 
-This is a critical open question and the landscape is changing,
+* Single semester course taught by multiple faculty members
+
+* Less confidence this approach will work for students with less computing experience
+
+* Less pressure for Python in the curriculum
+
+
+## Aside - Who is going to pay?
+
+This is a critical open question and the landscape is changing, currently two possibilities:
 
 * Personal fixed cost plans 
   - $20/$100/$200 / month
@@ -334,8 +364,14 @@ This is a critical open question and the landscape is changing,
 
 Enterprise licenses for these tools are trending very strongly towards the latter option exclusively.
 
+Very real concerns about data privacy / FERPA / etc. if not working under the auspices of your university.
 
-## What do the costs look like?
+
+## What does pay per token look like?
+
+It is hard to directly compare, but expect costs to be 5-20x more than a fixed cost plan for moderate to heavy use.
+
+. . .
 
 My last 30 days of Claude Code usage (Jun 15 - Jul 13), priced at standard API rates:
 
@@ -346,11 +382,19 @@ My last 30 days of Claude Code usage (Jun 15 - Jul 13), priced at standard API r
 | Haiku 4.5 |    ~0 |     ~0 |        6.1M |         0.4M |     $1 |
 | Total     |       |        |             |              | $2,004 |
 
-::: {.aside}
-Take these numbers with a grain of salt, but they are hopefully representative of a moderate user on Claude's $100 / month plan.
 
-Also note Fable 5 has only been available (again) since July 1.
-:::
+## What are we going to do?
+
+Duke has licensing agreements with OpenAI & Anthropic - both only offer pay per token options (or equivalent).
+
+* Cost controls are very limited and not viable for use with students / teaching
+
+* Working towards using a Claude Team plan for the course (~$25 / seat / month)
+
+* Alternative is to ask students to bring their own plan
+
+
+
 
 ## Reach out
 
