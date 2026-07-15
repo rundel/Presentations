@@ -24,9 +24,11 @@ library(stringr)
 
 ## Who am I
 
+&nbsp;
+
 Assoc. Professor of the Practice, Dept. of Statistical Science, Duke University
 
-A primary focus has been the development and delivery of statistical computing courses:
+&nbsp;
 
 ::: {.course-list}
 * [Sta 523](https://sta523-fa25.github.io/) - Programming for Statistical Science [`r fa("seedling")` Fall 2014]{.since}
@@ -51,6 +53,11 @@ A primary focus has been the development and delivery of statistical computing c
 
 ## Learning objectives
 
+
+::: {.medium}
+
+Mastery of:
+
 :::: {.columns}
 ::: {.column width='50%'}
 * Programming in R / Python
@@ -64,10 +71,12 @@ A primary focus has been the development and delivery of statistical computing c
 * Version control
 * Web scraping & APIs
 * Interactive tools
-* Databases
+* Databases & SQL
 * Optimization
 :::
 ::::
+
+:::
 
 ## An AI Timeline
 
@@ -262,6 +271,10 @@ Usage is widespread and approaching 100% but there is huge heterogeneity in whic
 
 ## Why do I care?
 
+* By Spring 2025 starting to see >50% usage
+
+* Usage starting to lean towards copy / paste (better models)
+
 * Compression in the lower tail of the grade distribution
 
   * AI one-shot solutions going from 20-40% → 60% → 80% grade
@@ -280,13 +293,9 @@ Usage is widespread and approaching 100% but there is huge heterogeneity in whic
 
   - Opinionated survey of the ecosystem
 
-* Effort was only ever a convenient proxy 
-
-* Students were not writing most of their code anyway
-
 * Writing code vs reading code
 
-* Students will be using these tools in the future
+* Students will be using these tools in the future (academics or industry)
 
 
 ## Low-hanging fruit
@@ -322,7 +331,7 @@ For the 2026/2027 running of the MSS courses (Sta 523 & 663) we will be trying s
 
   * Who is going to pay is TBD (more on this in a bit)
 
-## Why?
+## Why the MSS courses (Sta 523, 663)?
 
 * MSS students are coming in with strong(er) computing backgrounds
 
@@ -398,9 +407,15 @@ Duke has licensing agreements with OpenAI & Anthropic - both only offer pay per 
 
 * Tools are great at ingesting your lectures and generating lots of mediocre multiple choice questions
 
-* Interesting p
+* Frontier models are also really good at reviewing code
 
+  * Limited support for anonymisation in [ghclass](https://rundel.github.io/ghclass/index.html)'s grading workflow
 
+  * Template and rubric automation in [markermd](https://rundel.github.io/markermd/index.html)
+
+  * Value in assessing marking consistency
+
+  * Repeated passes are a necessity
 
 ## Reach out
 
