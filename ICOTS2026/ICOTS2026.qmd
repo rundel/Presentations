@@ -78,7 +78,7 @@ Mastery of:
 
 :::
 
-## An AI Timeline
+## An AI timeline
 
 ```{r model-timeline-data}
 #| include: false
@@ -262,7 +262,7 @@ Usage is widespread and approaching 100% but there is huge heterogeneity in whic
 > 
 > - We are aware that a huge volume of code is available on the web, and many tasks may have solutions posted.
 > 
-> - Unless explicitly stated otherwise, this course's policy is that you may make use of any online resources (e.g. Google, StackOverflow, etc.) but you must explicitly cite where you obtained any code you directly use or use as inspiration in your solution(s). 
+> - Unless explicitly stated otherwise, this course's policy is that you may make use of any online resources (e.g. Google, StackOverflow, etc.) but you must explicitly cite where you obtained any code you directly use or use as inspiration in your solution(s).
 > 
 > - Any recycled code that is discovered and is not explicitly cited will be treated as plagiarism, regardless of source.
 > 
@@ -319,7 +319,7 @@ Adjusting assessment - moving to in-class
 
 ## A more radical revision
 
-For the 2026/2027 running of the MSS courses (Sta 523 & 663) we will be trying something:
+For the 2026/2027 running of the MSS courses (Sta 523 & 663), we will be trying something:
 
 * Combining the majority of the existing materials of *both* courses into the Fall semester exclusively
 
@@ -327,7 +327,7 @@ For the 2026/2027 running of the MSS courses (Sta 523 & 663) we will be trying s
 
   * focusing on the top-down concepts rather than the bottom-up syntax
 
-* Provide / expect use of agentic tools from day 1
+* Providing / expecting use of agentic tools from day 1
 
   * Who is going to pay is TBD (more on this in a bit)
 
@@ -339,7 +339,7 @@ For the 2026/2027 running of the MSS courses (Sta 523 & 663) we will be trying s
 
 * Using these tools effectively probably should be a learning objective of a modern computing curriculum
 
-* Address a demand for Python in the 1st semester (summer internships)
+* Addresses a demand for Python in the 1st semester (summer internships)
 
 * Frees up 3-5 weeks of the 2nd course for an extended project-based assignment
 
@@ -361,11 +361,11 @@ For the 2026/2027 running of the MSS courses (Sta 523 & 663) we will be trying s
 
 This is a critical open question and the landscape is changing, currently two possibilities:
 
-* Personal fixed cost plans 
+* Personal fixed-cost plans
   - $20/$100/$200 / month
-  - 5 hr & weekly usage limits 
+  - 5 hr & weekly usage limits
 
-* Pay for usage / pay per token plans 
+* Pay for usage / pay-per-token plans
   - $2-10 / 1M input tokens
   - $15-50 / 1M output tokens
 
@@ -378,7 +378,7 @@ Very real concerns about data privacy / FERPA / etc. if not working under the au
 
 ## What does pay per token look like?
 
-It is hard to directly compare, but expect costs to be 5-20x more than a fixed cost plan for moderate to heavy use.
+It is hard to directly compare, but expect costs to be 5-20x more than a fixed-cost plan for moderate to heavy use.
 
 . . .
 
@@ -394,7 +394,7 @@ My last 30 days of Claude Code usage (Jun 15 - Jul 13), priced at standard API r
 
 ## What are we going to do?
 
-Duke has licensing agreements with OpenAI & Anthropic - both only offer pay per token options (or equivalent).
+Duke has licensing agreements with OpenAI & Anthropic - both only offer pay-per-token options (or equivalent).
 
 * Cost controls are very limited and not viable for use with students / teaching
 
@@ -403,13 +403,13 @@ Duke has licensing agreements with OpenAI & Anthropic - both only offer pay per 
 * Alternative is to ask students to bring their own plan
 
 
-## AI on the instructors side
+## AI on the instructor's side
 
-* Tools are great at ingesting your lectures and generating lots of mediocre multiple choice questions
+* Tools are great at ingesting your lectures and generating lots of mediocre multiple-choice questions
 
 * Frontier models are also really good at reviewing code
 
-  * Limited support for anonymisation in [ghclass](https://rundel.github.io/ghclass/index.html)'s grading workflow
+  * Limited support for anonymization in [ghclass](https://rundel.github.io/ghclass/index.html)'s grading workflow
 
   * Template and rubric automation in [markermd](https://rundel.github.io/markermd/index.html)
 
