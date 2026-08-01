@@ -6,7 +6,7 @@ Slides and materials for talks, workshops, and invited presentations.
 
 ### 2026 (upcoming)
 
-* *JSM* - Automate all the things \[[repo](JSM2026)]
+* *JSM* - Automate all the things \[[repo](JSM2026) | [slides](https://rundel.github.io/Presentations/JSM2026/JSM2026.html)]
 
 * *ICOTS* - Teaching Statistical Computing in the Age of AI \[[repo](ICOTS2026) | [slides](https://rundel.github.io/Presentations/ICOTS2026/ICOTS2026.html)]
 
