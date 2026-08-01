@@ -6,4 +6,4 @@ In this talk we will demonstrate `livecode`, a new R package for broadcasting co
 
 ## Slides
 
-Slides are available here: http://rundel.github.io/Presentations/RStudioConf2020/RStudioConf2020.html
+Slides - [html](https://rundel.github.io/Presentations/RStudioConf2020/RStudioConf2020.html)

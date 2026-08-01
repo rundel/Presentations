@@ -1,3 +1,5 @@
 ## Leveraging GPU libraries for efficient computation of Gaussian process models in R
 
 In this talk we will presents a case study of our recent work on the implementation of a Gaussian process based Bayesian model for spatial assignment. The talk will focus on the low level implementation of this model in R using Rcpp, Armadillo, and GPU linear algebra libraries CUBLAS and Magma. Building our implementation on top of these existing libraries allows us to exploit the computational power of commodity GPU hardware without the need for specific expertise in developing for these processors. We will discuss how through judicious use of these tools we are able to improve the performance of our assignment models by 3-5x over our original RcppArmadillo implementation. It is our hope that our case study will provide insight into the identification of common computational bottle necks which can be improved through the use of existing GPU libraries and implementations.
+
+Slides - [pdf](https://rundel.github.io/Presentations/UseR2013/Talk/UseR_2013_talk.pdf)

@@ -1,3 +1,5 @@
 ## Leveraging GPU Libraries for Efficient Computation of Bayesian Spatial Assignment Models in R
 
 We will present our work on the implementation of Bayesian models for spatial assignment of organisms using intrinsic genetic and isotopic markers. This talk will focus on the low level implementation of these models in R using Rcpp and GPU linear algebra libraries CUBLAS and Magma. Building our implementation on top of these existing libraries allowed us to exploit the computational advantage of commodity GPU hardware without the need for specific expertise in developing for these processors. Using these tools we were able to improve the performance of our assignment models by 3-5x by replacing only two functions with relevant GPU implementations. These approaches should be generally applicable to a large variety of problems and will only become more accessible as these and other GPU tools and libraries continue to mature.
+
+Slides - [pdf](https://rundel.github.io/Presentations/JSM%202012/Talk/jsm_talk_2012.pdf)

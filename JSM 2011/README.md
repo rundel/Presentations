@@ -1,3 +1,5 @@
 ## Spatial Models for Bird Origin Assignment using Genetic and Isotopic data
 
 In bird species with large migratory ranges it is often of interest to determine the spatial origin of a particular individual or group of individuals. This data has traditionally been collected through direct observation, e.g. banding, satellite tracking, which tends to be difficult, time consuming, and expensive. Recent work has used genetic or isotopic data to infer these spatial origins with some success, however these results tend to lack sufficient specificity to be used in all applications. Our work seeks to improve the accuracy of these existing methods by improving spatial predictions of bird origin by combining genetic and isotopic models. This talk will focus on the underlying details of the Bayesian spatial models including specific improvements we have made as well as approaches for efficient computation. We will also discuss the inclusion of additional spatial information in refining prediction, such as the use of species distribution models as prior information for bird origin.
+
+Slides - [pdf](https://rundel.github.io/Presentations/JSM%202011/Talk/jsm_talk_2011.pdf)
