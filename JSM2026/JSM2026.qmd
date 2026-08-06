@@ -63,9 +63,9 @@ All three courses run on GitHub - one (private) organization per course, student
 
 ## Click or script?
 
-Myself and others have written a lot about why you should be using git & GitHub for your courses.
+Myself and others have written a lot about why you should be using Git & GitHub for your courses.
 
-Having adopted GitHub, you still have to decide how to manage things there.
+Having adopted GitHub, you still have to decide how to manage things.
 
 * Point-and-click is fine for small courses and tasks
 
@@ -113,7 +113,7 @@ v0.4.1 on CRAN - workflow that follows is documented in the repo and a soon-to-b
 
 ## Course as organization
 
-One org per course per semester. Students added  *members* (to use teams). The default repository permission is set to `none`, so students only see their assigned repos.
+One org per course per semester. Students added as *members* (to use teams). The default repository permission is set to `none`, so students only see their assigned repos.
 
 :::: {.columns}
 ::: {.column width='55%'}
@@ -158,7 +158,7 @@ Collect student usernames via a web form / survey and validate before inviting:
 user_exists(c("rundel", "mine-cetinkaya-rundel", "ghclass-alice"))
 ```
 
-Use base R and ghclass to manage invites:
+Use ghclass to manage invites:
 
 ```{r}
 #| eval: false
@@ -178,11 +178,11 @@ The roster file is typically a join between LMS export and survey results
 ## 2.1 Assignments as repositories
 
 ::: {.medium}
-* `hw1` - the template, holding the student scaffold and the CI config
+* `hw1` - the source repo, holds the student scaffold and the CI config
 
 * `hw1-key` - the answer key
 
-* `hw1_lab01_team01`, ... - one repo per team/individual, mirrored from the template
+* `hw1_lab01_team01`, ... - one repo per team/individual, mirrored from the source
 :::
 
 
@@ -210,15 +210,15 @@ repo_tree("ghclass-paper/hw1-key")
 
 ## 2.2 Assigning teams
 
-Per assignment we build a roster that tracks student details and team assignment,
+Per assignment we  build a roster that tracks student details and random team assignments,
 
 ```{r}
 roster = readr::read_csv("github_roster.csv", show_col_types = FALSE) |>
   team_roster(
-    size = 3,
+    size = 3, 
     by   = "section",
     name = "jsm26_lab{section}_team{team_id}",
-    pad  = 2,
+    pad = 2,
     seed = 20250901
   )
 
@@ -226,18 +226,30 @@ roster |> dplyr::select(name, email, section, github, team)
 ```
 
 ::: {.aside}
-Teams are just a column in the roster - these can also be manual created or edited
+Teams are just a column in the roster - these can also be manual created
 :::
 
+::: {.notes}
+Size is the desired team size (we typically use 4)
+
+Padding applies numeric pading to the team index e.g. 02 vs 2
+
+This function is useful if you want to do random team assignments
+:::
 
 ## 2.3 Distributing an assignment
 
-
+Make sure the source repo is a *template*,
 
 ```{r}
 #| message: true
 repo_set_template("ghclass-paper/hw1")
+```
 
+then create student repos from it,
+
+```{r}
+#| message: true
 org_create_assignment(
   org         = "ghclass-paper",
   repo        = roster$team,
@@ -303,11 +315,11 @@ GitHub Actions provide a powerful tool for automating a varierty of things,
 
 * Our feedback usually focuses process not correctness (reproducibility)
 
-* We include workflows in student repos (`.github/workflows/check_assignment.yml`) as part of the template
+* We include workflows in student repos (`.github/workflows/check_assignment.yml`) as part of the source repo
 
-* The checks are plain R functions from [`checklist`](https://github.com/rundel/checklist) - required files present, document renders, etc.
+* The checks are mostly R functions from [`checklist`](https://github.com/rundel/checklist) - required files present, document renders, etc.
 
-* A prebuilt container image keeps runs fast and the environment consistent
+* Uses a prebuilt docker image - [`r_gh_action`](https://github.com/DukeStatSci/r_gh_actions)
 
 * `add_badges = TRUE` at distribution put a pass / fail badge at the top of each README
 
@@ -350,6 +362,12 @@ jobs:
         name: hw1-html
         path: hw1.html
 ```
+
+::: {.notes}
+Steps should be self explanitory - this is a simplified version of the real thing
+
+Point out the artifact bit is important
+:::
 
 
 ## What students see
@@ -409,7 +427,7 @@ fs::dir_tree("hw1")
 
 ## 4.2 Scores & feedback 
 
-Numeric scores go to the gradebook, written feedback via GitHub issues
+Numeric scores go to the gradebook, 
 
 ```{r}
 #| eval: false
@@ -423,6 +441,10 @@ readr::write_csv(upload, "hw1/hw1_upload.csv")
 
 . . .
 
+<br/>
+
+Written feedback shared via GitHub issues,
+
 ```{r}
 #| message: true
 comments = fs::dir_ls("hw1/comments", glob = "*.md")
@@ -431,10 +453,15 @@ repos    = paste0("ghclass-paper/", fs::path_ext_remove(fs::path_file(comments))
 issue_create(repos, title = "hw1 feedback", body = purrr::map_chr(comments, readr::read_file))
 ```
 
+::: {.notes}
+Upload to gradebooks require specific formating - we keep scores.csv simple and then join with a template file the gives us the specific format.
+
+Comment files are just markdown files we read and then turn into issues.
+:::
 
 ## `markermd`
 
-An interactive (Shiny) grading interface for Quarto and R Markdown assignments, built on top of [`q2r`](https://rundel.github.io/q2r) that works with `org_grade_assignment()`.
+An interactive (Shiny) grading interface for Quarto and R Markdown assignments that works with `org_grade_assignment()`.
 
 ::: {.r-stack .center}
 ![](imgs/template_screenshot.png){.fragment width="70%"}
@@ -444,49 +471,61 @@ An interactive (Shiny) grading interface for Quarto and R Markdown assignments, 
 ![](imgs/mark_rubric_screenshot.png){.fragment width="70%"}
 :::
 
-## Using `markermd`
-
-A grading project (folder) is initialized with `init_project()`.
-
-* `template()` is used to build an assignment template - document subsections and validation rules
-
-* `mark()` is the grading interface that lets you build a rubric and apply it across student submissions
-
-* `export_marks()` collects results from the database and populates `scores.csv` and `comments/`
-
-
-## `markermd` and AI
-
-Templates, rubrics, and marks round-trip from database as schema-validated YAML - deliberately simple enough for an LLM to author.
-
-`markermd::init_project()` installs three Claude Code skills in the grading folder.
-
-::: {.medium}
-* `markermd-scaffold-template` - questions and structural rules from the key
-
-* `markermd-scaffold-rubric` - rubric items, informed by sampling submissions
-
-* `markermd-apply-rubric` - a first pass across every repository, pre-toggled for review
+::: {.aside}
+Built using [`q2r`](https://rundel.github.io/q2r) to parse and build the document tree shown above
 :::
 
-Control over whether the LLM sees student work - some support for `ghclass::local_repo_anonymize()` for best effort anonymization of grading project.
+::: {.notes}
+1st ss - Template builder - parses the key to build out a document template. We associate various questions with sections of the document using headers (`###`). Templates can also have rules that allow us to validate the content (e.g. this section must have one chunk and some markdown)
+
+2nd ss - mark() validation tab - shows the result of applying the template across student repos, shows the validation status for each question as well as grading progress.
+
+3rd ss - mark() marking tab - gradescope like interface for applying rubric items by question and repo. Left side highlights either the raw code or rendered output (if available) as you move between questions.
+
+Not show - rubric interface that lets you add rubric items by question
+:::
+
+
+## Using `markermd`
+
+A grading project (folder) is initialized with `init_project()` which creates `.markermd/`.
+
+Once initialized you can use:
+
+* `template()` to build an assignment template - document subsections and validation rules
+
+* `mark()` to validate submissions, build a rubric, and apply it across submissions
+
+* `export_marks()` to collects results and populates `scores.csv` and `comments/`
+
+::: {.aside}
+We include some *very* experimental Claude code skills which can be used to help automate the tasks above
+:::
+
 
 ## Some advice
 
-* Each org gets 2,000 GitHub Actions minutes / month free, 3,000 on Team
+::: {.medium}
 
-  * easy to exhaust for a medium-sized course - upgrade, or self-host runners
+* Set `org_set_repo_permission()` and `org_set_workflow_permissions()` *before* anyone is invited, use `org_sitrep()` to check.
+
+* Every org gets 2,000 Actions minutes / month free, 3,000 if using Team upgrade
+
+  * easily exhausted for a medium-sized course - use self-host runners
 
 * Artifacts expire after 90 days and count against org storage (500 MB free, 2 GB on Team) - just keep the latest
 
 * Beware of secondary rate limits, e.g. bulk invitations and bulk issue creation
 
-  * a free org caps out around 50 invites/day
+  * default cap of 50 invites/day
 
-  * the fix is the free Team upgrade via [GitHub Education](https://education.github.com)
+  * free Team upgrade via [GitHub Education](https://education.github.com) increases this
 
-* Set `org_set_repo_permission()` and `org_set_workflow_permissions()` *before* anyone is invited, use `org_sitrep()` to check.
+* Grading framework is well positioned for use with Agentic AI tools, but be aware of your schools data policies / FERPA / etc.
 
+  * ghclass has initial support for "best effort" anonymization via `local_repo_anonymize()`
+
+:::
 
 ## Reach out
 
